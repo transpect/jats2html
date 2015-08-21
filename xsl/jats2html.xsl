@@ -71,7 +71,7 @@
   <xsl:param name="css-location" select="'css/stylesheet.css'"/>
   <!-- for calculating whether a table covers the whole width or only part of it: -->
   <xsl:param name="page-width" select="if (/book/book-meta/custom-meta-group/meta-name[. = 'type-area-width']) then concat(((/book/book-meta/custom-meta-group/meta-name[. = 'type-area-width']/meta-value) * 0.3527), 'mm') else '180mm'"/>
-  <xsl:param name="page-width-twips" select="letex:length-to-unitless-twip($page-width)" as="xs:double"/>
+  <xsl:param name="page-width-twips" select="tr:length-to-unitless-twip($page-width)" as="xs:double"/>
   <!-- whether to create backlinks from index terms to index entries.
        text-and-number: link from index terms with their text and number
        number: link from index terms with their number
@@ -549,7 +549,7 @@
   
   <xsl:variable name="frontmatter-parts" as="xs:string+" select="('title-page', 'frontispiz', 'copyright-page', 'about-contrib', 'about-book', 'series', 'additional-info')"/>
   
-  <xsl:function name="letex:create-epub-type-attribute" as="attribute()?">
+  <xsl:function name="tr:create-epub-type-attribute" as="attribute()?">
     <xsl:param name="context" as="element(*)"/>
     <xsl:choose>
       <xsl:when test="$context[self::*:pb]">
@@ -565,13 +565,13 @@
           </xsl:when>
           <!-- additional Info in title -->
           <xsl:when test="matches($context/@content-type, 'additional-info')">
-            <xsl:attribute name="epub:type" select="'letex:additional-info'"/>
+            <xsl:attribute name="epub:type" select="'tr:additional-info'"/>
           </xsl:when>
           <xsl:when test="matches($context/@content-type, 'series')">
-            <xsl:attribute name="epub:type" select="'letex:additional-info'"/>
+            <xsl:attribute name="epub:type" select="'tr:additional-info'"/>
           </xsl:when>
           <xsl:when test="matches($context/@content-type, 'about-book')">
-            <xsl:attribute name="epub:type" select="'letex:about-the-book'"/>
+            <xsl:attribute name="epub:type" select="'tr:about-the-book'"/>
           </xsl:when>
         </xsl:choose>
       </xsl:when>
@@ -579,7 +579,7 @@
         <xsl:attribute name="epub:type" select="'acknowledgements'"/>
       </xsl:when>
       <xsl:when test="$context[self::*:bio]">
-        <xsl:attribute name="epub:type" select="'letex:bio'"/>
+        <xsl:attribute name="epub:type" select="'tr:bio'"/>
       </xsl:when>
       <xsl:when test="$context[self::*:ref-list]">
         <xsl:attribute name="epub:type" select="'bibliograpy'"/>
@@ -601,7 +601,7 @@
   
   <xsl:template match="toc" mode="jats2html">
     <div class="toc">
-      <xsl:sequence select="letex:create-epub-type-attribute(.)"/>
+      <xsl:sequence select="tr:create-epub-type-attribute(.)"/>
       <xsl:choose>
         <xsl:when test="exists(* except title-group)">
           <!-- explicitly rendered toc -->
@@ -1025,7 +1025,7 @@
   <xsl:template match="@width" mode="jats2html"/>
 
   <xsl:template match="*[name() = ('table', 'array')][@css:width]" mode="table-widths">
-    <xsl:variable name="twips" select="letex:length-to-unitless-twip(@css:width)" as="xs:double?"/>
+    <xsl:variable name="twips" select="tr:length-to-unitless-twip(@css:width)" as="xs:double?"/>
     <xsl:choose>
       <xsl:when test="$twips">
         <xsl:copy copy-namespaces="no">
@@ -1070,7 +1070,7 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:attribute name="css:width" 
-          select="concat(string(xs:integer(1000 * (letex:length-to-unitless-twip(.) div $table-twips)) * 0.1), '%')"/>    
+          select="concat(string(xs:integer(1000 * (tr:length-to-unitless-twip(.) div $table-twips)) * 0.1), '%')"/>    
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -1078,7 +1078,7 @@
   <xsl:template match="*[name() = ('table', 'array')][exists(col | colgroup)]/*/tr/*/@css:width" mode="table-widths"/>
     
   <!-- will be discarded -->
-  <xsl:variable name="jats2html:masterpageobjects-para-regex" select="'letex_(pagenumber|columntitle)'" as="xs:string"/>
+  <xsl:variable name="jats2html:masterpageobjects-para-regex" select="'tr_(pagenumber|columntitle)'" as="xs:string"/>
   <xsl:template match="*[matches(@role, $jats2html:masterpageobjects-para-regex)]" mode="jats2html"/>
 
   <xsl:template match="@colspan | @rowspan" mode="jats2html">
