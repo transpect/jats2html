@@ -14,7 +14,7 @@
   <p:option name="status-dir-uri" required="false" select="'status'"/>
   <p:option name="css-location" required="false"/>
   
-  <p:input port="source" primary="true" />
+  <p:input port="source" primary="true"/>
   <p:input port="paths" kind="parameter" primary="true"/>
   <p:output port="result" primary="true" />
   
@@ -34,8 +34,11 @@
     <p:with-option name="status-dir-uri" select="$status-dir-uri"/>
   </tr:simple-progress-msg>
   
-  <cascade:dynamic-transformation-pipeline load="jats2html/jats2html">
+  <cascade:dynamic-transformation-pipeline load="jats2html/jats2html" 
+    fallback-xsl="http://transpect.io/jats2html/xsl/jats2html.xsl"
+    fallback-xpl="http://transpect.io/jats2html/xpl/jats2html_default.xpl">
     <p:with-param name="css-location" select="$css-location"/>
+    <p:with-param name="srcpaths" select="$srcpaths"/>
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
     <p:input port="source">
@@ -47,8 +50,8 @@
     <p:input port="options"><p:empty/></p:input>
     <p:pipeinfo>
       <examples xmlns="http://transpect.io"> 
-        <collection dir-uri="http://customers.transpect.io/adaptions/" file="jats2html/jats2html.xpl"/>
-        <generator-collection dir-uri="http://customers.transpect.io/adaptions/" file="jats2html/jats2html.xpl.xsl"/>
+        <collection dir-uri="http://transpect.io/" file="jats2html/xpl/jats2html.xpl"/>
+        <generator-collection dir-uri="http://transpect.io/" file="jats2html/xpl/jats2html.xpl.xsl"/>
       </examples>
     </p:pipeinfo>
   </cascade:dynamic-transformation-pipeline>
@@ -64,4 +67,5 @@
     </p:input>
     <p:with-option name="status-dir-uri" select="$status-dir-uri"/>
   </tr:simple-progress-msg>
+  
 </p:declare-step>

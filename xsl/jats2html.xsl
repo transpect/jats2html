@@ -30,6 +30,7 @@
 
   <xsl:param name="debug" select="'yes'"/>
   <xsl:param name="debug-dir-uri" select="'debug'"/>
+  <xsl:param name="srcpaths" select="'no'"/>
 
   <xsl:param name="s9y1-path" as="xs:string?"/>
   <xsl:param name="s9y2-path" as="xs:string?"/>
@@ -287,7 +288,13 @@
     <xsl:attribute name="class" select="name()"/>
   </xsl:template>
   
-  <xsl:template match="@id | @srcpath" mode="jats2html">
+  <xsl:template match="@srcpath" mode="jats2html">
+    <xsl:if test="$srcpaths eq 'yes'">
+      <xsl:copy/>  
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="@id" mode="class-att">
     <xsl:copy/>
   </xsl:template>
 

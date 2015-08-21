@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:declare-step xmlns:p="http://www.w3.org/ns/xproc"
+  xmlns:c="http://www.w3.org/ns/xproc-step" 
+  xmlns:tr="http://transpect.io"
+  xmlns:jats="http://jats.nlm.nih.gov"
+  version="1.0" 
+  name="jats2html-driver">
+  
+  <p:input port="source" primary="true"/>
+  <p:input port="stylesheet" primary="false"/>
+  <p:input port="parameters" kind="parameter" primary="true"/>
+  
+  <p:output port="result"/>
+  
+  <p:option name="debug" select="'no'"/>
+  <p:option name="debug-dir-uri" select="'debug'"/>
+  
+  <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
+  <p:import href="http://transpect.io/xproc-util/xslt-mode/xpl/xslt-mode.xpl"/>
+  
+  <tr:xslt-mode prefix="jats2html/01" mode="epub-alternatives" name="epub-alternatives">
+    <p:input port="models">
+      <p:empty/>
+    </p:input>
+    <p:input port="stylesheet">
+      <p:pipe step="jats2html-driver" port="stylesheet"/>
+    </p:input>
+    <p:input port="parameters">
+      <p:pipe port="parameters" step="jats2html-driver"/>
+    </p:input>
+    <p:with-option name="debug" select="$debug"/>
+    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+  </tr:xslt-mode>
+  
+  <tr:xslt-mode prefix="jats2html/02" mode="jats2html" name="jats2html">
+    <p:input port="models">
+      <p:empty/>
+    </p:input>
+    <p:input port="stylesheet">
+      <p:pipe step="jats2html-driver" port="stylesheet"/>
+    </p:input>
+    <p:input port="parameters">
+      <p:pipe port="parameters" step="jats2html-driver"/>
+    </p:input>
+    <p:with-option name="debug" select="$debug"/>
+    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+  </tr:xslt-mode>
+  
+  <tr:xslt-mode prefix="jats2html/03" mode="clean-up" name="clean-up">
+    <p:input port="models">
+      <p:empty/>
+    </p:input>
+    <p:input port="stylesheet">
+      <p:pipe step="jats2html-driver" port="stylesheet"/>
+    </p:input>
+    <p:input port="parameters">
+      <p:pipe port="parameters" step="jats2html-driver"/>
+    </p:input>
+    <p:with-option name="debug" select="$debug"/>
+    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+  </tr:xslt-mode>
+  
+</p:declare-step>
