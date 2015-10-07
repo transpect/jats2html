@@ -2,7 +2,6 @@
 <p:declare-step xmlns:p="http://www.w3.org/ns/xproc" 
   xmlns:c="http://www.w3.org/ns/xproc-step"    
   xmlns:tr="http://transpect.io"
-  xmlns:cascade="http://transpect.io/cascade"  
   xmlns:jats="http://jats.nlm.nih.gov"
   version="1.0"
   name="jats-jats2html"
@@ -34,7 +33,7 @@
     <p:with-option name="status-dir-uri" select="$status-dir-uri"/>
   </tr:simple-progress-msg>
   
-  <cascade:dynamic-transformation-pipeline load="jats2html/jats2html" 
+  <tr:dynamic-transformation-pipeline load="jats2html/jats2html" 
     fallback-xsl="http://transpect.io/jats2html/xsl/jats2html.xsl"
     fallback-xpl="http://transpect.io/jats2html/xpl/jats2html_default.xpl">
     <p:with-param name="css-location" select="$css-location"/>
@@ -54,7 +53,7 @@
         <generator-collection dir-uri="http://transpect.io/" file="jats2html/xpl/jats2html.xpl.xsl"/>
       </examples>
     </p:pipeinfo>
-  </cascade:dynamic-transformation-pipeline>
+  </tr:dynamic-transformation-pipeline>
 
   <tr:simple-progress-msg name="success-msg" file="jats2html-success.txt">
     <p:input port="msgs">
