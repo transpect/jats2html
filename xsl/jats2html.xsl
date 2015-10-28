@@ -69,7 +69,7 @@
        empty string or unset param if no resolution required: -->
   <xsl:param name="rr" select="'doc/'"/>
   <!-- convention: if empty string, then concat($common-path, '/css/stylesheet.css') -->
-  <xsl:param name="css-location" select="'css/stylesheet.css'"/>
+  <xsl:param name="css-location" select="''"/>
   <!-- for calculating whether a table covers the whole width or only part of it: -->
   <xsl:param name="page-width" select="if (/book/book-meta/custom-meta-group/meta-name[. = 'type-area-width']) then concat(((/book/book-meta/custom-meta-group/meta-name[. = 'type-area-width']/meta-value) * 0.3527), 'mm') else '180mm'"/>
   <xsl:param name="page-width-twips" select="tr:length-to-unitless-twip($page-width)" as="xs:double"/>
@@ -157,11 +157,11 @@
         <xsl:if test="@source-dir-uri">
           <meta name="source-dir-uri" content="{@source-dir-uri}"/>
         </xsl:if>
-        <link href="{if ($css-location = '') then concat($common-path, 'css/stylesheet.css') else $css-location}" type="text/css" rel="stylesheet"/>
-        <!-- cascaded load of css files -->
-        <xsl:for-each select="$publisher-path, $series-path, $work-path">
-          <xsl:variable name="css-path" select="concat(., 'css/overrides.css')" as="xs:string"/>
-          <link href="{$css-path}" type="text/css" rel="stylesheet"/>
+        <xsl:if test="$css-location ne ''">
+          <link rel="stylesheet" type="text/css" href="{$css-location}"/>  
+        </xsl:if>
+        <xsl:for-each select="$paths">
+          <link rel="stylesheet" type="text/css" href="{concat(., 'css/overrides.css')}"/>
         </xsl:for-each>
         <title>
           <xsl:apply-templates select="book-meta/book-title-group/book-title/node() | title-group/title/node()"
