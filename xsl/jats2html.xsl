@@ -180,18 +180,24 @@
     </html>
   </xsl:template>
   
-  <xsl:template match="book-meta" mode="jats2html">
+  <xsl:template match="book-meta|book-part-meta|journal-meta|article-meta" mode="jats2html">
     <div class="title">
-      <xsl:apply-templates select="* except (custom-meta-group | abstract | contrib-group), contrib-group/contrib" mode="#current"/>
+      <xsl:apply-templates select="@srcpath, * except (custom-meta-group | abstract | contrib-group), contrib-group/contrib" mode="#current"/>
     </div>
     <xsl:apply-templates select="contrib-group/bio" mode="#current"/>
     <xsl:apply-templates select="abstract" mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="book-meta/*[local-name()= ('book-id', 'isbn', 'permissions', 'book-volume-number', 'publisher')]" mode="jats2html"/>
+  <xsl:template match="book-meta/*[local-name()= ('book-id', 'isbn', 'permissions', 'book-volume-number', 'publisher')]" mode="jats2html">
+    <div class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </div>
+  </xsl:template>
   
   <xsl:template match="book-title-group" mode="jats2html">
-    <xsl:apply-templates mode="#current"/>
+    <div class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </div>
   </xsl:template>
   
   <xsl:template match="subtitle | aff" mode="jats2html">
@@ -202,13 +208,13 @@
   
   <xsl:template match="bio | permissions" mode="jats2html" >
     <div class="{name()}">
-      <xsl:apply-templates mode="#current"/>
+      <xsl:call-template name="css:content"/>
     </div>      
   </xsl:template>
   
   <xsl:template match="contrib/string-name" mode="jats2html">
     <p class="author">
-      <xsl:apply-templates mode="#current"/>
+      <xsl:call-template name="css:content"/>
     </p>
   </xsl:template>
   
@@ -527,11 +533,15 @@
   </xsl:template>
   
   <xsl:template match="book-part | front-matter-part | foreword | preface | dedication" mode="jats2html">
-    <xsl:apply-templates select="book-part-meta | front-matter | book-body | body | book-back | back | named-book-part-body" mode="jats2html"/>
+    <div class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </div>
   </xsl:template>
   
   <xsl:template match="body | book-body | title-group | book-part-meta | front-matter | book-back | back | app[ancestor::app-group]" mode="jats2html">
-    <xsl:apply-templates mode="#current"/>
+    <div class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </div>
   </xsl:template>
   
   <xsl:template match="body[not(descendant::body)] | named-book-part-body | app[not(ancestor::app-group)] | app-group | glossary" mode="jats2html" priority="1.5">
