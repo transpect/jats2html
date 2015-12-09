@@ -665,7 +665,7 @@
 
   <xsl:template match="label" mode="jats2html"/>
   
-  <xsl:template match="title | book-title" mode="jats2html">
+  <xsl:template match="title | book-title | article-title" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="level" select="jats2html:heading-level(.)" as="xs:integer?"/>
     <xsl:element name="{if ($level) then concat('h', $level) else 'p'}">
