@@ -64,6 +64,7 @@
   <xsl:param name="subtitles-in-titles" select="'yes'"/>
 
   <xsl:param name="divify-sections" select="'no'"/>
+  <xsl:param name="divify-title-groups" select="'no'"/>
   <!-- Resolve Relative links to the parent directory against the following URI
        (for example, the source XML directory's URL in the code repository),
        empty string or unset param if no resolution required: -->
@@ -180,7 +181,12 @@
     </html>
   </xsl:template>
   
-  <xsl:template match="book-meta|book-part-meta|journal-meta|article-meta" mode="jats2html">
+  <xsl:template match="book-meta | book-part-meta | journal-meta | article-meta" mode="jats2html">
+    <xsl:call-template name="render-metadata-sections"/>
+    <!-- to overwrite it more easily -->
+  </xsl:template>
+  
+  <xsl:template name="render-metadata-sections">
     <div class="title">
       <xsl:apply-templates select="@srcpath, * except (custom-meta-group | abstract | contrib-group), contrib-group/contrib" mode="#current"/>
     </div>
@@ -188,13 +194,65 @@
     <xsl:apply-templates select="abstract" mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="book-meta/*[local-name()= ('book-id', 'isbn', 'permissions', 'book-volume-number', 'publisher')]" mode="jats2html">
-    <div class="{local-name()}">
-      <xsl:call-template name="css:content"/>
+  
+  <xsl:variable name="default-structural-containers" as="xs:string+"
+    select="('book-part', 'body', 'book-body', 'front-matter', 'front-matter-part', 'book-back', 'back', 'sec', 'ack', 'app', 'ref-list', 'dedication', 'foreword', 'preface', 'contrib-group')"/>
+  
+  <xsl:template match="*[name() = $default-structural-containers]" 
+                mode="jats2html" priority="2">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
+  <!-- everything that goes into a div (except footnote-like content): -->
+  <xsl:template match="*[name() = $default-structural-containers][$divify-sections = 'yes']
+    | fig | caption | abstract | verse-group | app | glossary" 
+    mode="jats2html" priority="3">
+    <div class="{string-join((name(), @book-part-type, @sec-type, @content-type), ' ')}">
+      <xsl:next-match/>
     </div>
   </xsl:template>
   
-  <xsl:template match="book-title-group" mode="jats2html">
+  <xsl:variable name="default-title-containers" as="xs:string+" select="('book-title-group', 'title-group')"/>
+  
+  <xsl:template match="*[name() = $default-title-containers]" 
+                 mode="jats2html" priority="3">
+    <xsl:choose>
+      <xsl:when test="$divify-title-groups = 'yes'">
+        <div class="{name()}">
+          <xsl:call-template name="css:content"/>
+        </div>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="node()" mode="#current"/>
+      </xsl:otherwise>
+    </xsl:choose>
+   </xsl:template>
+  
+  <xsl:template match="body[not(descendant::body)] | named-book-part-body | app[not(ancestor::app-group)] | app-group | glossary" mode="jats2html" priority="1.5">
+    <xsl:choose>
+      <xsl:when test="$divify-sections = 'yes'">
+        <div class="{name()}">
+          <xsl:apply-templates mode="#current"/>
+        </div>
+        <xsl:call-template name="jats2html:footnotes"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates mode="#current"/>
+        <xsl:call-template name="jats2html:footnotes"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template name="jats2html:footnotes">
+    <xsl:variable name="footnotes" select=".//fn" as="element(fn)*"/>
+    <xsl:if test="$footnotes">
+      <div class="notes">
+        <xsl:apply-templates select="$footnotes" mode="notes"/>
+      </div>  
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="book-meta/*[local-name()= ('book-id', 'isbn', 'permissions', 'book-volume-number', 'publisher')]" mode="jats2html">
     <div class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </div>
@@ -230,7 +288,7 @@
     underline | sub | sup | verse-line | verse-group | copyright-statement | surname | given-names | volume | source | year | issue | etal |
     date | string-date | fpage | lpage | article-title | chapter-title | pub-id | volume-series | series | person-group | edition | publisher-loc |
     publisher-name | edition | comment | role | collab | trans-title | trans-source | trans-subtitle | subtitle | comment | contrib-id |
-    speech | boxed-text | prefix" mode="jats2html" priority="-0.25" >
+    speech | boxed-text | prefix | suffix" mode="jats2html" priority="-0.25" >
     <xsl:call-template name="css:content"/>
   </xsl:template>
   
@@ -322,31 +380,17 @@
   <!-- will be handled by class-att mode -->
   <xsl:template match="@content-type | @style-type | @specific-use" mode="jats2html"/>
 
-  <xsl:variable name="default-structural-containers" as="xs:string+"
-    select="('book-part', 'front-matter-part', 'sec', 'ack', 'ref-list', 'dedication', 'foreword', 'preface', 'contrib-group')"/>
-
-  <!-- everything that goes into a div (except footnote-like content): -->
-  <xsl:template match="*[name() = $default-structural-containers][$divify-sections = 'yes']
-                       | fig | caption | abstract | verse-group | app | glossary" 
-    mode="jats2html" priority="3">
-    <div class="{string-join((name(), @book-part-type, @sec-type, @content-type), ' ')}">
-      <xsl:next-match/>
-    </div>
-  </xsl:template>
-
-  <xsl:template match="*[name() = $default-structural-containers]" 
-    mode="jats2html" priority="2">
-    <xsl:apply-templates mode="#current"/>
-  </xsl:template>
-  
   <xsl:template match="contrib-id" mode="jats2html">
     <span>
       <xsl:next-match/>
     </span>
   </xsl:template>
-  
+
   <xsl:template match="break" mode="jats2html">
-    <br/>
+    <xsl:param name="in-toc" as="xs:boolean?"/>
+    <xsl:if test="not($in-toc)">
+      <br/>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="break[ancestor::*[self::*:book-title]]" priority="2" mode="jats2html">
@@ -441,10 +485,35 @@
     </xsl:if>
   </xsl:template>
  
+  <xsl:template match="p[@specific-use = ('itemizedlist', 'orderedlist')]" mode="jats2html">
+    <xsl:apply-templates mode="#current">
+      <xsl:with-param name="former-list-type" as="xs:string" select="@specific-use"/>
+    </xsl:apply-templates>
+  </xsl:template>
+    
   <xsl:template match="def-list" mode="jats2html">
-    <dl>
-      <xsl:call-template name="css:content"/>
-    </dl>
+    <xsl:param name="former-list-type" as="xs:string?"/>
+    <xsl:choose>
+      <xsl:when test="($former-list-type = 'itemizedlist') and (every $term in def-item/term satisfies $term = def-item[1]/term)">
+        <ul>
+          <xsl:call-template name="css:content">
+            <xsl:with-param name="discard-term" as="xs:boolean" select="if (normalize-space($former-list-type)) then true() else false()" tunnel="yes"/>
+          </xsl:call-template>
+        </ul>
+      </xsl:when>
+      <xsl:when test="($former-list-type = 'orderedlist') and (matches(def-item[1]/term, '^[1a]\.$'))">
+        <ol>
+          <xsl:call-template name="css:content">
+            <xsl:with-param name="discard-term" as="xs:boolean" select="if (normalize-space($former-list-type)) then true() else false()" tunnel="yes"/>
+          </xsl:call-template>
+        </ol>
+      </xsl:when>
+      <xsl:otherwise>
+        <dl>
+          <xsl:call-template name="css:content"/>
+        </dl>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
     
   <xsl:template match="def-item" mode="jats2html">
@@ -452,16 +521,20 @@
   </xsl:template>
 
   <xsl:template match="def-item/term" mode="jats2html">
-    <dt>
-      <xsl:copy-of select="../@id"/>
-      <xsl:call-template name="css:content"/>
-    </dt>
+    <xsl:param name="discard-term" as="xs:boolean?" tunnel="yes"/>
+  <xsl:if test="not($discard-term)">
+      <dt>
+        <xsl:copy-of select="../@id"/>
+        <xsl:call-template name="css:content"/>
+      </dt>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="def-item/def" mode="jats2html">
-    <dd>
+    <xsl:param name="discard-term" as="xs:boolean?" tunnel="yes"/>
+    <xsl:element name="{if ($discard-term) then 'li' else 'dd'}">
       <xsl:apply-templates select="@*, node()" mode="#current"/>
-    </dd>
+    </xsl:element>
   </xsl:template>
 
   <xsl:template match="*:dd/*:label" mode="clean-up"/>
@@ -532,33 +605,6 @@
     <xsl:attribute name="class" select="."/>
   </xsl:template>
   
-  <xsl:template match="book-part | front-matter-part | foreword | preface | dedication" mode="jats2html">
-    <div class="{local-name()}">
-      <xsl:call-template name="css:content"/>
-    </div>
-  </xsl:template>
-  
-  <xsl:template match="body | book-body | title-group | book-part-meta | front-matter | book-back | back | app[ancestor::app-group]" mode="jats2html">
-    <div class="{local-name()}">
-      <xsl:call-template name="css:content"/>
-    </div>
-  </xsl:template>
-  
-  <xsl:template match="body[not(descendant::body)] | named-book-part-body | app[not(ancestor::app-group)] | app-group | glossary" mode="jats2html" priority="1.5">
-    <xsl:apply-templates mode="#current"/>
-    <xsl:call-template name="jats2html:footnotes"/>
-  </xsl:template>
-  
-  <xsl:template name="jats2html:footnotes">
-    <xsl:variable name="footnotes" select=".//fn" as="element(fn)*"/>
-    <xsl:if test="$footnotes">
-      <div class="notes">
-        <xsl:apply-templates select="$footnotes" mode="notes"/>
-      </div>  
-    </xsl:if>
-  </xsl:template>
-  
-  
   <xsl:variable name="frontmatter-parts" as="xs:string+" select="('title-page', 'frontispiz', 'copyright-page', 'about-contrib', 'about-book', 'series', 'additional-info')"/>
   
   <xsl:function name="tr:create-epub-type-attribute" as="attribute()?">
@@ -611,6 +657,10 @@
     </xsl:choose>
    </xsl:function>
   
+  <xsl:variable name="jats2html:notoc-regex" as="xs:string" select="'_-_NOTOC'">
+    <!-- Overwrite this regex in your adaptions to exclude titles containing this string in its content-type from being listed in the html toc -->
+  </xsl:variable>
+  
   <xsl:template match="toc" mode="jats2html">
     <div class="toc">
       <xsl:sequence select="tr:create-epub-type-attribute(.)"/>
@@ -624,7 +674,8 @@
           <xsl:apply-templates
             select="//title[parent::sec[not(ancestor::boxed-text)] | parent::title-group | parent::app | parent::app-group | parent::ref-list | parent::glossary]
                            [not(ancestor::boxed-text or ancestor::toc)]
-                           [jats2html:heading-level(.) le number((current()/@depth, 100)[1]) + 1]"
+                           [jats2html:heading-level(.) le number((current()/@depth, 100)[1]) + 1]
+                           [not(matches(@content-type, $jats2html:notoc-regex))]"
             mode="toc"/>
         </xsl:otherwise>
       </xsl:choose>
@@ -663,15 +714,33 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template match="label[named-content[@content-type = 'post-identifier']]
+                            [../title union ../caption/title]" mode="jats2html" priority="3">
+    <xsl:param name="actually-process-it" as="xs:boolean?"/>
+    <xsl:if test="$actually-process-it">
+      <xsl:apply-templates select="." mode="label-sep"/>
+      <span>
+        <xsl:call-template name="css:content"/>
+      </span>
+    </xsl:if>
+  </xsl:template>
+
   <xsl:template match="label" mode="jats2html"/>
   
-  <xsl:template match="title | book-title | article-title" mode="jats2html">
+  <xsl:template match="title | book-title" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="level" select="jats2html:heading-level(.)" as="xs:integer?"/>
     <xsl:element name="{if ($level) then concat('h', $level) else 'p'}">
       <xsl:copy-of select="(../@id, parent::title-group/../../@id)[1][not($divify-sections = 'yes')]"/>
       <xsl:call-template name="css:other-atts"/>
-      <xsl:variable name="label" as="element(label)?" select="(../label, parent::caption/../label)[1]"/>
+      <xsl:variable name="label" as="element(label)?" select="(
+                                                                 ../label[not(named-content[@content-type = 'post-identifier'])], 
+                                                                parent::caption/../label[not(named-content[@content-type = 'post-identifier'])]
+                                                               )[1]"/>
+      <xsl:variable name="post-label" as="element(label)?" select="(
+                                                                     ../label[named-content[@content-type = 'post-identifier']], 
+                                                                     parent::caption/../label[named-content[@content-type = 'post-identifier']]
+                                                                   )[1]"/>
       <xsl:attribute name="title">
         <xsl:apply-templates select="$label" mode="strip-indexterms-etc"/>
         <xsl:apply-templates select="$label" mode="label-sep"/>
@@ -687,6 +756,10 @@
           </xsl:value-of>
         </xsl:variable>
         <xsl:sequence select="replace($stripped, '^[\p{Zs}\s]*(.+?)[\p{Zs}\s]*$', '$1')"/>
+      <xsl:if test="$post-label">
+          <xsl:apply-templates select="$post-label" mode="label-sep"/>
+          <xsl:apply-templates select="$post-label" mode="strip-indexterms-etc"/>
+        </xsl:if>
       </xsl:attribute>
       <xsl:apply-templates select="$label" mode="#current">
         <xsl:with-param name="actually-process-it" select="true()"/>
@@ -695,6 +768,9 @@
         <a id="{generate-id()}" />  
       </xsl:if>
       <xsl:apply-templates mode="#current"/>
+    <xsl:apply-templates select="$post-label" mode="#current">
+        <xsl:with-param name="actually-process-it" select="true()"/>
+      </xsl:apply-templates>
     </xsl:element>
   </xsl:template>
   
@@ -805,8 +881,8 @@
     </xsl:for-each>
   </xsl:template>
 
-  <xsl:template match="surname | given-names | volume | prefix| source | year | date | etal | issue | string-date | fpage | lpage | article-title | chapter-title | 
-    pub-id | volume-series | series | person-group | edition | publisher-loc | publisher-name | edition | person-group| role | collab | trans-title | trans-source | trans-subtitle | subtitle |comment" mode="jats2html"> 
+  <xsl:template match="surname | given-names | volume | prefix | suffix | source | year | date | etal | issue | string-date | fpage | lpage | article-title | chapter-title | 
+    pub-id | volume-series | series | person-group | edition | publisher-loc | publisher-name | edition | person-group| role | collab | trans-title | trans-source | trans-subtitle | comment" mode="jats2html"> 
     <span class="{local-name()}">
       <xsl:next-match/>
     </span> 
@@ -1135,7 +1211,11 @@
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
           <xsl:when test="count($linked-items) eq 1">
-            <a href="#{$linked-items[1]/@id}" id="xref_{@id}">
+            <a href="#{$linked-items[1]/@id}">
+              <xsl:if test="@id">
+                <!-- in some cases an xref does not have an @id, so we will not create dulicate @id="xref_" attributes -->
+                <xsl:attribute name="id" select="concat('xref_', @id)"/>  
+              </xsl:if>
               <!--<xsl:if test=". is (key('by-rid', $linked-items[1]/@id, $root))[1]">
                 <xsl:attribute name="id" select="concat('xref_', $linked-items[1]/@id)"/>
               </xsl:if>-->
