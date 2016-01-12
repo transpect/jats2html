@@ -161,6 +161,9 @@
         <xsl:if test="$css-location ne ''">
           <link rel="stylesheet" type="text/css" href="{$css-location}"/>  
         </xsl:if>
+        <xsl:if test="$css-location eq ''">
+          <link rel="stylesheet" type="text/css" href="{concat($common-path, 'css/stylesheet.css')}"/>  
+        </xsl:if>
         <xsl:for-each select="$paths">
           <link rel="stylesheet" type="text/css" href="{concat(., 'css/overrides.css')}"/>
         </xsl:for-each>
