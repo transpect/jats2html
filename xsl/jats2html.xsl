@@ -363,7 +363,7 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="@id" mode="class-att">
+  <xsl:template match="@id" mode="class-att jats2html">
     <xsl:copy/>
   </xsl:template>
 
