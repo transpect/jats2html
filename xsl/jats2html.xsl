@@ -168,7 +168,7 @@
           <link rel="stylesheet" type="text/css" href="{concat(., 'css/overrides.css')}"/>
         </xsl:for-each>
         <title>
-          <xsl:apply-templates select="book-meta/book-title-group/book-title/node() | title-group/title/node()"
+          <xsl:apply-templates select="book-meta/book-title-group/book-title/node() | front/article-meta/title-group/article-title/node()"
             mode="#current">
             <!-- suppress replicated target with id: -->
             <xsl:with-param name="in-toc" select="true()" tunnel="yes"/>
@@ -730,7 +730,7 @@
 
   <xsl:template match="label" mode="jats2html"/>
   
-  <xsl:template match="title | book-title" mode="jats2html">
+  <xsl:template match="title | book-title |  article-title[ancestor::title-group]" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="level" select="jats2html:heading-level(.)" as="xs:integer?"/>
     <xsl:element name="{if ($level) then concat('h', $level) else 'p'}">
