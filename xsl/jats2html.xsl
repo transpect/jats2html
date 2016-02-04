@@ -1238,8 +1238,7 @@
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:message>Cannot link: multiple resolutions for xref with an explicit link text. <xsl:copy-of select="."
-              /></xsl:message>
+            <xsl:message>Cannot link: multiple resolutions for xref with an explicit link text. <xsl:copy-of select="."/></xsl:message>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
