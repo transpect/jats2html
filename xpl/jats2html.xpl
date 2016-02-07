@@ -49,8 +49,8 @@
     <p:input port="options"><p:empty/></p:input>
     <p:pipeinfo>
       <examples xmlns="http://transpect.io"> 
-        <collection dir-uri="http://transpect.io/" file="jats2html/xpl/jats2html.xpl"/>
-        <generator-collection dir-uri="http://transpect.io/" file="jats2html/xpl/jats2html.xpl.xsl"/>
+        <collection dir-uri="http://this.transpect.io/a9s/" file="jats2html/xpl/jats2html.xpl"/>
+        <generator-collection dir-uri="http://this.transpect.io/a9s/" file="jats2html/xpl/jats2html.xpl.xsl"/>
       </examples>
     </p:pipeinfo>
   </tr:dynamic-transformation-pipeline>
