@@ -543,7 +543,7 @@
   <xsl:template match="*:dd/*:label" mode="clean-up"/>
    
   
-  <xsl:template match="list[@list-type eq 'simple|ndash|bullet']" mode="jats2html">
+  <xsl:template match="list[matches(@list-type, 'simple|ndash|bullet')]" mode="jats2html">
     <ul>
       <xsl:apply-templates mode="#current"/>
     </ul>
