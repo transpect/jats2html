@@ -543,13 +543,13 @@
   <xsl:template match="*:dd/*:label" mode="clean-up"/>
    
   
-  <xsl:template match="list[matches(@list-type, 'simple|ndash|bullet')]" mode="jats2html">
+  <xsl:template match="list[matches(@list-type, '^(simple|ndash|bullet)$')]" mode="jats2html">
     <ul>
       <xsl:apply-templates mode="#current"/>
     </ul>
   </xsl:template>
   
-  <xsl:template match="list[matches(@list-type, '^(order|alpha|roman|alpha-lower|alpha-upper|roman-lower|roman-upper)')]" mode="jats2html">
+  <xsl:template match="list[matches(@list-type, '^(order|alpha|roman|alpha-lower|alpha-upper|roman-lower|roman-upper)$')]" mode="jats2html">
     <ol>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </ol>
