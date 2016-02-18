@@ -247,9 +247,13 @@
   </xsl:template>
   
   <xsl:template name="jats2html:footnotes">
+    <xsl:param name="recount-footnotes" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="footnotes" select=".//fn" as="element(fn)*"/>
     <xsl:if test="$footnotes">
       <div class="notes">
+        <xsl:if test="$recount-footnotes">
+          <xsl:processing-instruction name="recount" select="'yes'"/>
+        </xsl:if>
         <xsl:apply-templates select="$footnotes" mode="notes"/>
       </div>  
     </xsl:if>
