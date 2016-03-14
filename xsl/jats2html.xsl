@@ -199,7 +199,8 @@
   
   
   <xsl:variable name="default-structural-containers" as="xs:string+"
-    select="('book-part', 'body', 'book-body', 'front-matter', 'front-matter-part', 'book-back', 'back', 'sec', 'ack', 'app', 'ref-list', 'dedication', 'foreword', 'preface', 'contrib-group')"/>
+    select="('book-part', 'body', 'book-body', 'front', 'front-matter', 'front-matter-part', 'book-back', 'back', 'sec', 'ack', 
+             'abstract', 'app', 'ref-list', 'dedication', 'foreword', 'preface', 'contrib-group')"/>
   
   <xsl:template match="*[name() = $default-structural-containers]" 
                 mode="jats2html" priority="2">
@@ -1430,4 +1431,28 @@
     <xsl:attribute name="css:text-align" select="."/>
   </xsl:template>
       
+  
+  <xsl:template match="front" mode="jats2html" priority="5">
+    <h1>
+      <xsl:value-of select="article-meta/article-id[1]"/>
+    </h1>
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="front//*[not(ancestor-or-self::*/name() = 'abstract')]" mode="jats2html">
+    <p>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:for-each select="2 to count(ancestor::*)">
+        <xsl:text>&#x2003;</xsl:text>
+      </xsl:for-each>
+      <b>
+        <xsl:value-of select="name()"/>
+      </b>
+      <xsl:value-of select="string-join(for $a in (@* except @srcpath) return concat(' ', $a/name(), '=''', $a, ''''), '')"/>
+      <xsl:text>:&#x2003;</xsl:text>
+      <xsl:apply-templates select="text()" mode="#current"/>
+    </p>
+    <xsl:apply-templates select="*" mode="#current"/>
+  </xsl:template>
+
 </xsl:stylesheet>
