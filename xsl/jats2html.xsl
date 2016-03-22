@@ -482,8 +482,9 @@
   <xsl:template match="fn" mode="jats2html">
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <xsl:param name="in-toc" tunnel="yes" as="xs:boolean?"/>
+    <xsl:param name="recount-footnotes" tunnel="yes" as="xs:boolean?"/>
     <xsl:if test="not($in-toc)">
-      <span class="note-anchor" id="fna_{@id}">
+      <span class="note-anchor" id="fna_{@id}"><xsl:if test="$recount-footnotes"><xsl:processing-instruction name="recount" select="'yes'"/></xsl:if>
         <a href="#fn_{@id}">
           <sup>
             <xsl:value-of select="index-of($footnote-ids, @id)"/>
