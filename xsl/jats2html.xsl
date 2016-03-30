@@ -965,15 +965,15 @@
         <xsl:attribute name="title">
           <xsl:apply-templates mode="#current"/>
         </xsl:attribute>
-        <a href="#ie_{descendant-or-self::index-term[last()]/@id}" class="it">
-          <xsl:if test="$index-backlink-type = ('text-and-number', 'number')">
+        <xsl:if test="$index-backlink-type = ('text-and-number', 'number')">
+          <a href="#ie_{descendant-or-self::index-term[last()]/@id}" class="it">
             <span class="it"/>
             <xsl:if test="$index-backlink-type = ('text-and-number')">
               <xsl:text xml:space="preserve"> </xsl:text>
               <xsl:apply-templates mode="#current"/>
             </xsl:if>
-          </xsl:if>
-        </a>
+          </a>
+        </xsl:if>
         <!--<xsl:text xml:space="preserve"> </xsl:text>
         <a href="#ie_{descendant-or-self::index-term[last()]/@id}" class="it"/>-->
       </span>
