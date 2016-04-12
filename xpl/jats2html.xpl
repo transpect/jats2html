@@ -12,6 +12,8 @@
   <p:option name="debug-dir-uri" required="false" select="'debug'"/>
   <p:option name="status-dir-uri" required="false" select="'status'"/>
   <p:option name="css-location" required="false" select="'stylesheet.css'"/>
+  <p:option name="fallback-xsl" select="'http://transpect.io/jats2html/xsl/jats2html.xsl'"/>
+  <p:option name="fallback-xpl" select="'http://transpect.io/jats2html/xpl/jats2html_default.xpl'"/>
   
   <p:input port="source" primary="true"/>
   <p:input port="paths" kind="parameter" primary="true"/>
@@ -33,9 +35,9 @@
     <p:with-option name="status-dir-uri" select="$status-dir-uri"/>
   </tr:simple-progress-msg>
   
-  <tr:dynamic-transformation-pipeline load="jats2html/jats2html" 
-    fallback-xsl="http://transpect.io/jats2html/xsl/jats2html.xsl"
-    fallback-xpl="http://transpect.io/jats2html/xpl/jats2html_default.xpl">
+  <tr:dynamic-transformation-pipeline load="jats2html/jats2html">
+    <p:with-option name="fallback-xsl" select="$fallback-xsl"/>
+    <p:with-option name="fallback-xpl" select="$fallback-xpl"/>
     <p:with-param name="css-location" select="$css-location"/>
     <p:with-param name="srcpaths" select="$srcpaths"/>
     <p:with-option name="debug" select="$debug"/>
