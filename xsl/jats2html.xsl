@@ -122,7 +122,7 @@
   
   <!-- collateral. Otherwise the generated IDs might differ due to temporary trees / variables 
     when transforming the content -->  
-  <xsl:template match="index-term | xref | fn" mode="epub-alternatives">
+  <xsl:template match="*[name() = ('index-term', 'xref', 'fn')][not(@id)]" mode="epub-alternatives">
     <xsl:copy copy-namespaces="no">
       <xsl:attribute name="id" select="generate-id()"/>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
@@ -1228,11 +1228,12 @@
               <!--<xsl:if test=". is (key('by-rid', $linked-items[1]/@id, $root))[1]">
                 <xsl:attribute name="id" select="concat('xref_', $linked-items[1]/@id)"/>
               </xsl:if>-->
-              <xsl:apply-templates mode="#current"/>
+              <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
             </a>
             <xsl:if test="$linked-items[1]/@ref-type = 'ref'"><!-- bibliography entry -->
               <xsl:if test="$bib-backlink-type = 'letter'">
                 <span class="cit">
+                  <xsl:apply-templates select="@srcpath" mode="#current"/>
                   <xsl:text>[</xsl:text>
                   <xsl:number format="a" value="index-of(for $xr in key('by-rid', @rid, $root) return $xr/@id, @id)"/>
                   <xsl:text>]</xsl:text>
@@ -1241,6 +1242,9 @@
             </xsl:if>
           </xsl:when>
           <xsl:when test="count($linked-items) eq 0">
+            <a>
+              <xsl:apply-templates select="@srcpath" mode="#current"/>
+            </a>
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
           <xsl:otherwise>
@@ -1250,6 +1254,9 @@
       </xsl:when>
       <xsl:otherwise>
         <!-- generate referring text -->
+        <a>
+          <xsl:apply-templates select="@srcpath" mode="#current"/>
+        </a>
         <xsl:call-template name="render-rids">
           <xsl:with-param name="linked-items" select="$linked-items"/>
           <xsl:with-param name="in-toc" select="$in-toc" tunnel="yes"/>
@@ -1440,8 +1447,8 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="front//*[not(ancestor-or-self::*/name() = 'abstract')]" mode="jats2html">
-    <p>
+  <xsl:template match="front//*[not(ancestor-or-self::*/name() = ('abstract', 'x'))]" mode="jats2html" priority="0.2">
+    <xsl:element name="{if (name() = ('article-title')) then 'h2' else 'p'}">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each select="2 to count(ancestor::*)">
         <xsl:text>&#x2003;</xsl:text>
@@ -1452,7 +1459,7 @@
       <xsl:value-of select="string-join(for $a in (@* except @srcpath) return concat(' ', $a/name(), '=''', $a, ''''), '')"/>
       <xsl:text>:&#x2003;</xsl:text>
       <xsl:apply-templates select="text()" mode="#current"/>
-    </p>
+    </xsl:element>
     <xsl:apply-templates select="*" mode="#current"/>
   </xsl:template>
 
