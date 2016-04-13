@@ -1442,7 +1442,7 @@
   
   <xsl:template match="front" mode="jats2html" priority="5">
     <h1>
-      <xsl:value-of select="article-meta/article-id[1]"/>
+      <xsl:value-of select="article-meta/article-id" separator=" "/>
     </h1>
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
