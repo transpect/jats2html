@@ -734,6 +734,15 @@
     </xsl:if>
   </xsl:template>
 
+
+  <xsl:template match="*[local-name() = ('h7', 'h8')]" mode="clean-up" priority="3">
+    <xsl:element name="h6">
+      <xsl:apply-templates select="@* except @class" mode="#current"/>
+       <xsl:attribute name="class" select="concat(@class, ' ', local-name(current()))"/>
+      <xsl:apply-templates select="node()" mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
   <xsl:template match="label" mode="jats2html"/>
   
   <xsl:template match="title | book-title |  article-title[ancestor::title-group]" mode="jats2html">
