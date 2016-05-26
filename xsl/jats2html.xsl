@@ -28,7 +28,8 @@
   <xsl:import href="http://transpect.io/hub2html/xsl/css-rules.xsl"/>
   <xsl:import href="http://transpect.io/hub2html/xsl/css-atts2wrap.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/lengths/xsl/lengths.xsl"/>
-
+	<xsl:import href="http://transpect.io/xslt-util/hex/xsl/hex.xsl"/>
+	
   <xsl:param name="debug" select="'yes'"/>
   <xsl:param name="debug-dir-uri" select="'debug'"/>
   <xsl:param name="srcpaths" select="'no'"/>
@@ -1204,7 +1205,7 @@
     <xsl:attribute name="{if (contains(../name(), 'graphic')) then 'src' else 'href'}" 
                    select="if ($rr and matches(., '^\.\./'))
                            then resolve-uri(., $rr)
-                           else ."/>
+                           else tr:escape-html-uri(.)"/>
   </xsl:template>
   
   <xsl:template match="@ext-link-type" mode="jats2html"/>
