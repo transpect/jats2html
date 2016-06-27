@@ -423,7 +423,7 @@
   <xsl:template match="speech" mode="jats2html">
     <div>
       <xsl:call-template name="css:other-atts"/>
-      <xsl:apply-templates select="p"/>
+      <xsl:apply-templates select="p" mode="#current"/>
     </div>
   </xsl:template>
   
@@ -431,13 +431,13 @@
     <p>
       <xsl:call-template name="css:other-atts"/>
       <xsl:apply-templates select="preceding-sibling::*[1]/self::speaker" mode="#current"/>
-      <xsl:apply-templates mode="#current"/>
+      <xsl:apply-templates select="node()" mode="#current"/>
     </p>   
   </xsl:template>
   
   <xsl:template match="speech/speaker" mode="jats2html">
     <span>
-      <xsl:next-match/>
+      <xsl:call-template name="css:content"/>
     </span>   
   </xsl:template>
   
