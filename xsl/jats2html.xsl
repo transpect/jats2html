@@ -495,7 +495,7 @@
     </xsl:if>
   </xsl:template>
  
-  <xsl:template match="p[@specific-use = ('itemizedlist', 'orderedlist')]" mode="jats2html">
+	<xsl:template match="p[@specific-use = ('itemizedlist', 'orderedlist', 'variablelist')]" mode="jats2html">
     <xsl:apply-templates mode="#current">
       <xsl:with-param name="former-list-type" as="xs:string" select="@specific-use"/>
     </xsl:apply-templates>
