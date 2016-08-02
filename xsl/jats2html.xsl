@@ -1457,7 +1457,7 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="front//*[not(ancestor-or-self::*/name() = ('abstract', 'x'))]" mode="jats2html" priority="0.2">
+  <xsl:template match="front//*[not(ancestor-or-self::*/name() = ('abstract', 'graphic', 'inline-graphic', 'fig', 'xref', 'x', 'p', 'sub', 'sup', 'italic', 'bold', 'underline', 'index-term', 'fn'))]" mode="jats2html">
     <xsl:element name="{if (name() = ('article-title')) then 'h2' else 'p'}">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each select="2 to count(ancestor::*)">
