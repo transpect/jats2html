@@ -33,6 +33,7 @@
   <xsl:param name="debug" select="'yes'"/>
   <xsl:param name="debug-dir-uri" select="'debug'"/>
   <xsl:param name="srcpaths" select="'no'"/>
+  <xsl:param name="render-metadata" select="'yes'"/>
 
   <xsl:param name="s9y1-path" as="xs:string?"/>
   <xsl:param name="s9y2-path" as="xs:string?"/>
@@ -1448,7 +1449,8 @@
   <xsl:template match="@align" mode="hub2htm:css-style-overrides">
     <xsl:attribute name="css:text-align" select="."/>
   </xsl:template>
-      
+  
+  <!-- if you want to omit metadata in your output, set the param $render-metadata to 'no' -->
   
   <xsl:template match="front" mode="jats2html" priority="5">
     <h1>
@@ -1458,19 +1460,21 @@
   </xsl:template>
   
   <xsl:template match="front//*[not(ancestor-or-self::*/name() = ('abstract', 'graphic', 'inline-graphic', 'fig', 'xref', 'x', 'p', 'sub', 'sup', 'italic', 'bold', 'underline', 'index-term', 'fn'))]" mode="jats2html">
-    <xsl:element name="{if (name() = ('article-title')) then 'h2' else 'p'}">
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:for-each select="2 to count(ancestor::*)">
-        <xsl:text>&#x2003;</xsl:text>
-      </xsl:for-each>
-      <b>
-        <xsl:value-of select="name()"/>
-      </b>
-      <xsl:value-of select="string-join(for $a in (@* except @srcpath) return concat(' ', $a/name(), '=''', $a, ''''), '')"/>
-      <xsl:text>:&#x2003;</xsl:text>
-      <xsl:apply-templates select="text()" mode="#current"/>
-    </xsl:element>
-    <xsl:apply-templates select="*" mode="#current"/>
+    <xsl:if test="$render-metadata eq 'yes'">
+      <xsl:element name="{if (name() = ('article-title')) then 'h2' else 'p'}">
+        <xsl:apply-templates select="@*" mode="#current"/>
+        <xsl:for-each select="2 to count(ancestor::*)">
+          <xsl:text>&#x2003;</xsl:text>
+        </xsl:for-each>
+          <b>
+            <xsl:value-of select="name()"/>
+          </b>
+        <xsl:value-of select="string-join(for $a in (@* except @srcpath) return concat(' ', $a/name(), '=''', $a, ''''), '')"/>
+        <xsl:text>:&#x2003;</xsl:text>
+        <xsl:apply-templates select="text()" mode="#current"/>
+      </xsl:element>
+      <xsl:apply-templates select="*" mode="#current"/>
+    </xsl:if>
   </xsl:template>
 
 </xsl:stylesheet>
