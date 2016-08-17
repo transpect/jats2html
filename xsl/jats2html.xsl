@@ -1080,10 +1080,16 @@
   
   <!-- formulas -->
   
-  <xsl:template match="disp-formula|inline-formula" mode="jats2html">
+  <xsl:template match="disp-formula | disp-formula/alternatives" mode="jats2html">
     <div class="{name()}">
       <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
     </div>
+  </xsl:template>
+  
+  <xsl:template match="inline-formula | inline-formula/alternatives" mode="jats2html">
+    <span class="{name()}">
+      <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
+    </span>
   </xsl:template>
   
   <!-- strip ns prefix to meet mathjax requirements -->
@@ -1091,12 +1097,6 @@
     <xsl:element name="{local-name()}" namespace="http://www.w3.org/1998/Math/MathML">
       <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
     </xsl:element>
-  </xsl:template>
-  
-  <xsl:template match="alternatives" mode="jats2html">
-    <div class="{name()}">
-      <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
-    </div>
   </xsl:template>
   
   <xsl:template match="table-wrap/alternatives[graphic] | boxed-text/alternatives[graphic]" mode="jats2html" priority="2">
