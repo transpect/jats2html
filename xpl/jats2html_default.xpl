@@ -10,7 +10,12 @@
   <p:input port="stylesheet" primary="false"/>
   <p:input port="parameters" kind="parameter" primary="true"/>
   
-  <p:output port="result"/>
+  <p:output port="result" primary="true"/>
+  <p:output port="report" sequence="true">
+    <p:pipe port="report" step="epub-alternatives"/>
+    <p:pipe port="report" step="jats2html"/>
+    <p:pipe port="report" step="clean-up"/>
+  </p:output>
   
   <p:option name="debug" select="'no'"/>
   <p:option name="debug-dir-uri" select="'debug'"/>

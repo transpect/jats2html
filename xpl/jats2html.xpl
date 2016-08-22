@@ -19,6 +19,9 @@
   <p:input port="source" primary="true"/>
   <p:input port="paths" kind="parameter" primary="true"/>
   <p:output port="result" primary="true" />
+  <p:output port="report" sequence="true">
+    <p:pipe port="report" step="dtp"/>
+  </p:output>
   
   <p:import href="http://transpect.io/cascade/xpl/dynamic-transformation-pipeline.xpl"/>
   <p:import href="http://transpect.io/xproc-util/xml-model/xpl/prepend-xml-model.xpl" />
@@ -36,7 +39,7 @@
     <p:with-option name="status-dir-uri" select="$status-dir-uri"/>
   </tr:simple-progress-msg>
   
-  <tr:dynamic-transformation-pipeline load="jats2html/jats2html">
+  <tr:dynamic-transformation-pipeline load="jats2html/jats2html" name="dtp">
     <p:with-option name="fallback-xsl" select="$fallback-xsl"/>
     <p:with-option name="fallback-xpl" select="$fallback-xpl"/>
     <p:with-param name="css-location" select="$css-location"/>
