@@ -74,7 +74,7 @@
   <!-- convention: if empty string, then concat($common-path, '/css/stylesheet.css') -->
   <xsl:param name="css-location" select="''"/>
   <!-- for calculating whether a table covers the whole width or only part of it: -->
-  <xsl:param name="page-width" select="if (/book/book-meta/custom-meta-group/meta-name[. = 'type-area-width']) then concat(((/book/book-meta/custom-meta-group/meta-name[. = 'type-area-width']/meta-value) * 0.3527), 'mm') else '180mm'"/>
+  <xsl:param name="page-width" select="if (/book/book-meta/custom-meta-group/custom-meta[meta-name[. = 'type-area-width']][matches(meta-value, '\d')]) then concat(((/book/book-meta/custom-meta-group/custom-meta[meta-name[. = 'type-area-width']]/meta-value) * 0.3527), 'mm') else '180mm'"/>
   <xsl:param name="page-width-twips" select="tr:length-to-unitless-twip($page-width)" as="xs:double"/>
   <!-- whether to create backlinks from index terms to index entries.
        text-and-number: link from index terms with their text and number
