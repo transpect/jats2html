@@ -599,7 +599,7 @@
   </xsl:template>
 
   <xsl:template match="table-wrap | table-wrap-foot" mode="jats2html">
-    <div class="{local-name()} {string(table/@content-type)}">
+    <div class="{local-name()} {distinct-values(table/@content-type)}">
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </div>
   </xsl:template>
@@ -607,7 +607,7 @@
 
 <!-- special case when alternative images is rendered for epub-->  
   <xsl:template match="table-wrap[alternatives]" mode="jats2html" priority="3">
-    <div class="{local-name()} {string(table/@content-type)} alt-image">
+    <div class="{local-name()} {distinct-values(table/@content-type)} alt-image">
       <xsl:apply-templates select="@*, node() except table" mode="#current"/>
     </div>
   </xsl:template>
