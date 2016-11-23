@@ -683,7 +683,7 @@
         <xsl:otherwise>
           <xsl:apply-templates select="title-group" mode="jats2html"/>
           <xsl:apply-templates
-            select="//title[parent::sec[not(ancestor::boxed-text)] | parent::title-group | parent::app | parent::app-group | parent::ref-list | parent::glossary]
+            select="//title[parent::sec[not(ancestor::boxed-text)] | parent::title-group | parent::app | parent::ack | parent::app-group | parent::ref-list | parent::glossary]
                            [not(ancestor::boxed-text or ancestor::toc)]
                            [jats2html:heading-level(.) le number((current()/@depth, 100)[1]) + 1]
                            [not(matches(@content-type, $jats2html:notoc-regex))]"
