@@ -202,8 +202,12 @@
    <xsl:template match="sec" mode="epub-alternatives">
      <xsl:copy copy-namespaces="no">
        <!-- sec-meta elements are located in BITS as first child of the section, followed by the title. So we change the order here -->
-       <xsl:apply-templates select="@*, label, title, subtitle, alt-title, sec-meta/node(), node() except (label, title, subtitle, alt-title, sec-meta)" mode="#current"/>
+       <xsl:apply-templates select="@*, label, title, subtitle, alt-title, sec-meta, node() except (label, title, subtitle, alt-title, sec-meta)" mode="#current"/>
      </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="sec-meta" mode="epub-alternatives">
+    <xsl:apply-templates select="node()" mode="#current"/>
   </xsl:template>
   
   <xsl:variable name="default-structural-containers" as="xs:string+"
