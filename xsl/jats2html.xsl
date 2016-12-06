@@ -991,8 +991,6 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:key name="by-id" match="*[@id]" use="@id"/>
-  
   <!-- for index terms -->
   <xsl:template match="html:span[@class eq 'it']" mode="clean-up">
     <xsl:copy copy-namespaces="no">
@@ -1212,9 +1210,10 @@
   <xsl:template match="@ext-link-type" mode="jats2html"/>
   
   <xsl:template match="@xlink:type" mode="jats2html"/>
-  
+
   <xsl:key name="by-id" match="*[@id]" use="@id"/>
   <xsl:key name="by-rid" match="*[@rid]" use="@rid"/>
+  <xsl:key name="rule-by-name" match="css:rule" use="@name"/> 
   
   <xsl:variable name="root" select="/" as="document-node()"/>
 
