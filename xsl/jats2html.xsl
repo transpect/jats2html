@@ -307,7 +307,7 @@
   <xsl:template match="p | array | table | caption | ref | mixed-citation | copyright-statement | styled-content | named-content|  italic | bold |
     underline | sub | sup | verse-line | verse-group | copyright-statement | surname | given-names | volume | source | year | issue | etal |
     date | string-date | fpage | lpage | article-title | chapter-title | pub-id | volume-series | series | person-group | edition | publisher-loc |
-    publisher-name | edition | comment | role | collab | trans-title | trans-source | trans-subtitle | subtitle | comment | contrib-id |
+    publisher-name | edition | comment | role | collab | trans-title | trans-source | trans-subtitle | subtitle | comment | contrib-id | uri[not(@xlink:href)] |
     speech | boxed-text | prefix | suffix" mode="jats2html" priority="-0.25" >
     <xsl:call-template name="css:content"/>
   </xsl:template>
@@ -911,7 +911,7 @@
     </xsl:for-each>
   </xsl:template>
 
-  <xsl:template match="surname | given-names | volume | prefix | suffix | source | year | date | etal | issue | string-date | fpage | lpage | article-title | chapter-title | 
+  <xsl:template match="surname | given-names | volume | prefix | suffix | source | year | date | etal | issue | string-date | fpage | lpage | article-title | chapter-title | uri[not(@xlink:href)] |
     pub-id | volume-series | series | person-group | edition | publisher-loc | publisher-name | edition | person-group| role | collab | trans-title | trans-source | trans-subtitle | comment" mode="jats2html"> 
     <span class="{local-name()}">
       <xsl:next-match/>
@@ -1201,7 +1201,7 @@
     <xsl:copy/>
   </xsl:template>
   
-  <xsl:template match="ext-link|uri" mode="jats2html">
+  <xsl:template match="ext-link|uri[@xlink:href]" mode="jats2html">
     <a>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
       <xsl:if test="not(node())">
