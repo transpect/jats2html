@@ -181,6 +181,7 @@
       <body>
         <xsl:apply-templates mode="#current">
           <xsl:with-param name="footnote-ids" select="//fn/@id" as="xs:string*" tunnel="yes"/>
+          <xsl:with-param name="root" select="root(.)" as="document-node()" tunnel="yes"/>
         </xsl:apply-templates>
       </body>
     </html>
