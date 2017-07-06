@@ -1110,7 +1110,12 @@
   
   <xsl:template match="table-wrap/alternatives[graphic] | boxed-text/alternatives[graphic]" mode="jats2html" priority="2">
     <xsl:for-each select="graphic">
-      <img class="{local-name()}" src="{@xlink:href}" alt="Alternative image for table {@xlink:href}"/>
+      <img>
+        <xsl:attribute name="class" select="local-name()"/>
+        <xsl:attribute name="src" select="@xlink:href"/>
+        <xsl:attribute name="alt" select="concat('Alternative image for table ', @xlink:href)"/>
+        <xsl:apply-templates select="@srcpath" mode="#current"/>
+      </img>
     </xsl:for-each>
   </xsl:template>
   
