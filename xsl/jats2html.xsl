@@ -718,6 +718,18 @@
     </p>
   </xsl:template>
   
+  <xsl:template match="ext-link" mode="jats2html" priority="3">
+    <xsl:param name="in-toc" tunnel="yes" as="xs:boolean?"/>
+    <xsl:choose>
+      <xsl:when test="$in-toc">
+        <xsl:apply-templates/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:next-match/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
   <xsl:template match="target[@id] | inline-graphic" mode="jats2html" priority="2">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
     <xsl:if test="not($in-toc)">
