@@ -769,7 +769,8 @@
   </xsl:template>
   
   <xsl:template match="label" mode="jats2html"/>
-  
+  <xsl:variable name="subtitle-separator-in-ncx" as="xs:string?" select="'&#x2002;'"/>
+
   <xsl:template match="title | book-title |  article-title[ancestor::title-group]" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="level" select="jats2html:heading-level(.)" as="xs:integer?"/>
@@ -792,7 +793,7 @@
             <xsl:apply-templates mode="strip-indexterms-etc"/>
             <xsl:if test="$subtitles-in-titles = 'yes'">
               <xsl:if test="../subtitle[matches(., '\S')]">
-                <xsl:text>&#x2002;</xsl:text>
+                <xsl:value-of select="$subtitle-separator-in-ncx"/>
               </xsl:if>
               <xsl:apply-templates select="../subtitle/node()" mode="strip-indexterms-etc"/>
             </xsl:if>
@@ -811,7 +812,7 @@
         <a id="{generate-id()}" />  
       </xsl:if>
       <xsl:apply-templates mode="#current"/>
-    <xsl:apply-templates select="$post-label" mode="#current">
+      <xsl:apply-templates select="$post-label" mode="#current">
         <xsl:with-param name="actually-process-it" select="true()"/>
       </xsl:apply-templates>
     </xsl:element>
