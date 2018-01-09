@@ -1102,7 +1102,7 @@
   
   <!-- formulas -->
   
-  <xsl:template match="disp-formula | disp-formula/alternatives" mode="jats2html">
+  <xsl:template match="disp-formula-group | disp-formula | disp-formula/alternatives" mode="jats2html">
     <div class="{name()}">
       <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
     </div>
