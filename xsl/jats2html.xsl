@@ -926,7 +926,7 @@
   </xsl:template>
 
   <xsl:template match="surname | given-names | volume | prefix | suffix | source | year | date | etal | issue | string-date | fpage | lpage | article-title | chapter-title | uri[not(@xlink:href)] |
-    pub-id | volume-series | series | person-group | edition | publisher-loc | publisher-name | edition | person-group| role | collab | trans-title | trans-source | trans-subtitle | comment" mode="jats2html"> 
+    pub-id | volume-series | series | person-group | edition | publisher-loc | publisher-name | edition | person-group | role | collab | trans-title | trans-source | trans-subtitle | comment | kwd | nested-kwd | country" mode="jats2html"> 
     <span class="{local-name()}">
       <xsl:next-match/>
     </span> 
