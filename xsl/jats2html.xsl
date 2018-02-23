@@ -1083,12 +1083,14 @@
   <!-- graphics -->
   
   <xsl:template match="graphic | inline-graphic" mode="jats2html">
-    <img alt="{replace((@xlink:title, @xlink:href)[1], '^(.+)/([^/]+)$', '$2')}">
+    <img alt="{(alt-text, replace((@xlink:title, @xlink:href)[1], '^(.+)/([^/]+)$', '$2'))[1]}">
     	<xsl:apply-templates select="@srcpath, @xlink:href" mode="#current"/>
       <xsl:call-template name="css:content"/>
     </img>
   </xsl:template>
   
+  <xsl:template match="alt-text" mode="jats2html"/>
+
   <xsl:template match="*[local-name() = ('graphic', 'inline-graphic')]/@xlink:href" mode="jats2html">
     <xsl:attribute name="src" select="."/>
   </xsl:template>
