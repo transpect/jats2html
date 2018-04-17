@@ -1234,7 +1234,7 @@
   <xsl:template match="@xlink:href" mode="jats2html">
     <xsl:attribute name="{if (contains(../name(), 'graphic')) then 'src' else 'href'}" 
                    select="if ($rr and matches(., '^\.\./'))
-                           then resolve-uri(., $rr)
+                           then resolve-uri(., resolve-uri($rr))
                            else tr:escape-html-uri(.)"/>
   </xsl:template>
   
