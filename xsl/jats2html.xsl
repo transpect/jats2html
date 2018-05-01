@@ -167,6 +167,7 @@
           <link rel="stylesheet" type="text/css" href="{concat($common-path, 'css/stylesheet.css')}"/>  
         </xsl:if>
         <xsl:for-each select="$paths[not(position() = index-of($roles, 'common'))]">
+          <xsl:sort select="string-length(.)" order="ascending"/>
           <link rel="stylesheet" type="text/css" href="{concat(., 'css/overrides.css')}"/>
         </xsl:for-each>
         <title>
