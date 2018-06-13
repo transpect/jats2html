@@ -507,6 +507,28 @@
     </xsl:if>
   </xsl:template>
  
+  <xsl:template match="xref[starts-with(@rid, 'id_endnote')]" mode="jats2html" priority="5">
+    <!-- endnote markers (from InDesign CC)-->
+    <xsl:param name="in-toc" tunnel="yes" as="xs:boolean?"/>
+    <xsl:if test="not($in-toc)">
+      <sup>
+        <xsl:next-match/>
+      </sup>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="target[starts-with(@id, 'id_endnote-')][. is ../node()[1]]" mode="jats2html" priority="5">
+    <!-- endnote paras (from InDesign CC)-->
+      <xsl:next-match/>
+      <span class="endnote-anchor">
+        <a href="#id_endnoteAnchor-{replace(@id, '^id_endnote-', '')}">
+          <sup>
+            <xsl:value-of select="replace(@id, '^id_endnote-', '')"/>
+          </sup>
+        </a>
+      </span>
+  </xsl:template>
+
 	<xsl:template match="p[@specific-use = ('itemizedlist', 'orderedlist', 'variablelist')]" mode="jats2html">
     <xsl:apply-templates mode="#current">
       <xsl:with-param name="former-list-type" as="xs:string" select="@specific-use"/>
