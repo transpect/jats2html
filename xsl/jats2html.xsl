@@ -529,6 +529,29 @@
       </span>
   </xsl:template>
 
+  <xsl:template match="*[html:p[html:span[@class = 'endnote-anchor']]]" mode="clean-up" priority="5">
+    <!-- group endnote paras (from InDesign CC)-->
+    <xsl:copy copy-namespaces="no">
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:element name="div">
+        <xsl:attribute name="class" select="'endnotes'"/>
+        <xsl:for-each-group select="node()" group-starting-with="html:p[html:span[@class = 'endnote-anchor']]">
+          <xsl:choose>
+            <xsl:when test="current-group()[self::html:p[html:span[@class = 'endnote-anchor']]]">
+              <xsl:element name="div">
+                <xsl:attribute name="class" select="'en'"/>
+                <xsl:apply-templates select="current-group()" mode="#current"/>
+              </xsl:element>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:apply-templates select="current-group()" mode="#current"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each-group>
+      </xsl:element>
+    </xsl:copy>
+  </xsl:template>
+  
 	<xsl:template match="p[@specific-use = ('itemizedlist', 'orderedlist', 'variablelist')]" mode="jats2html">
     <xsl:apply-templates mode="#current">
       <xsl:with-param name="former-list-type" as="xs:string" select="@specific-use"/>
