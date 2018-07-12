@@ -540,7 +540,7 @@
             <xsl:when test="current-group()[self::html:p[html:span[@class = 'endnote-anchor']]]">
               <xsl:element name="div">
                 <xsl:attribute name="class" select="'en'"/>
-                <xsl:apply-templates select="current-group()" mode="#current"/>
+                <xsl:apply-templates select="current-group()[1]/html:a[. is ../*[1]]/@id, current-group()" mode="#current"/>
               </xsl:element>
             </xsl:when>
             <xsl:otherwise>
@@ -552,6 +552,13 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="html:p[html:span[@class = 'endnote-anchor']]" mode="clean-up" priority="5">
+    <xsl:apply-templates select="html:span[@class = 'endnote-anchor']" mode="#current"/>
+    <xsl:copy copy-namespaces="no">
+      <xsl:apply-templates select="@*, node() except (*[1][self::html:a], html:span[@class = 'endnote-anchor'])" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+      
 	<xsl:template match="p[@specific-use = ('itemizedlist', 'orderedlist', 'variablelist')]" mode="jats2html">
     <xsl:apply-templates mode="#current">
       <xsl:with-param name="former-list-type" as="xs:string" select="@specific-use"/>
