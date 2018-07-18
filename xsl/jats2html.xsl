@@ -987,6 +987,8 @@
   <xsl:template match="@person-group-type" mode="jats2html"/>
 
   <xsl:variable name="jats:index-symbol-heading" as="xs:string" select="'0'"/>
+  <xsl:variable name="jats:index-heading-elt-name" as="xs:string" select="'h4'"/>
+  <xsl:variable name="jats:index-heading-class" as="xs:string" select="'index-subheading'"/>
   
   <xsl:template match="index" mode="jats2html">
     <div class="{local-name()}">
@@ -998,11 +1000,12 @@
         collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary">
         <xsl:sort select="current-grouping-key()" 
           collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary"/>
-        <h4>
+        <xsl:element name="{$jats:index-heading-elt-name}">
+          <xsl:attribute name="class" select="$jats:index-heading-class"/>
           <xsl:value-of select="if (matches(current-grouping-key(), '[A-z\p{IsLatin-1Supplement}]') and current-grouping-key() ne '0') 
                                 then upper-case(current-grouping-key()) 
                                 else $jats:index-symbol-heading"/>
-        </h4>
+        </xsl:element>
         <xsl:call-template name="group-index-terms">
           <xsl:with-param name="level" select="1"/>
           <xsl:with-param name="index-terms" select="current-group()"/>
