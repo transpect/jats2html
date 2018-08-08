@@ -1702,7 +1702,6 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
-<<<<<<< .mine
   <!--  *
         * JATS/BITS metadata for <head> section
         * -->
