@@ -33,6 +33,7 @@
   <xsl:param name="debug" select="'yes'"/>
   <xsl:param name="debug-dir-uri" select="'debug'"/>
   <xsl:param name="srcpaths" select="'no'"/>
+  <xsl:param name="create-metadata-head" select="'yes'"/>
   <xsl:param name="render-metadata" select="'yes'"/>
 
   <xsl:param name="s9y1-path" as="xs:string?"/>
@@ -74,7 +75,11 @@
   <!-- convention: if empty string, then concat($common-path, '/css/stylesheet.css') -->
   <xsl:param name="css-location" select="''"/>
   <!-- for calculating whether a table covers the whole width or only part of it: -->
-  <xsl:param name="page-width" select="if (/book/book-meta/custom-meta-group/custom-meta[meta-name[. = 'type-area-width']][matches(meta-value, '\d')]) then concat(((/book/book-meta/custom-meta-group/custom-meta[meta-name[. = 'type-area-width']]/meta-value) * 0.3527), 'mm') else '180mm'"/>
+  <xsl:param name="page-width" 
+             select="if (/book/book-meta/custom-meta-group/custom-meta[meta-name[. = 'type-area-width']]
+                                                                      [matches(meta-value, '\d')]) 
+                     then concat(((/book/book-meta/custom-meta-group/custom-meta[meta-name[. = 'type-area-width']]/meta-value) * 0.3527), 'mm')
+                     else '180mm'"/>
   <xsl:param name="page-width-twips" select="tr:length-to-unitless-twip($page-width)" as="xs:double"/>
   <!-- whether to create backlinks from index terms to index entries.
        text-and-number: link from index terms with their text and number
@@ -136,18 +141,18 @@
   </xsl:template>
 
   <xsl:template match="*" mode="jats2html" priority="-1">
-    <xsl:if test="$debug eq 'yes'">
+    <!--<xsl:if test="$debug eq 'yes'">
       <xsl:message>jats2html: unhandled: <xsl:apply-templates select="." mode="css:unhandled"/></xsl:message>
-    </xsl:if>
+    </xsl:if>-->
     <xsl:copy>
       <xsl:apply-templates select="@* | node()" mode="#current" />  
     </xsl:copy>
   </xsl:template>
   
   <xsl:template match="@*" mode="jats2html">
-    <xsl:if test="$debug eq 'yes'">
+    <!--<xsl:if test="$debug eq 'yes'">
       <xsl:message>jats2html: unhandled attr: <xsl:apply-templates select="." mode="css:unhandled"/></xsl:message>
-    </xsl:if>
+    </xsl:if>-->
   </xsl:template>
   
   <xsl:template match="@dtd-version" mode="jats2html" />
@@ -169,6 +174,9 @@
         <xsl:for-each select="reverse($paths[not(position() = index-of($roles, 'common'))])">
           <link rel="stylesheet" type="text/css" href="{concat(., 'css/overrides.css')}"/>
         </xsl:for-each>
+        <xsl:if test="$create-metadata-head eq 'yes'">
+          <xsl:call-template name="create-meta-tags"/>  
+        </xsl:if>
         <title>
           <xsl:apply-templates select="book-meta/book-title-group/book-title/node()
                                       |front/article-meta/title-group/article-title/node()"
@@ -180,6 +188,9 @@
         <xsl:apply-templates select=".//custom-meta-group/css:rules" mode="hub2htm:css"/>
       </head>
       <body>
+        <xsl:if test="$render-metadata">
+          <xsl:call-template name="render-metadata-sections"/>
+        </xsl:if>
         <xsl:apply-templates mode="#current">
           <xsl:with-param name="footnote-ids" select="//fn/@id" as="xs:string*" tunnel="yes"/>
           <xsl:with-param name="root" select="root(.)" as="document-node()" tunnel="yes"/>
@@ -214,10 +225,17 @@
                                                             alt-title, 
                                                             sec-meta" as="element()+"/>
      <xsl:copy copy-namespaces="no">
+       <xsl:variable name="sec-meta-elements" 
+                     select="label, 
+                             title, 
+                             subtitle, 
+                             alt-title, 
+                             sec-meta " as="element()+"/>
        <!-- sec-meta elements are located in BITS as first child of the section, followed by the title. So we change the order here -->
-       <xsl:apply-templates select="@*, 
-                                    $ordered-sec-meta-elements, 
-                                    node() except $ordered-sec-meta-elements" mode="#current"/>
+       <xsl:apply-templates select="@*,
+                                    $sec-meta-elements,
+                                    node() 
+                                    except $sec-meta-elements" mode="#current"/>
      </xsl:copy>
   </xsl:template>
   
@@ -279,7 +297,11 @@
     </xsl:choose>
    </xsl:template>
   
-  <xsl:template match="body[not(descendant::body)] | named-book-part-body | app[not(ancestor::app-group)] | app-group | glossary" mode="jats2html" priority="1.5">
+  <xsl:template match="body[not(descendant::body)]
+                      |named-book-part-body
+                      |app[not(ancestor::app-group)]
+                      |app-group
+                      |glossary" mode="jats2html" priority="1.5">
     <xsl:choose>
       <xsl:when test="$divify-sections = 'yes'">
         <div class="{name()}">
@@ -338,6 +360,11 @@
     And don’t ever change the priority unless you’ve made sure that no other template
     relies on this value to be 0.25.
     -->
+  <xsl:template match="p | array | table | caption | ref | mixed-citation | styled-content | named-content|  italic | bold |
+    underline | sub | sup | verse-line | verse-group | surname | given-names | volume | source | year | issue | etal |
+    date | string-date | fpage | lpage | article-title | chapter-title | pub-id | volume-series | series | person-group | edition | publisher-loc |
+    publisher-name | edition | comment | role | collab | trans-title | trans-source | trans-subtitle | subtitle | comment | contrib-id | uri[not(@xlink:href)] |
+    speech | boxed-text | prefix | suffix" mode="jats2html" priority="-0.25" >
   <xsl:template match="p
                       |array 
                       |table 
@@ -1675,6 +1702,141 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
+<<<<<<< .mine
+  <!--  *
+        * JATS/BITS metadata for <head> section
+        * -->
+  
+  <!-- override this template in your importing stylesheet if you don't 
+       want to enrich the HTML head with additional meta tags -->
+  
+  <xsl:template name="create-meta-tags">
+    <xsl:apply-templates select="(collection-meta, book-meta)
+                                |(front/journal-meta, front/article-meta)" mode="jats2html-create-meta-tags"/>
+  </xsl:template>
+  
+  <xsl:template match="collection-meta|book-meta|journal-meta|article-meta" mode="jats2html-create-meta-tags">
+    <xsl:apply-templates select="*" mode="jats2html-create-meta-tags"/>
+  </xsl:template>
+  
+  <xsl:template match="pub-date[@publication-format]" mode="jats2html-create-meta-tags">
+    <meta name="{concat(local-name(), '-', @publication-format)}" content="{concat(year, '-', month, '-', day)}"/>
+  </xsl:template>
+  
+  <xsl:template match="pub-date[not(@publication-format)]" mode="jats2html-create-meta-tags">
+    <meta name="{local-name()}" content="{concat(year, '-', month, '-', day)}"/>
+  </xsl:template>
+  
+  <xsl:template match="*[local-name() = ('issn', 'issn-l')][@publication-format]" mode="jats2html-create-meta-tags">
+    <meta name="{concat(local-name(), '-', @publication-format)}" content="{.}"/>
+  </xsl:template>
+  
+  <xsl:template match="*[local-name() = ('issn', 'issn-l')][not(@publication-format)]" mode="jats2html-create-meta-tags">
+    <meta name="{local-name()}" content="{.}"/>
+  </xsl:template>
+  
+  <!-- Dublin Core metadata -->
+  
+  <xsl:template match="collection-meta/title-group/title
+                      |collection-meta/title-group/subtitle
+                      |book-title-group/book-title
+                      |book-title-group/subtitle
+                      |title-group/article-title
+                      |title-group/subtitle
+                      |trans-title-group/trans-title
+                      |trans-title-group/trans-subtitle" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.title" content="{.}" />
+  </xsl:template>
+  
+  <xsl:template match="publisher-name" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.publisher" content="{.}" />
+  </xsl:template>
+  
+  <xsl:template match="contrib" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.contributor" content="{(string-name, 
+                                                string-join((name/surname, name/given-names), ' '))[1]}" />
+  </xsl:template>
+  
+  <xsl:template match="abstract|trans-abstract" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.abstract" content="{.}" />
+  </xsl:template>
+  
+  <xsl:template match="subject" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.subject" content="{.}" />
+  </xsl:template>
+  
+  <xsl:template match="isbn" mode="jats2html-create-meta-tags" priority="1">
+    <meta name="DCTERMS.identifier" scheme="DCTERMS.ISBN" content="{.}"/>
+  </xsl:template>
+  
+  <xsl:template match="article-id[@pub-id-type eq 'doi']
+                      |book-id[@book-id-type eq 'doi']" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.identifier" scheme="DCTERMS.DOI" content="{.}"/> 
+  </xsl:template>
+  
+  <xsl:template match="article-categories" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.type" content="{.}"/> 
+  </xsl:template>
+  
+  <xsl:template match="copyright-statement" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.rights" content="{.}"/>
+  </xsl:template>
+  
+  <xsl:template match="copyright-year" mode="jats2html-create-meta-tags">
+  </xsl:template>
+  
+  <xsl:template match="copyright-holder" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.holder" content="{.}"/>
+  </xsl:template>
+  
+  <xsl:template match="license" mode="jats2html-create-meta-tags">
+    <xsl:apply-templates select="@*, *" mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="license-p" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.license" content="{.}"/>
+  </xsl:template>
+  
+  <xsl:template match="license/@xlink:href" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.license" scheme="DCTERMS.URI" content="{.}"/>
+  </xsl:template>
+  
+  <xsl:template match="license/@license-type" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.accessRights" content="{.}"/>
+  </xsl:template>
+  
+  <!-- drop metadata which is not applicable for meta tags -->
+  
+  <xsl:template match="aff
+                      |aff-alternatives
+                      |author-notes
+                      |conference
+                      |counts
+                      |custom-meta-group
+                      |funding-group
+                      |history
+                      |kwd-group
+                      |notes
+                      |supplementary-material
+                      |x" mode="jats2html-create-meta-tags"/>
+  
+  <!-- default handler for meta-tags -->
+  
+  <xsl:template match="*" mode="jats2html-create-meta-tags" priority="-1">
+    <xsl:choose>
+      <xsl:when test="*">
+        <xsl:apply-templates select="*" mode="#current"/>    
+      </xsl:when>
+      <xsl:when test="@xlink:href">
+        <link rel="{concat(parent::*/local-name(), '-', local-name())}" href="{@xlink:href}"/>
+      </xsl:when>
+      <xsl:when test="text()">
+        <meta name="{concat(parent::*/local-name(), '-', local-name())}" content="{.}"/>    
+      </xsl:when>
+      <xsl:when test="@*[not(name() = ('xml:base', 'content-type', 'id', 'xlink:href'))]">
+        <xsl:for-each select="@*[not(local-name() = ('xml:base', 'content-type', 'id', 'xlink:href'))]">
+          <meta name="{concat(parent::*/local-name(), '-', local-name())}" content="{.}"/>  
+
   <xsl:template match="front//*[not(ancestor-or-self::*/name() = ('abstract', 
                                                                   'graphic', 
                                                                   'inline-graphic', 
@@ -1696,15 +1858,208 @@
         <xsl:for-each select="2 to count(ancestor::*)">
           <xsl:text>&#x2003;</xsl:text>
         </xsl:for-each>
-          <b>
-            <xsl:value-of select="name()"/>
-          </b>
-        <xsl:value-of select="string-join(for $a in (@* except @srcpath) return concat(' ', $a/name(), '=''', $a, ''''), '')"/>
-        <xsl:text>:&#x2003;</xsl:text>
-        <xsl:apply-templates select="text()" mode="#current"/>
-      </xsl:element>
-      <xsl:apply-templates select="*" mode="#current"/>
-    </xsl:if>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:message select="'jats2html: unmapped element:', local-name()"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
-
+  
+  <!--  *
+        * JATS/BITS metadata to be rendered in <body>s
+        * -->
+  
+  <!-- resolve metadata wrappers -->
+  
+  <xsl:template name="render-metadata-sections">
+    <xsl:apply-templates select="collection-meta
+                                |book-meta
+                                |front/journal-meta
+                                |front/article-meta" mode="jats2html-render-metadata"/>
+  </xsl:template>
+  
+  <xsl:template match="collection-meta
+                      |book-meta
+                      |front/journal-meta
+                      |front/article-meta" mode="jats2html-render-metadata">
+    <section class="{local-name()} jats-meta">
+      <xsl:apply-templates select="@*, *" mode="#current"/>
+    </section>
+  </xsl:template>
+  
+  <!-- default handler for rendering metadata -->
+  
+  <xsl:template match="*" mode="jats2html-render-metadata" priority="-1">
+    <div class="{local-name()} jats-meta">
+      <xsl:choose>
+        <xsl:when test="*">
+          <xsl:apply-templates select="@*, node()" mode="#current"/>
+        </xsl:when>
+        <xsl:when test="text()">
+          <span class="{local-name()} jats-meta-name">
+            <xsl:value-of select="local-name()"/>
+          </span>
+          <xsl:text>&#x20;</xsl:text>
+          <span class="{local-name()} jats-meta-value">
+            <xsl:apply-templates mode="#current"/>
+          </span>
+        </xsl:when>
+        <xsl:when test="not(text()) and @*">
+          <div class="{local-name()} jats-meta-attlist">
+            <xsl:for-each select="@*">
+              <span class="{local-name()} jats-meta-attname">
+                <xsl:value-of select="."/>
+              </span>
+              <span class="{local-name()} jats-meta-attvalue">
+                <xsl:value-of select="."/>
+              </span>
+            </xsl:for-each>  
+          </div>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates mode="#current"/>
+        </xsl:otherwise>
+      </xsl:choose>  
+    </div>
+  </xsl:template>
+  
+  <!--  *
+        * render content metadata
+        * -->
+  
+  <xsl:template match="collection-meta|book-meta" mode="jats2html">
+    <div class="{local-name()} titlepage">
+      <xsl:apply-templates mode="jats2html-create-title"/>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="collection-meta/title-group
+                      |book-title-group" mode="jats2html-create-title">
+    <div class="{local-name()}">
+      <h1 class="{if(self::book-title-group) then 'book-title' else 'collection-title'}">
+        <xsl:apply-templates select="label, title, book-title" mode="#current"/>
+      </h1>
+      <xsl:apply-templates select="* except (label|title|book-title)" mode="#current"/>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="collection-meta/title-group/title
+                      |book-title-group/book-title
+                      |collection-meta/title-group/label
+                      |book-title-group/label" mode="jats2html-create-title-spans">
+    <span class="{local-name()}">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </span>
+  </xsl:template>
+  
+  <xsl:template match="subtitle" mode="jats2html-create-title">
+    <h2 class="{local-name()}">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </h2>
+  </xsl:template>
+  
+  <xsl:template match="trans-title-group/title
+                      |trans-title-group/trans-title" mode="jats2html-create-title">
+    <h3 class="{local-name()}">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </h3>
+  </xsl:template>
+  
+  <xsl:template match="trans-title-group/subtitle
+                      |trans-title-group/trans-subtitle" mode="jats2html-create-title">
+    <h4 class="{local-name()}">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </h4>
+  </xsl:template>
+  
+  <xsl:template match="alt-title" mode="jats2html-create-title">
+    <h5 class="{local-name()}">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </h5>
+  </xsl:template>
+  
+  <xsl:template match="contrib" mode="jats2html-create-title">
+    <div class="{concat(local-name(), ' ', @contrib-type)}">
+      <div class="name">
+        <xsl:apply-templates select="anonymous, (string-name, name)[1]" mode="#current"/>
+      </div>
+      <div class="aff">
+        <xsl:apply-templates select="xref" mode="#current"/>
+      </div>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="contrib/xref" mode="jats2html-create-title">
+    <xsl:variable name="ref" select="@rid" as="attribute(rid)"/>
+    <xsl:apply-templates select="ancestor::contrib-group/aff[@id eq $ref]" mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="aff" mode="jats2html-create-title">
+    <xsl:analyze-string select=".//text()" regex="([,;])">
+      <xsl:matching-substring>
+        <xsl:value-of select="regex-group(1)"/><br/>
+      </xsl:matching-substring>
+      <xsl:non-matching-substring>
+        <xsl:value-of select="."/>
+      </xsl:non-matching-substring>
+    </xsl:analyze-string>
+  </xsl:template>
+  
+  <xsl:template match="name" mode="jats2html-create-title">
+    <xsl:apply-templates select="surname" mode="#current"/>
+    <xsl:text>&#x20;</xsl:text>
+    <xsl:apply-templates select="given-names" mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="award-group" mode="jats2html-create-title">
+    <xsl:apply-templates select="funding-source" mode="#current"/>
+  </xsl:template>
+  
+  <!-- default handler for creating simple divs and spans with *[@class eq local-name()]-->
+  
+  <xsl:template match="aff
+                      |contrib-group
+                      |funding-group
+                      |funding-source
+                      |funding-statement
+                      |fn-group
+                      |funding-group
+                      |string-name
+                      |trans-title-group
+                      |volume-in-collection
+                      |volume-number
+                      |volume-title" mode="jats2html-create-title">
+    <div class="{local-name()}">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="isbn|issn|issn-l" mode="jats2html-create-title">
+    <div class="{local-name()}">
+      <span class="{local-name()}-name">
+        <xsl:value-of select="upper-case(local-name())"/>
+      </span>
+        <span class="{local-name()}-value">
+          <xsl:apply-templates mode="#current"/>
+        </span>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="anonymous
+                      |given-names
+                      |string-name
+                      |surname" mode="jats2html-create-title">
+    <span class="{local-name()}">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </span>
+  </xsl:template>
+  
+  <!-- Drop stuff that is mentioned already in the metadata. Override this if you want to render this -->
+  
+  <xsl:template match="collection-id|book-id|orcid-id|funding-id|subj-group" mode="jats2html-create-title"/>
+  
+  <!-- drop all attributes which are not matched by other templates -->
+  
+  <xsl:template match="@*" mode="jats2html-create-title"/>
+  
 </xsl:stylesheet>
