@@ -208,16 +208,6 @@
     <!-- to overwrite it more easily -->
   </xsl:template>
   
-  <xsl:template name="render-metadata-sections">
-    <div class="title">
-      <xsl:apply-templates select="@srcpath, * except (custom-meta-group
-                                                      |abstract
-                                                      |contrib-group)" mode="#current"/>
-    </div>
-    <xsl:apply-templates select="contrib-group/bio" mode="#current"/>
-    <xsl:apply-templates select="abstract" mode="#current"/>
-  </xsl:template>
-  
    <xsl:template match="sec" mode="epub-alternatives">
      <xsl:variable name="ordered-sec-meta-elements" select="label, 
                                                             title, 
@@ -360,11 +350,6 @@
     And don’t ever change the priority unless you’ve made sure that no other template
     relies on this value to be 0.25.
     -->
-  <xsl:template match="p | array | table | caption | ref | mixed-citation | styled-content | named-content|  italic | bold |
-    underline | sub | sup | verse-line | verse-group | surname | given-names | volume | source | year | issue | etal |
-    date | string-date | fpage | lpage | article-title | chapter-title | pub-id | volume-series | series | person-group | edition | publisher-loc |
-    publisher-name | edition | comment | role | collab | trans-title | trans-source | trans-subtitle | subtitle | comment | contrib-id | uri[not(@xlink:href)] |
-    speech | boxed-text | prefix | suffix" mode="jats2html" priority="-0.25" >
   <xsl:template match="p
                       |array 
                       |table 
@@ -1831,32 +1816,6 @@
       </xsl:when>
       <xsl:when test="text()">
         <meta name="{concat(parent::*/local-name(), '-', local-name())}" content="{.}"/>    
-      </xsl:when>
-      <xsl:when test="@*[not(name() = ('xml:base', 'content-type', 'id', 'xlink:href'))]">
-        <xsl:for-each select="@*[not(local-name() = ('xml:base', 'content-type', 'id', 'xlink:href'))]">
-          <meta name="{concat(parent::*/local-name(), '-', local-name())}" content="{.}"/>  
-
-  <xsl:template match="front//*[not(ancestor-or-self::*/name() = ('abstract', 
-                                                                  'graphic', 
-                                                                  'inline-graphic', 
-                                                                  'fig', 
-                                                                  'xref', 
-                                                                  'x', 
-                                                                  'p', 
-                                                                  'sub', 
-                                                                  'sup', 
-                                                                  'italic', 
-                                                                  'bold', 
-                                                                  'underline', 
-                                                                  'index-term', 
-                                                                  'fn'))]" 
-                mode="jats2html">
-    <xsl:if test="$render-metadata eq 'yes'">
-      <xsl:element name="{if (name() = ('article-title')) then 'h2' else 'p'}">
-        <xsl:apply-templates select="@*" mode="#current"/>
-        <xsl:for-each select="2 to count(ancestor::*)">
-          <xsl:text>&#x2003;</xsl:text>
-        </xsl:for-each>
       </xsl:when>
       <xsl:otherwise>
         <xsl:message select="'jats2html: unmapped element:', local-name()"/>
