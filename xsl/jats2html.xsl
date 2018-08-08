@@ -34,7 +34,7 @@
   <xsl:param name="debug-dir-uri" select="'debug'"/>
   <xsl:param name="srcpaths" select="'no'"/>
   <xsl:param name="create-metadata-head" select="'yes'"/>
-  <xsl:param name="render-metadata" select="'yes'"/>
+  <xsl:param name="render-metadata" select="'no'"/>
 
   <xsl:param name="s9y1-path" as="xs:string?"/>
   <xsl:param name="s9y2-path" as="xs:string?"/>
@@ -188,7 +188,7 @@
         <xsl:apply-templates select=".//custom-meta-group/css:rules" mode="hub2htm:css"/>
       </head>
       <body>
-        <xsl:if test="$render-metadata">
+        <xsl:if test="$render-metadata eq 'yes'">
           <xsl:call-template name="render-metadata-sections"/>
         </xsl:if>
         <xsl:apply-templates mode="#current">
@@ -199,11 +199,11 @@
     </html>
   </xsl:template>
   
-  <xsl:template match="book-meta
-                     |book-part-meta
-                     |journal-meta
-                     |article-meta
-                     |collection-meta" mode="jats2html">
+  <xsl:template match="collection-meta
+                      |book-meta
+                      |book-part-meta
+                      |front/journal-meta
+                      |front/article-meta" mode="jats2html">
     <xsl:call-template name="render-metadata-sections"/>
     <!-- to overwrite it more easily -->
   </xsl:template>
@@ -1838,14 +1838,14 @@
   
   <xsl:template match="collection-meta
                       |book-meta
-                      |front/journal-meta
-                      |front/article-meta" mode="jats2html-render-metadata">
-    <section class="{local-name()} jats-meta">
+                      |journal-meta
+                      |article-meta" mode="jats2html-render-metadata">
+    <div class="{local-name()} jats-meta">
       <xsl:apply-templates select="@*, *" mode="#current"/>
-    </section>
+    </div>
   </xsl:template>
   
-  <!-- default handler for rendering metadata -->
+  <!-- default handler for rendering all metadata -->
   
   <xsl:template match="*" mode="jats2html-render-metadata" priority="-1">
     <div class="{local-name()} jats-meta">
