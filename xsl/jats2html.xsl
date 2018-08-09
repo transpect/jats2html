@@ -1162,6 +1162,7 @@
   
   <xsl:template name="index-entry">
     <xsl:param name="level" as="xs:integer"/>
+    <xsl:param name="root" as="document-node()" tunnel="yes"/>
     <p class="ie ie{$level}">
       <xsl:value-of select="current-grouping-key()"/>
       <xsl:text>&#x2002;</xsl:text>
@@ -1171,6 +1172,23 @@
         </a>
         <xsl:if test="position() ne last()">
           <xsl:text xml:space="preserve">, </xsl:text>
+        </xsl:if>
+      </xsl:for-each>
+      <xsl:for-each select="distinct-values(current-group()//see)">
+        <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' Siehe ' else ' see '" xml:space="preserve"/>
+        <xsl:value-of select="current()"/>
+        <xsl:if test="not(position() = last())">
+          <xsl:text>;</xsl:text>
+        </xsl:if>
+      </xsl:for-each>
+      <xsl:if test="current-group()//see and current-group()//see-also">
+        <xsl:text xml:space="preserve">;</xsl:text>
+      </xsl:if>
+      <xsl:for-each select="distinct-values(current-group()//see-also)">
+        <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' Siehe auch ' else ' see also'" xml:space="preserve"/>
+        <xsl:value-of select="current()"/>
+        <xsl:if test="not(position() = last())">
+          <xsl:text>;</xsl:text>
         </xsl:if>
       </xsl:for-each>
     </p>
@@ -1222,12 +1240,14 @@
   </xsl:template>
   
   <xsl:template match="see" mode="jats2html">
-    <xsl:text xml:space="preserve"> see </xsl:text>
+    <xsl:param name="root" as="document-node()" tunnel="yes"/>
+    <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' Siehe ' else ' see '" xml:space="preserve"/>
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
   <xsl:template match="see-also" mode="jats2html">
-    <xsl:text xml:space="preserve"> see also </xsl:text>
+    <xsl:param name="root" as="document-node()" tunnel="yes"/>
+    <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' Siehe auch ' else ' see also '" xml:space="preserve"/>
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
