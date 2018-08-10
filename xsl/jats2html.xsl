@@ -213,14 +213,14 @@
                                                             title, 
                                                             subtitle, 
                                                             alt-title, 
-                                                            sec-meta" as="element()+"/>
+                                                            sec-meta" as="element()*"/>
      <xsl:copy copy-namespaces="no">
        <xsl:variable name="sec-meta-elements" 
                      select="label, 
                              title, 
                              subtitle, 
                              alt-title, 
-                             sec-meta " as="element()+"/>
+                             sec-meta " as="element()*"/>
        <!-- sec-meta elements are located in BITS as first child of the section, followed by the title. So we change the order here -->
        <xsl:apply-templates select="@*,
                                     $sec-meta-elements,
@@ -1162,7 +1162,6 @@
   
   <xsl:template name="index-entry">
     <xsl:param name="level" as="xs:integer"/>
-    <xsl:param name="root" as="document-node()" tunnel="yes"/>
     <p class="ie ie{$level}">
       <xsl:value-of select="current-grouping-key()"/>
       <xsl:text>&#x2002;</xsl:text>
@@ -1240,13 +1239,11 @@
   </xsl:template>
   
   <xsl:template match="see" mode="jats2html">
-    <xsl:param name="root" as="document-node()" tunnel="yes"/>
     <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' Siehe ' else ' see '" xml:space="preserve"/>
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
   <xsl:template match="see-also" mode="jats2html">
-    <xsl:param name="root" as="document-node()" tunnel="yes"/>
     <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' Siehe auch ' else ' see also '" xml:space="preserve"/>
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
@@ -1367,7 +1364,7 @@
       <xsl:apply-templates select="." mode="table-widths"/>
     </xsl:variable>
     <xsl:apply-templates select="$conditional-percent-widths" mode="#current">
-      <xsl:with-param name="root" select="root(.)" tunnel="yes"/>
+      <xsl:with-param name="root" select="root(.)" as="document-node()" tunnel="yes"/>
     </xsl:apply-templates>
   </xsl:template>
   
