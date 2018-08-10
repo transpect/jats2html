@@ -265,7 +265,7 @@
                       |verse-group
                       |app
                       |glossary" 
-    mode="jats2html" priority="3">
+                mode="jats2html" priority="3">
     <div class="{string-join((name(), @book-part-type, @sec-type, @content-type), ' ')}">
       <xsl:next-match/>
     </div>
@@ -2042,7 +2042,7 @@
   
   <!-- Drop stuff that is mentioned already in the metadata. Override this if you want to render this -->
   
-  <xsl:template match="collection-id|book-id|orcid-id|funding-id|subj-group" mode="jats2html-create-title"/>
+  <xsl:template match="collection-id|book-id|orcid-id|funding-id|subj-group|object-id" mode="jats2html-create-title"/>
   
   <!-- drop all attributes which are not matched by other templates -->
   
