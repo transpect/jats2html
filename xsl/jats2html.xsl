@@ -332,9 +332,17 @@
   </xsl:template>
   
   <xsl:template match="bio | permissions" mode="jats2html" >
-    <div class="{name()}">
+    <div class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </div>      
+  </xsl:template>
+  
+  <xsl:template match="copyright-holder
+                      |copyright-statement
+                      |copyright-year" mode="jats2html">
+    <span class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </span>
   </xsl:template>
   
   <xsl:template match="contrib/string-name" mode="jats2html">
@@ -356,7 +364,6 @@
                       |caption 
                       |ref
                       |mixed-citation
-                      |copyright-statement
                       |styled-content
                       |named-content
                       |italic
@@ -366,7 +373,6 @@
                       |sup
                       |verse-line
                       |verse-group
-                      |copyright-statement
                       |surname
                       |given-names
                       |volume
@@ -1075,7 +1081,7 @@
     <xsl:attribute name="css:text-decoration" select="'underline'"/>
   </xsl:template>
   
-  <xsl:template match="ref | copyright-statement" mode="jats2html">
+  <xsl:template match="ref" mode="jats2html">
     <p class="{name()}">
       <xsl:next-match/>
     </p>
