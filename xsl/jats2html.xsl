@@ -747,6 +747,12 @@
     </blockquote>
   </xsl:template>
   
+  <xsl:template match="attrib" mode="jats2html">
+    <p class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </p>
+  </xsl:template>
+  
   <!-- please note that <notes> can include notes 
        which may represent notes from editors or other notabilities
        and shouldn't be confused with general notes or footnotes, 
