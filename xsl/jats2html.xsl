@@ -1236,6 +1236,13 @@
     </xsl:if>
   </xsl:template>
   
+  <!-- <index-term-range-end> is a marker to specify the range of an index-term.
+       Its @rid must match the @id of a previous <index-term>. -->
+  
+  <xsl:template match="index-term-range-end" mode="jats2html">
+    <a class="{local-name()}" id="{@rid}"/>
+  </xsl:template>
+  
   <!-- for index terms -->
   <xsl:template match="html:span[@class eq 'it']" mode="clean-up">
     <xsl:copy copy-namespaces="no">
