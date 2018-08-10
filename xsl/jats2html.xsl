@@ -310,11 +310,11 @@
     <xsl:param name="recount-footnotes" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="footnotes" select=".//fn" as="element(fn)*"/>
     <xsl:if test="$footnotes">
-      <div class="notes">
+      <div class="footnotes">
         <xsl:if test="$recount-footnotes">
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
-        <xsl:apply-templates select="$footnotes" mode="notes"/>
+        <xsl:apply-templates select="$footnotes" mode="footnotes"/>
       </div>  
     </xsl:if>
   </xsl:template>
@@ -570,7 +570,7 @@
     <xsl:next-match/>
   </xsl:template>
 
-  <xsl:template match="*" mode="notes">
+  <xsl:template match="*" mode="footnotes">
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <div class="{name()}" id="fn_{@id}">
       <span class="note-mark">
@@ -747,8 +747,19 @@
     </blockquote>
   </xsl:template>
   
+  <!-- please note that <notes> can include notes 
+       which may represent notes from editors or other notabilities
+       and shouldn't be confused with general notes or footnotes, 
+       although this element can appear notelessly in the regular content. -->
+  
+  <xsl:template match="footnotes" mode="jats2html">
+    <div class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </div>
+  </xsl:template>
+  
   <xsl:template match="fig" mode="jats2html">
-    <div>
+    <div class="{local-name()}">
       <xsl:call-template name="css:other-atts"/>
       <xsl:apply-templates select="* except (label | caption | permissions), caption, permissions" mode="#current"/>
     </div>
