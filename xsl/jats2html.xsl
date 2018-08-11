@@ -1368,9 +1368,10 @@
   </xsl:template>
   
   <xsl:template match="tex-math" mode="jats2html">
-    <div class="{name()}">
+    <xsl:element name="{if(ancestor::disp-formula) then 'div' else 'span'}">
+      <xsl:attribute name="class" select="local-name()"/>
       <xsl:apply-templates select="@srcpath" mode="#current"/>
-    </div>
+    </xsl:element>
   </xsl:template>
   
   <!-- tables -->
