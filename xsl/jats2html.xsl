@@ -1335,6 +1335,17 @@
 
   <xsl:template match="graphic/attrib" mode="jats2html"/>
   
+  <!-- media -->
+  
+  <xsl:template match="media" mode="jats2html">
+    <xsl:element name="{if(matches(@mimetype, '^audio')) 
+                        then 'audio' 
+                        else 'video'}">
+      <source src="{@xlink:href}" type="{@mimetype}"/>
+      <xsl:apply-templates select="alt-text, long-desc" mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
   <!-- formulas -->
   
   <xsl:template match="disp-formula-group | disp-formula | disp-formula/alternatives" mode="jats2html">
