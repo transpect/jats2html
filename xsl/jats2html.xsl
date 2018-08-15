@@ -762,9 +762,9 @@
   </xsl:template>
   
   <xsl:template match="code" mode="jats2html">
-    <xsl:copy copy-namespaces="no">
+    <code>
       <xsl:call-template name="css:content"/>
-    </xsl:copy>
+    </code>
   </xsl:template>
 
   <xsl:template match="disp-quote" mode="jats2html">
@@ -916,6 +916,7 @@
                            |parent::title-group
                            |parent::app
                            |parent::ack
+                           |parent::index-title-group
                            |parent::app-group
                            |parent::ref-list
                            |parent::glossary]
@@ -1738,7 +1739,8 @@
                                                'preface', 
                                                'foreword', 
                                                'dedication', 
-                                               'front-matter-part')"/>
+                                               'front-matter-part',
+                                               'book-app')"/>
   </xsl:function>
   
   <xsl:function name="jats2html:heading-level" as="xs:integer?">
@@ -1750,16 +1752,23 @@
       <xsl:when test="$elt/parent::book-title-group">
         <xsl:sequence select="1"/>
       </xsl:when>
-      <xsl:when test="$elt/parent::title-group">
+      <xsl:when test="$elt/parent::title-group
+                   or $elt/parent::index
+                   or $elt/parent::index-title-group
+                   or $elt/parent::fn-group">
         <xsl:sequence select="2"/>
       </xsl:when>
       <xsl:when test="$elt/parent::sec[ancestor::boxed-text]">
         <xsl:sequence select="count($elt/ancestor::*[ancestor::boxed-text]) + 3"/>
       </xsl:when>
-      <xsl:when test="$elt/parent::*[local-name() = ('index')]">
-        <xsl:sequence select="2"/>
-      </xsl:when>
-      <xsl:when test="$elt/parent::*[local-name() = ('ref-list', 'sec', 'abstract', 'ack', 'app', 'app-group', 'glossary', 'bio')]">
+      <xsl:when test="$elt/parent::abstract
+                   or $elt/parent::ack
+                   or $elt/parent::app
+                   or $elt/parent::app-group 
+                   or $elt/parent::bio
+                   or $elt/parent::glossary
+                   or $elt/parent::sec
+                   or $elt/parent::ref-list">
         <xsl:variable name="ancestor-title" select="$elt/../../(title
                                                                |(. | ../book-part-meta)/title-group/title)" as="element(title)?"/>
         <xsl:variable name="heading-level" select="if(exists($ancestor-title))
