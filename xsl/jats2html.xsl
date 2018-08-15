@@ -247,11 +247,13 @@
                          'ack', 
                          'abstract', 
                          'app', 
+                         'index',
                          'ref-list', 
                          'dedication', 
                          'foreword', 
                          'preface', 
-                         'contrib-group')"/>
+                         'contrib-group',
+                         'fn-group')"/>
   
   <xsl:template match="*[name() = $default-structural-containers]" 
                 mode="jats2html" priority="2">
@@ -1222,6 +1224,12 @@
           <xsl:with-param name="index-terms" select="current-group()"/>
         </xsl:call-template>
       </xsl:for-each-group>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="index-title-group" mode="jats2html">
+    <div class="{local-name()}">
+      <xsl:call-template name="css:content"/>
     </div>
   </xsl:template>
   
