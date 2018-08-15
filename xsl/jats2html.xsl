@@ -374,6 +374,7 @@
                       |bold
                       |monospace
                       |sc
+                      |private-char
                       |underline
                       |sub
                       |sup
@@ -1121,7 +1122,7 @@
     </abbr>
   </xsl:template>
   
-  <xsl:template match="monospace|named-content|underline|sc" mode="jats2html">
+  <xsl:template match="monospace|named-content|underline|sc|private-char" mode="jats2html">
     <span class="{local-name()}">
       <xsl:next-match/>
     </span>
