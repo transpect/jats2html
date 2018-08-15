@@ -360,6 +360,7 @@
     -->
   <xsl:template match="p
                       |array 
+                      |abbrev
                       |table 
                       |caption 
                       |ref
@@ -368,6 +369,8 @@
                       |named-content
                       |italic
                       |bold
+                      |monospace
+                      |sc
                       |underline
                       |sub
                       |sup
@@ -520,14 +523,25 @@
     </xsl:choose>
   </xsl:template>
      
-  <xsl:template match="target[@id]" mode="jats2html">
-    <a id="{@id}"/>
+  <xsl:template match="target
+                      |milestone-start" mode="jats2html">
+    <a class="{local-name()}" id="{(@id, generate-id())[1]}"/>
+  </xsl:template>
+  
+  <xsl:template match="milestone-end" mode="jats2html">
+    <a class="{local-name()}" href="#{(preceding::milestone-start[1]/@id, preceding::milestone-start[1]/generate-id())[1]}"/>
   </xsl:template>
   
   <xsl:template match="boxed-text[@content-type eq 'marginalia']" mode="jats2html">
     <div>
       <xsl:next-match/>
     </div>   
+  </xsl:template>
+  
+  <xsl:template match="question-wrap|question|answer" mode="jats2html">
+    <div class="{local-name()}">
+      <xsl:next-match/>
+    </div>
   </xsl:template>
 
   <xsl:template match="speech" mode="jats2html">
@@ -764,7 +778,7 @@
        and shouldn't be confused with general notes or footnotes, 
        although this element can appear notelessly in the regular content. -->
   
-  <xsl:template match="footnotes" mode="jats2html">
+  <xsl:template match="notes" mode="jats2html">
     <div class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </div>
@@ -776,8 +790,12 @@
       <xsl:apply-templates select="* except (label | caption | permissions), caption, permissions" mode="#current"/>
     </div>
   </xsl:template>
+  
+  <xsl:template match="alternatives" mode="jats2html">
+    <xsl:apply-templates select="(mml:math, tex-math, media, (graphic|inline-graphic))[1]" mode="#current"/>
+  </xsl:template>
 
-  <xsl:template match="table-wrap | table-wrap-foot" mode="jats2html">
+  <xsl:template match="table-wrap|table-wrap-foot" mode="jats2html">
     <div class="{local-name()} {distinct-values(table/@content-type)}">
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </div>
@@ -951,7 +969,9 @@
   <xsl:template match="label" mode="jats2html"/>
   <xsl:variable name="subtitle-separator-in-ncx" as="xs:string?" select="'&#x2002;'"/>
 
-  <xsl:template match="title | book-title |  article-title[ancestor::title-group]" mode="jats2html">
+  <xsl:template match="title
+                      |book-title
+                      |article-title[ancestor::title-group]" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="level" select="jats2html:heading-level(.)" as="xs:integer?"/>
     <xsl:element name="{if ($level) then concat('h', $level) else 'p'}">
@@ -1046,7 +1066,7 @@
     </span>
   </xsl:template>
   
-  <xsl:template match="sup | sub" mode="jats2html">
+  <xsl:template match="sup|sub" mode="jats2html">
     <xsl:element name="{name()}">
       <xsl:next-match/>
     </xsl:element>
@@ -1064,21 +1084,28 @@
     </b>
   </xsl:template>
   
-  <xsl:template match="named-content" mode="jats2html">
-    <span class="{local-name()}">
+  <xsl:template match="abbrev" mode="jats2html">
+    <abbr>
       <xsl:next-match/>
-    </span>
+    </abbr>
   </xsl:template>
-
-  <xsl:template match="underline" mode="jats2html">
-    <!-- §§§ html5 option? -->
-    <span>
+  
+  <xsl:template match="monospace|named-content|underline|sc" mode="jats2html">
+    <span class="{local-name()}">
       <xsl:next-match/>
     </span>
   </xsl:template>
   
   <xsl:template match="underline" mode="hub2htm:css-style-overrides">
     <xsl:attribute name="css:text-decoration" select="'underline'"/>
+  </xsl:template>
+  
+  <xsl:template match="monospace" mode="hub2htm:css-style-overrides">
+    <xsl:attribute name="css:font-family" select="'monospace'"/>
+  </xsl:template>
+  
+  <xsl:template match="sc" mode="hub2htm:css-style-overrides">
+    <xsl:attribute name="css:font-variant" select="'small-caps'"/>
   </xsl:template>
   
   <xsl:template match="ref" mode="jats2html">
@@ -1395,11 +1422,17 @@
                       |th
                       |colgroup
                       |col
-                      |*[name() = ('table', 'array')][not(matches(@css:width, 'pt$'))]" mode="jats2html">
+                      |table[not(matches(@css:width, 'pt$'))]" mode="jats2html">
     <xsl:element name="{local-name()}" exclude-result-prefixes="#all">
       <xsl:call-template name="css:content"/>
     </xsl:element>
-  </xsl:template>  
+  </xsl:template>
+  
+  <xsl:template match="array" mode="jats2html">
+    <table class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </table>
+  </xsl:template>
 
   <xsl:template match="*[name() = ('table', 'array')][matches(@css:width, 'pt$')]" mode="jats2html">
     <xsl:variable name="conditional-percent-widths" as="element(*)">
@@ -1418,12 +1451,15 @@
     <xsl:variable name="twips" select="tr:length-to-unitless-twip(@css:width)" as="xs:double?"/>
     <xsl:choose>
       <xsl:when test="$twips">
-        <xsl:copy copy-namespaces="no">
+        <table>
+          <xsl:if test="local-name() eq 'array'">
+            <xsl:attribute name="class" select="'array'"/>
+          </xsl:if>
           <xsl:apply-templates select="@*, node()" mode="#current">
             <xsl:with-param name="table-twips" select="$twips" tunnel="yes"/>
             <xsl:with-param name="table-percentage" select="jats2html:table-width-grid($twips, $page-width-twips)" tunnel="yes"/>
           </xsl:apply-templates>
-        </xsl:copy>    
+        </table>    
       </xsl:when>
       <xsl:otherwise>
         <xsl:next-match/>
@@ -1700,10 +1736,13 @@
         <xsl:sequence select="2"/>
       </xsl:when>
       <xsl:when test="$elt/parent::*[local-name() = ('ref-list', 'sec', 'abstract', 'ack', 'app', 'app-group', 'glossary', 'bio')]">
-        <xsl:variable name="ancestor-title" select="$elt/../../(title | (. | ../book-part-meta)/title-group/title)" as="element(title)?"/>
-        <xsl:sequence select="if (exists($ancestor-title)) 
-                              then jats2html:heading-level($ancestor-title) + 1
-                              else 2"/></xsl:when>
+        <xsl:variable name="ancestor-title" select="$elt/../../(title
+                                                               |(. | ../book-part-meta)/title-group/title)" as="element(title)?"/>
+        <xsl:variable name="heading-level" select="if(exists($ancestor-title))
+                                                   then jats2html:heading-level($ancestor-title) + 1
+                                                   else ()" as="xs:integer?"/>
+        <xsl:sequence select="((if($heading-level gt 6) then 6 else $heading-level), 2)[1]"/>
+      </xsl:when>
       <xsl:otherwise>
         <xsl:message>No heading level for <xsl:copy-of select="$elt/.."/></xsl:message>
       </xsl:otherwise>
