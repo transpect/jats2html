@@ -760,6 +760,12 @@
       <xsl:call-template name="css:content"/>
     </pre>
   </xsl:template>
+  
+  <xsl:template match="code" mode="jats2html">
+    <xsl:copy copy-namespaces="no">
+      <xsl:call-template name="css:content"/>
+    </xsl:copy>
+  </xsl:template>
 
   <xsl:template match="disp-quote" mode="jats2html">
     <blockquote>
@@ -779,6 +785,24 @@
        although this element can appear notelessly in the regular content. -->
   
   <xsl:template match="notes" mode="jats2html">
+    <div class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="statement|question-wrap|question|answer|explanation" mode="jats2html">
+    <div class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="option" mode="jats2html">
+    <div class="{local-name(), if(@correct) then concat('correct-', @correct) else ()}">
+      <xsl:call-template name="css:content"/>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="option/label" mode="jats2html">
     <div class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </div>
