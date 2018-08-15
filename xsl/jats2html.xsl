@@ -891,6 +891,9 @@
       <xsl:when test="$context[self::*:book-back[@book-part-type]]">
         <xsl:attribute name="epub:type" select="$context/@book-part-type"/>
       </xsl:when>
+      <xsl:when test="$context[self::*:book-app]">
+        <xsl:attribute name="epub:type" select="'appendix'"/>
+      </xsl:when>
       <xsl:when test="$context[self::*:notes]">
         <xsl:attribute name="epub:type" select="'footnotes'"/>
       </xsl:when>
