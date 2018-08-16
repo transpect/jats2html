@@ -247,7 +247,6 @@
                          'ack', 
                          'abstract', 
                          'app', 
-                         'index',
                          'ref-list', 
                          'dedication', 
                          'foreword', 
@@ -886,7 +885,7 @@
       <xsl:when test="$context[self::*:ref-list]">
         <xsl:attribute name="epub:type" select="'bibliograpy'"/>
       </xsl:when>
-      <xsl:when test="$context[self::*[local-name() = ('preface', 'foreword', 'dedication', 'glossary', 'index', 'toc')]]">
+      <xsl:when test="$context[self::*[local-name() = ('preface', 'foreword', 'dedication', 'glossary', 'index', 'index-term', 'toc')]]">
         <xsl:attribute name="epub:type" select="$context/local-name()"/>
       </xsl:when>
       <xsl:when test="$context[self::*:book-part[@book-part-type]]">
@@ -1204,33 +1203,45 @@
   <xsl:variable name="jats:index-heading-elt-name" as="xs:string" select="'h4'"/>
   <xsl:variable name="jats:index-heading-class" as="xs:string" select="'index-subheading'"/>
   
-  <xsl:template match="index" mode="jats2html">
-    <div class="{local-name()}">
-    <xsl:apply-templates select="@*, node()" mode="#current"/>
-      <xsl:for-each-group select="//index-term[not(parent::index-term)]"
-        group-by="if (matches(substring(jats2html:strip-combining((@sort-key, term)[1]), 1, 1), '[A-z\p{IsLatin-1Supplement}]')) 
-                                  then substring(jats2html:strip-combining((@sort-key, term)[1]), 1, 1) 
-                                  else '0'"
-        collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary">
-        <xsl:sort select="current-grouping-key()" 
-          collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary"/>
-        <xsl:element name="{$jats:index-heading-elt-name}">
-          <xsl:attribute name="class" select="$jats:index-heading-class"/>
-          <xsl:value-of select="if (matches(current-grouping-key(), '[A-z\p{IsLatin-1Supplement}]') and current-grouping-key() ne '0') 
-                                then upper-case(current-grouping-key()) 
-                                else $jats:index-symbol-heading"/>
-        </xsl:element>
-        <xsl:call-template name="group-index-terms">
-          <xsl:with-param name="level" select="1"/>
-          <xsl:with-param name="index-terms" select="current-group()"/>
-        </xsl:call-template>
-      </xsl:for-each-group>
-    </div>
-  </xsl:template>
-  
   <xsl:template match="index-title-group" mode="jats2html">
     <div class="{local-name()}">
       <xsl:call-template name="css:content"/>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="index" mode="jats2html">
+    <xsl:variable name="index-type" select="@index-type" as="attribute(index-type)?"/>
+    <div class="{local-name()}">
+      <xsl:sequence select="tr:create-epub-type-attribute(.)"/>
+      <!-- if a rendered index exists, we don't generate a new one from index-terms -->
+      <xsl:choose>
+        <xsl:when test="index-entry">
+          <xsl:apply-templates select="@*, node()" mode="#current"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates select="@*" mode="#current"/>
+          <xsl:for-each-group select="//index-term[not(parent::index-term)]
+                                                  [if(@index-type) then @index-type eq $index-type else true()]"
+                              group-by="if (matches(substring(jats2html:strip-combining((@sort-key, term)[1]), 1, 1), 
+                                                    '[A-z\p{IsLatin-1Supplement}]')) 
+                                        then substring(jats2html:strip-combining((@sort-key, term)[1]), 1, 1) 
+                                        else '0'"
+                              collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary">
+            <xsl:sort select="current-grouping-key()" 
+                      collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary"/>
+            <xsl:element name="{$jats:index-heading-elt-name}">
+              <xsl:attribute name="class" select="$jats:index-heading-class"/>
+              <xsl:value-of select="if (matches(current-grouping-key(), '[A-z\p{IsLatin-1Supplement}]') and current-grouping-key() ne '0') 
+                                    then upper-case(current-grouping-key()) 
+                                    else $jats:index-symbol-heading"/>
+            </xsl:element>
+            <xsl:call-template name="group-index-terms">
+              <xsl:with-param name="level" select="1"/>
+              <xsl:with-param name="index-terms" select="current-group()"/>
+            </xsl:call-template>
+          </xsl:for-each-group>
+        </xsl:otherwise>
+      </xsl:choose>
     </div>
   </xsl:template>
   
@@ -1238,23 +1249,29 @@
     <xsl:param name="level" as="xs:integer"/>
     <xsl:param name="index-terms" as="element(index-term)*"/>
     <!-- §§§ We need to know a book’s main language! -->
-    <xsl:for-each-group select="$index-terms" group-by="(@sort-key, term)[1]"
-      collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=identical">
-      <xsl:sort select="current-grouping-key()" collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary"/>
-      <xsl:sort select="current-grouping-key()" collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=identical"/>
-      <xsl:call-template name="index-entry">
-        <xsl:with-param name="level" select="$level"/>
-      </xsl:call-template>
-    </xsl:for-each-group>
+    <xsl:if test="count($index-terms) gt 0">
+      <ul class="index-entry-list" epub:type="index-entry-list">
+        <xsl:for-each-group select="$index-terms" group-by="(@sort-key, term)[1]"
+                            collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=identical">
+          <xsl:sort select="current-grouping-key()" collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary"/>
+          <xsl:sort select="current-grouping-key()" collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=identical"/>
+          <xsl:call-template name="index-entry">
+            <xsl:with-param name="level" select="$level"/>
+          </xsl:call-template>
+        </xsl:for-each-group>
+      </ul>  
+    </xsl:if>
   </xsl:template>
   
   <xsl:template name="index-entry">
     <xsl:param name="level" as="xs:integer"/>
-    <p class="ie ie{$level}">
-      <xsl:value-of select="current-grouping-key()"/>
+    <li class="ie ie{$level}" epub:type="index-entry">
+      <span class="index-term" epub:type="index-term">
+        <xsl:value-of select="current-grouping-key()"/>
+      </span>
       <xsl:text>&#x2002;</xsl:text>
       <xsl:for-each select="current-group()[not(index-term)]">
-        <a href="#it_{@id}" id="ie_{@id}">
+        <a href="#it_{@id}" id="ie_{@id}" epub:type="index-locator">
           <xsl:value-of select="position()"/>
         </a>
         <xsl:if test="position() ne last()">
@@ -1278,7 +1295,7 @@
           <xsl:text>;</xsl:text>
         </xsl:if>
       </xsl:for-each>
-    </p>
+    </li>
     <xsl:call-template name="group-index-terms">
       <xsl:with-param name="index-terms" select="current-group()/index-term"/>
       <xsl:with-param name="level" select="$level + 1"/>
