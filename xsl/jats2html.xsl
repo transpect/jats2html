@@ -35,6 +35,7 @@
   <xsl:param name="srcpaths" select="'no'"/>
   <xsl:param name="create-metadata-head" select="'yes'"/>
   <xsl:param name="render-metadata" select="'no'"/>
+  <xsl:param name="xhtml-version" select="'1.0'"/><!-- supported values: '1.0', '5.0' -->
 
   <xsl:param name="s9y1-path" as="xs:string?"/>
   <xsl:param name="s9y2-path" as="xs:string?"/>
@@ -65,7 +66,7 @@
   <xsl:variable name="series-path" as="xs:string?" select="$paths[position() = index-of($roles, 'production-line')]"/>
   
   <xsl:param name="subtitles-in-titles" select="'yes'"/>
-
+  <!-- with $xhtml-version eq '5.0' <section> will be created instead of <div> -->
   <xsl:param name="divify-sections" select="'no'"/>
   <xsl:param name="divify-title-groups" select="'no'"/>
   <!-- Resolve Relative links to the parent directory against the following URI
@@ -242,11 +243,12 @@
                          'front-matter-part', 
                          'book-back',
                          'book-app',
-                         'back', 
+                         'back',
                          'sec', 
                          'ack', 
                          'abstract', 
                          'app', 
+                         'glossary',
                          'ref-list', 
                          'dedication', 
                          'foreword', 
@@ -264,13 +266,15 @@
                       |fig
                       |caption
                       |abstract
-                      |verse-group
-                      |app
-                      |glossary" 
+                      |verse-group" 
                 mode="jats2html" priority="3">
-    <div class="{string-join((name(), @book-part-type, @sec-type, @content-type), ' ')}">
+    <xsl:element name="{if($xhtml-version eq '5.0' 
+                           and not(local-name() = ('fig', 'caption', 'abstract', 'verse-group'))) 
+                        then 'section' 
+                        else 'div'}">
+      <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
       <xsl:next-match/>
-    </div>
+    </xsl:element>
   </xsl:template>
   
   <xsl:variable name="default-title-containers" as="xs:string+" select="('book-title-group', 'title-group')"/>
@@ -1209,10 +1213,11 @@
     </div>
   </xsl:template>
   
-  <xsl:template match="index" mode="jats2html">
-    <xsl:variable name="index-type" select="@index-type" as="attribute(index-type)?"/>
-    <div class="{local-name()}">
-      <xsl:sequence select="tr:create-epub-type-attribute(.)"/>
+  <xsl:template match="index" name="index" mode="jats2html">
+    <xsl:element name="{if($xhtml-version eq '5.0') then 'section' else 'div'}">
+      <xsl:variable name="index-type" select="@index-type" as="attribute(index-type)?"/>
+      <xsl:attribute name="class" select="'index'"/>
+      <xsl:attribute name="epub:type" select="'index'"/>
       <!-- if a rendered index exists, we don't generate a new one from index-terms -->
       <xsl:choose>
         <xsl:when test="index-entry">
@@ -1242,7 +1247,7 @@
           </xsl:for-each-group>
         </xsl:otherwise>
       </xsl:choose>
-    </div>
+    </xsl:element>
   </xsl:template>
   
   <xsl:template name="group-index-terms">
