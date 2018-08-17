@@ -1203,15 +1203,18 @@
 
   <xsl:template match="@person-group-type" mode="jats2html"/>
 
+  <!--  *
+        * index 
+        * -->
+
+  <!--  BITS can contain two ways markup an index:
+        (1) There are index-terms embedded in the main body and we generate an index from these.
+        (2) A list of index-entry elements already exists which is not linked. Most likely, you
+            would just take these with their given order. -->
+
   <xsl:variable name="jats:index-symbol-heading" as="xs:string" select="'0'"/>
   <xsl:variable name="jats:index-heading-elt-name" as="xs:string" select="'h4'"/>
   <xsl:variable name="jats:index-heading-class" as="xs:string" select="'index-subheading'"/>
-  
-  <xsl:template match="index-title-group" mode="jats2html">
-    <div class="{local-name()}">
-      <xsl:call-template name="css:content"/>
-    </div>
-  </xsl:template>
   
   <xsl:template match="index" name="index" mode="jats2html">
     <xsl:element name="{if($xhtml-version eq '5.0') then 'section' else 'div'}">
@@ -1221,7 +1224,7 @@
       <!-- if a rendered index exists, we don't generate a new one from index-terms -->
       <xsl:choose>
         <xsl:when test="index-entry">
-          <xsl:apply-templates select="@*, node()" mode="#current"/>
+          <xsl:call-template name="group-index-entries"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:apply-templates select="@*" mode="#current"/>
@@ -1248,6 +1251,35 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="index-title-group" mode="jats2html">
+    <xsl:apply-templates mode="jats2html"/>
+  </xsl:template>
+  
+  <xsl:template name="group-index-entries">
+    <xsl:for-each-group select="index-entry|index-title-group" group-adjacent="local-name()">
+      <xsl:choose>
+        <xsl:when test="current-grouping-key() eq 'index-entry'">
+          <ul class="index-entry-list" epub:type="index-entry-list">
+            <xsl:for-each select="current-group()">
+              <li class="index-entry" epub:type="index-entry">          
+                <xsl:apply-templates mode="rendered-index-entry"/>
+              </li>
+            </xsl:for-each>
+          </ul>
+        </xsl:when>
+        <xsl:when test="current-grouping-key() eq 'index-title-group'">
+          <xsl:apply-templates select="current-group()" mode="#current"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:for-each-group>
+  </xsl:template>
+  
+  <xsl:template match="term" mode="rendered-index-entry">
+    <span class="indexterm" epub:type="index-term">
+      <xsl:apply-templates mode="jats2html"/>
+    </span>
   </xsl:template>
   
   <xsl:template name="group-index-terms">
