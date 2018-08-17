@@ -544,12 +544,6 @@
       <xsl:next-match/>
     </div>   
   </xsl:template>
-  
-  <xsl:template match="question-wrap|question|answer" mode="jats2html">
-    <div class="{local-name()}">
-      <xsl:next-match/>
-    </div>
-  </xsl:template>
 
   <xsl:template match="speech" mode="jats2html">
     <div>
