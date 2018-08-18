@@ -91,6 +91,12 @@
        letter: link from entry with a letter
        none: go figure -->
   <xsl:param name="bib-backlink-type" select="'letter'"/>
+  <!-- change markup for indices -->
+  <xsl:param name="index-symbol-heading"   as="xs:string"  select="'0'"/>
+  <xsl:param name="index-generate-title"   as="xs:string"  select="'no'"/>
+  <xsl:param name="index-fallback-title"    as="xs:string"  select="'Index'"/>
+  <xsl:param name="index-heading-elt-name" as="xs:string"  select="'h4'"/>
+  <xsl:param name="index-heading-class"    as="xs:string"  select="'index-subheading'"/>
   
   <xsl:output method="xhtml" indent="no" 
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
@@ -335,7 +341,23 @@
     </div>
   </xsl:template>
   
-  <xsl:template match="subtitle | aff" mode="jats2html">
+  <xsl:template match="book-back" mode="jats2html" priority="5">
+    <xsl:variable name="available-index-types"  as="xs:string*" select="distinct-values(//index-term/@index-type)"/>
+    <xsl:variable name="pre-rendered-index-types"  as="xs:string*" select="index/@index-type"/>
+    <xsl:element name="{if($xhtml-version eq '5.0') then 'section' else 'div'}">
+      <xsl:attribute name="class" select="local-name()"/>
+      <xsl:for-each select="$available-index-types[not(. = $pre-rendered-index-types)]">
+        <xsl:call-template name="create-index">
+          <xsl:with-param name="context" select="()" as="element()?"/>
+          <xsl:with-param name="root" select="$root" as="document-node()"/>
+          <xsl:with-param name="index-type" select="." as="xs:string"/>
+        </xsl:call-template>
+      </xsl:for-each>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="subtitle|aff" mode="jats2html">
     <p class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </p>
@@ -1209,32 +1231,50 @@
         (1) There are index-terms embedded in the main body and we generate an index from these.
         (2) A list of index-entry elements already exists which is not linked. Most likely, you
             would just take these with their given order. -->
-
-  <xsl:variable name="jats:index-symbol-heading" as="xs:string" select="'0'"/>
-  <xsl:variable name="jats:index-heading-elt-name" as="xs:string" select="'h4'"/>
-  <xsl:variable name="jats:index-heading-class" as="xs:string" select="'index-subheading'"/>
   
-  <xsl:template match="index" name="index" mode="jats2html">
+  <xsl:variable name="jats:index-symbol-heading"   as="xs:string"  select="$index-symbol-heading"/>
+  <xsl:variable name="jats:index-generate-title"   as="xs:string"  select="$index-generate-title"/>
+  <xsl:variable name="jats:index-fallback-title"   as="xs:string"  select="$index-fallback-title"/>
+  <xsl:variable name="jats:index-heading-elt-name" as="xs:string"  select="$index-heading-elt-name"/>
+  <xsl:variable name="jats:index-heading-class"    as="xs:string"  select="$index-heading-class"/>
+  
+  <!-- this template either renders an existing index 
+       or is invoked with call-template to create a new index -->
+  
+  <xsl:template match="index" name="create-index" mode="jats2html">
+    <xsl:param name="context" select="."              as="element()?"/>
+    <xsl:param name="root" select="/"                 as="document-node()"/>
+    <xsl:param name="index-type" select="@index-type" as="xs:string?"/>
     <xsl:element name="{if($xhtml-version eq '5.0') then 'section' else 'div'}">
-      <xsl:variable name="index-type" select="@index-type" as="attribute(index-type)?"/>
-      <xsl:attribute name="class" select="'index'"/>
+      <xsl:variable name="index-type" select="$index-type" as="xs:string?"/>
+      <xsl:attribute name="class" select="string-join(('index', $index-type), ' ')"/>
       <xsl:attribute name="epub:type" select="'index'"/>
       <!-- if a rendered index exists, we don't generate a new one from index-terms -->
       <xsl:choose>
-        <xsl:when test="index-entry">
+        <xsl:when test="$context/index-entry">
           <xsl:call-template name="group-index-entries"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:apply-templates select="@*" mode="#current"/>
-          <xsl:for-each-group select="//index-term[not(parent::index-term)]
-                                                  [if(@index-type) then @index-type eq $index-type else true()]"
+          <xsl:apply-templates select="$context/@*" mode="#current"/>
+          <xsl:if test="$jats:index-generate-title">
+            <xsl:call-template name="create-index-title-group">
+              <xsl:with-param name="context" as="element(index-title-group)">
+                <index-title-group xmlns="">
+                  <title><xsl:value-of select="(concat(upper-case(substring($index-type, 1, 1)), substring($index-type, 2)),
+                                                $jats:index-fallback-title)[1]"/></title>
+                </index-title-group>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+          <xsl:for-each-group select="$root//index-term[not(parent::index-term)]
+                                                       [if(@index-type) then @index-type eq $index-type else true()]"
                               group-by="if (matches(substring(jats2html:strip-combining((@sort-key, term)[1]), 1, 1), 
                                                     '[A-z\p{IsLatin-1Supplement}]')) 
                                         then substring(jats2html:strip-combining((@sort-key, term)[1]), 1, 1) 
                                         else '0'"
-                              collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary">
+                              collation="http://saxon.sf.net/collation?lang={($root/*/@xml:lang, 'de')[1]};strength=primary">
             <xsl:sort select="current-grouping-key()" 
-                      collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary"/>
+                      collation="http://saxon.sf.net/collation?lang={($root/*/@xml:lang, 'de')[1]};strength=primary"/>
             <xsl:element name="{$jats:index-heading-elt-name}">
               <xsl:attribute name="class" select="$jats:index-heading-class"/>
               <xsl:value-of select="if (matches(current-grouping-key(), '[A-z\p{IsLatin-1Supplement}]') and current-grouping-key() ne '0') 
@@ -1251,8 +1291,9 @@
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="index-title-group" mode="jats2html">
-    <xsl:apply-templates mode="jats2html"/>
+  <xsl:template match="index-title-group" name="create-index-title-group" mode="jats2html">
+    <xsl:param name="context" select="." as="element(index-title-group)"/>
+    <xsl:apply-templates select="$context/node()" mode="jats2html"/>
   </xsl:template>
   
   <xsl:template name="group-index-entries">
