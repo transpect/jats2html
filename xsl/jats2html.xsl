@@ -2143,7 +2143,7 @@
   </xsl:template>
   
   <xsl:template match="aff" mode="jats2html-create-title">
-    <xsl:analyze-string select=".//text()" regex="([,;])">
+    <xsl:analyze-string select="string-join(.//text())" regex="([,;])">
       <xsl:matching-substring>
         <xsl:value-of select="regex-group(1)"/><br/>
       </xsl:matching-substring>
@@ -2165,8 +2165,7 @@
   
   <!-- default handler for creating simple divs and spans with *[@class eq local-name()]-->
   
-  <xsl:template match="aff
-                      |contrib-group
+  <xsl:template match="contrib-group
                       |funding-group
                       |funding-source
                       |funding-statement
