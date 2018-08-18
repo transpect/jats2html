@@ -200,13 +200,17 @@
     </html>
   </xsl:template>
   
-  <xsl:template match="collection-meta
-                      |book-meta
-                      |book-part-meta
+  <xsl:template match="book-part-meta
                       |front/journal-meta
                       |front/article-meta" mode="jats2html">
     <xsl:call-template name="render-metadata-sections"/>
-    <!-- to overwrite it more easily -->
+  </xsl:template>
+  
+  <xsl:template match="book-meta|collection-meta" mode="jats2html">
+    <div class="{local-name()} titlepage">
+      <xsl:apply-templates mode="jats2html-create-title"/>
+      <xsl:call-template name="render-metadata-sections"/>
+    </div>
   </xsl:template>
   
    <xsl:template match="sec" mode="epub-alternatives">
@@ -2076,12 +2080,6 @@
   <!--  *
         * render content metadata
         * -->
-  
-  <xsl:template match="collection-meta|book-meta" mode="jats2html">
-    <div class="{local-name()} titlepage">
-      <xsl:apply-templates mode="jats2html-create-title"/>
-    </div>
-  </xsl:template>
   
   <xsl:template match="collection-meta/title-group
                       |book-title-group" mode="jats2html-create-title">
