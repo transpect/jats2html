@@ -166,7 +166,7 @@
   
   <xsl:template match="/*" mode="jats2html">
     <html>
-      <xsl:apply-templates select="@xml:lang" mode="#current"/>
+      <xsl:apply-templates select="@xml:*" mode="#current"/>
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <xsl:if test="@source-dir-uri">
@@ -530,6 +530,10 @@
       <xsl:copy/>
       <xsl:attribute name="lang" select="."/>
     </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="@xml:base" mode="jats2html">
+    <xsl:attribute name="xml:base" select="replace(. , '\.[a-z]+$', '.html')"/>
   </xsl:template>
   
   <!-- will be handled by class-att mode -->
