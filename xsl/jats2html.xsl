@@ -521,15 +521,13 @@
 
   <xsl:template match="table[@id = ../@id]/@id" mode="jats2html"/>
   
-  <xsl:template match="@css:* | @xml:lang" mode="jats2html_DISABLED">
+  <xsl:template match="@css:*" mode="jats2html_DISABLED">
     <xsl:copy/>
   </xsl:template>
   
   <xsl:template match="@xml:lang" mode="jats2html">
-    <xsl:if test="not(. = ancestor::*[@xml:lang][1]/@xml:lang)">
-      <xsl:copy/>
-      <xsl:attribute name="lang" select="."/>
-    </xsl:if>
+    <xsl:copy-of select="."/>
+    <xsl:attribute name="lang" select="."/>
   </xsl:template>
   
   <xsl:template match="@xml:base" mode="jats2html">
