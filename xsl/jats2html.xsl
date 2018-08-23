@@ -1876,7 +1876,8 @@
                    or $elt/parent::bio
                    or $elt/parent::glossary
                    or $elt/parent::sec
-                   or $elt/parent::ref-list">
+                   or $elt/parent::ref-list
+                   or $elt/parent::statement">
         <xsl:variable name="ancestor-title" select="$elt/../../(title
                                                                |(. | ../book-part-meta)/title-group/title)" as="element(title)?"/>
         <xsl:variable name="heading-level" select="if(exists($ancestor-title))
