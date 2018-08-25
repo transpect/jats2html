@@ -111,7 +111,7 @@
     as="document-node(element(l10n:l10n))"/>
 
   <xsl:key name="l10n-string" match="l10n:string" use="@id"/>
-
+<!--
   <xsl:variable name="epub-alternatives">
     <xsl:apply-templates select="/" mode="epub-alternatives"/>
   </xsl:variable>
@@ -126,7 +126,7 @@
 
   <xsl:template name="main">
     <xsl:sequence select="$clean-up"/>
-  </xsl:template>
+  </xsl:template>-->
   
   <xsl:template match="* | @*" mode="expand-css clean-up table-widths epub-alternatives">
     <xsl:copy copy-namespaces="no">
