@@ -345,6 +345,7 @@
     <xsl:variable name="available-index-types"  as="xs:string*" select="distinct-values(//index-term/@index-type)"/>
     <xsl:variable name="pre-rendered-index-types"  as="xs:string*" select="index/@index-type"/>
     <xsl:element name="{if($xhtml-version eq '5.0') then 'section' else 'div'}">
+      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:attribute name="class" select="local-name()"/>
       <xsl:for-each select="$available-index-types[not(. = $pre-rendered-index-types)]">
         <xsl:call-template name="create-index">
@@ -353,7 +354,7 @@
           <xsl:with-param name="index-type" select="." as="xs:string"/>
         </xsl:call-template>
       </xsl:for-each>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
   
