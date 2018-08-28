@@ -1507,6 +1507,16 @@
     </xsl:element>
   </xsl:template>
   
+  <xsl:template match="object-id" mode="jats2html">
+    <a class="{string-join((local-name(), 
+                            for $i in @*[not(local-name() = 'id')] 
+                            return concat($i/local-name(), '__', $i)
+                            ), ' ')}" 
+       href="#{normalize-space(.)}">
+      <xsl:apply-templates select="@id" mode="#current"/>
+    </a>
+  </xsl:template>
+  
   <!-- formulas -->
   
   <xsl:template match="disp-formula-group | disp-formula | disp-formula/alternatives" mode="jats2html">
@@ -1991,12 +2001,12 @@
   </xsl:template>
   
   <xsl:template match="isbn" mode="jats2html-create-meta-tags" priority="1">
-    <meta name="DCTERMS.identifier" scheme="DCTERMS.ISBN" content="{.}"/>
+    <meta name="DCTERMS.identifier" content="{.}"/>
   </xsl:template>
   
   <xsl:template match="article-id[@pub-id-type eq 'doi']
                       |book-id[@book-id-type eq 'doi']" mode="jats2html-create-meta-tags">
-    <meta name="DCTERMS.identifier" scheme="DCTERMS.DOI" content="{.}"/> 
+    <meta name="DCTERMS.identifier" content="{.}"/> 
   </xsl:template>
   
   <xsl:template match="article-categories" mode="jats2html-create-meta-tags">
@@ -2007,15 +2017,14 @@
     <meta name="DCTERMS.rights" content="{.}"/>
   </xsl:template>
   
-  <xsl:template match="copyright-year" mode="jats2html-create-meta-tags">
-  </xsl:template>
+  <xsl:template match="copyright-year" mode="jats2html-create-meta-tags"/>
   
   <xsl:template match="copyright-holder" mode="jats2html-create-meta-tags">
     <meta name="DCTERMS.holder" content="{.}"/>
   </xsl:template>
   
   <xsl:template match="license" mode="jats2html-create-meta-tags">
-    <xsl:apply-templates select="@*, *" mode="#current"/>
+    <xsl:apply-templates select="@xlink:href, @license-type, *" mode="#current"/>
   </xsl:template>
   
   <xsl:template match="license-p" mode="jats2html-create-meta-tags">
@@ -2023,7 +2032,7 @@
   </xsl:template>
   
   <xsl:template match="license/@xlink:href" mode="jats2html-create-meta-tags">
-    <meta name="DCTERMS.license" scheme="DCTERMS.URI" content="{.}"/>
+    <meta name="DCTERMS.license" content="{.}"/>
   </xsl:template>
   
   <xsl:template match="license/@license-type" mode="jats2html-create-meta-tags">
