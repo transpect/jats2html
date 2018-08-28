@@ -1512,7 +1512,7 @@
                             for $i in @*[not(local-name() = 'id')] 
                             return concat($i/local-name(), '__', $i)
                             ), ' ')}" 
-       href="#{normalize-space(.)}">
+       title="{normalize-space(.)}">
       <xsl:apply-templates select="@id" mode="#current"/>
     </a>
   </xsl:template>
