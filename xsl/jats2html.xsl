@@ -29,6 +29,7 @@
   <xsl:import href="http://transpect.io/hub2html/xsl/css-atts2wrap.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/lengths/xsl/lengths.xsl"/>
 	<xsl:import href="http://transpect.io/xslt-util/hex/xsl/hex.xsl"/>
+  <xsl:import href="http://transpect.io/unwrap-mml/xsl/unwrap-mml.xsl"/>
 	
   <xsl:param name="debug" select="'yes'"/>
   <xsl:param name="debug-dir-uri" select="'debug'"/>
@@ -843,10 +844,6 @@
       <xsl:apply-templates select="* except (label | caption | permissions), caption, permissions" mode="#current"/>
     </div>
   </xsl:template>
-  
-  <xsl:template match="alternatives" mode="jats2html">
-    <xsl:apply-templates select="(mml:math, tex-math, media, (graphic|inline-graphic))[1]" mode="#current"/>
-  </xsl:template>
 
   <xsl:template match="table-wrap|table-wrap-foot" mode="jats2html">
     <div class="{local-name()} {distinct-values(table/@content-type)}">
@@ -1502,11 +1499,12 @@
   <!-- media -->
   
   <xsl:template match="media" mode="jats2html">
-    <xsl:element name="{if(matches(@mimetype, '^audio')) 
-                        then 'audio' 
-                        else 'video'}">
+    <xsl:variable name="media-type" as="xs:string"
+                  select="if(matches(@mimetype, '^audio')) then 'audio' else 'video'" />
+    <xsl:element name="{$media-type}">
       <source src="{@xlink:href}" type="{@mimetype}"/>
       <xsl:apply-templates select="alt-text, long-desc" mode="#current"/>
+      <xsl:value-of select="concat('Your device cannot play ', $media-type)"/>
     </xsl:element>
   </xsl:template>
   
@@ -1522,26 +1520,51 @@
   
   <!-- formulas -->
   
-  <xsl:template match="disp-formula-group | disp-formula | disp-formula/alternatives" mode="jats2html">
+  <xsl:template match="disp-formula-group
+                      |disp-formula" mode="jats2html">
     <div class="{name()}">
       <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
     </div>
   </xsl:template>
   
-  <xsl:template match="inline-formula | inline-formula/alternatives" mode="jats2html">
+  <xsl:template match="inline-formula" mode="jats2html">
     <span class="{name()}">
       <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
     </span>
   </xsl:template>
   
-  <!-- strip ns prefix to meet mathjax requirements -->
+  <xsl:template match="disp-formula/alternatives
+                      |inline-formula/alternatives" mode="jats2html">
+    <xsl:apply-templates select="(mml:math, tex-math, media, (graphic|inline-graphic))[1]" mode="#current"/>  
+  </xsl:template>
+  
   <xsl:template match="mml:math" mode="jats2html">
+    <xsl:variable name="altimg" as="attribute(xlink:href)?"
+                  select="parent::alternatives/*[local-name() = ('graphic', 'inline-graphic')]/@xlink:href"/>
     <xsl:element name="{local-name()}" namespace="http://www.w3.org/1998/Math/MathML">
-      <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
+      <!-- Unlike HTML, EPUB 3.0 requires an alttext attribute. -->
+      <xsl:attribute name="alttext">
+        <xsl:if test="tr:unwrap-mml-boolean(.)">
+          <xsl:apply-templates mode="unwrap-mml"/>
+        </xsl:if>
+      </xsl:attribute>
+      <xsl:if test="$altimg">
+        <xsl:attribute name="altimg" select="$altimg"/>
+      </xsl:if>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="table-wrap/alternatives[graphic] | boxed-text/alternatives[graphic]" mode="jats2html" priority="2">
+  <!-- strip ns prefix, mathjax and some browsers have issues with xml namespaces -->
+  
+  <xsl:template match="mml:*" mode="jats2html">
+    <xsl:element name="{local-name()}" namespace="http://www.w3.org/1998/Math/MathML">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="table-wrap/alternatives[graphic]
+                      |boxed-text/alternatives[graphic]" mode="jats2html" priority="2">
     <xsl:for-each select="graphic">
       <img>
         <xsl:attribute name="class" select="local-name()"/>
