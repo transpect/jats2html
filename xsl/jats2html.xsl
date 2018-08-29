@@ -395,9 +395,9 @@
                       |array 
                       |abbrev
                       |table 
-                      |caption 
-                      |ref
+                      |caption
                       |mixed-citation
+                      |element-citation
                       |styled-content
                       |named-content
                       |italic
@@ -475,19 +475,18 @@
     <xsl:attribute name="class" select="string-join((name(), $att), ' ')"/>
   </xsl:template>
 
-  <xsl:template match="mixed-citation" mode="class-att" priority="2">
+  <xsl:template match="mixed-citation|element-citation" mode="class-att" priority="2">
     <xsl:variable name="att" as="attribute(class)?">
       <xsl:next-match/>
     </xsl:variable>
     <xsl:attribute name="class" select="string-join((name(), @publication-type, $att), ' ')"/>
   </xsl:template>
 
-  <xsl:template match="mixed-citation" mode="jats2html" priority="2"> 
+  <xsl:template match="mixed-citation|element-citation" mode="jats2html" priority="2"> 
     <span>
       <xsl:next-match/>
     </span>
   </xsl:template>
-
 
   <xsl:variable name="jats2html:ignore-style-name-regex-x"
     select="'^(NormalParagraphStyle|Hyperlink)$'"
@@ -1183,6 +1182,10 @@
         <xsl:text xml:space="preserve">, </xsl:text>
       </xsl:if>
     </xsl:for-each>
+  </xsl:template>
+  
+  <xsl:template match="ref" mode="jats2html">
+    <xsl:apply-templates select="(mixed-citation, element-citation)[1]" mode="#current"/>
   </xsl:template>
 
   <xsl:template match="surname
