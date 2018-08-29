@@ -1361,7 +1361,7 @@
         </xsl:if>
       </xsl:for-each>
       <xsl:for-each select="distinct-values(current-group()//see)">
-        <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' Siehe ' else ' see '" xml:space="preserve"/>
+        <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe ' else ' see '" xml:space="preserve"/>
         <xsl:value-of select="current()"/>
         <xsl:if test="not(position() = last())">
           <xsl:text>;</xsl:text>
@@ -1371,7 +1371,7 @@
         <xsl:text xml:space="preserve">;</xsl:text>
       </xsl:if>
       <xsl:for-each select="distinct-values(current-group()//see-also)">
-        <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' Siehe auch ' else ' see also'" xml:space="preserve"/>
+        <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe auch ' else ' see also'" xml:space="preserve"/>
         <xsl:value-of select="current()"/>
         <xsl:if test="not(position() = last())">
           <xsl:text>;</xsl:text>
@@ -1433,12 +1433,12 @@
   </xsl:template>
   
   <xsl:template match="see" mode="jats2html">
-    <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' Siehe ' else ' see '" xml:space="preserve"/>
+    <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe ' else ' see '" xml:space="preserve"/>
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
   <xsl:template match="see-also" mode="jats2html">
-    <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' Siehe auch ' else ' see also '" xml:space="preserve"/>
+    <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe auch ' else ' see also '" xml:space="preserve"/>
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
