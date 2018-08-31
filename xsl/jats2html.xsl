@@ -112,22 +112,6 @@
     as="document-node(element(l10n:l10n))"/>
 
   <xsl:key name="l10n-string" match="l10n:string" use="@id"/>
-<!--
-  <xsl:variable name="epub-alternatives">
-    <xsl:apply-templates select="/" mode="epub-alternatives"/>
-  </xsl:variable>
-  
-  <xsl:variable name="jats2html">
-    <xsl:apply-templates select="$epub-alternatives" mode="jats2html"/>
-  </xsl:variable>
-  
-  <xsl:variable name="clean-up">
-    <xsl:apply-templates select="$jats2html" mode="clean-up"/>
-  </xsl:variable>
-
-  <xsl:template name="main">
-    <xsl:sequence select="$clean-up"/>
-  </xsl:template>-->
   
   <xsl:template match="* | @*" mode="expand-css clean-up table-widths epub-alternatives">
     <xsl:copy copy-namespaces="no">
@@ -196,9 +180,10 @@
         <xsl:apply-templates select=".//custom-meta-group/css:rules" mode="hub2htm:css"/>
       </head>
       <body>
-        <xsl:if test="$render-metadata eq 'yes'">
+        <!-- Commented out because this template needs to be called in the context of metadata elements:
+          <xsl:if test="$render-metadata eq 'yes'">
           <xsl:call-template name="render-metadata-sections"/>
-        </xsl:if>
+        </xsl:if>-->
         <xsl:apply-templates mode="#current">
           <xsl:with-param name="footnote-ids" select="//fn/@id" as="xs:string*" tunnel="yes"/>
           <xsl:with-param name="root" select="root(.)" as="document-node()" tunnel="yes"/>
@@ -527,7 +512,6 @@
   </xsl:template>
   
   <xsl:template match="@xml:lang" mode="jats2html">
-    <xsl:copy-of select="."/>
     <xsl:attribute name="lang" select="."/>
   </xsl:template>
   
@@ -616,7 +600,7 @@
   <xsl:template match="disp-quote[exists(descendant::*[self::p])][every $child in * satisfies ($child/@specific-use = 'PrintOnly')]" mode="epub-alternatives"/>
 
 
-  <xsl:template match="*[fn]" mode="jats2html">
+  <xsl:template match="*[fn]" mode="jats2html" priority="1">
     <xsl:next-match/>
   </xsl:template>
 
@@ -776,6 +760,7 @@
       <xsl:when test=". = 'alpha-upper'"><xsl:attribute name="class" select="'upper-alpha'"/></xsl:when>
       <xsl:when test=". = 'roman-lower'"><xsl:attribute name="class" select="'lower-roman'"/></xsl:when>
       <xsl:when test=". = 'roman-upper'"><xsl:attribute name="class" select="'upper-roman'"/></xsl:when>
+      <xsl:otherwise><xsl:attribute name="class" select="."/></xsl:otherwise>
     </xsl:choose>
   </xsl:template>
   
@@ -1167,7 +1152,7 @@
       <xsl:next-match/>
     </p>
   </xsl:template>
-  
+
   <xsl:template match="ref[@id]/node()[last()][$bib-backlink-type = 'letter']" mode="jats2html">
     <xsl:next-match/>
     <xsl:text>&#x2002;</xsl:text>
@@ -1267,6 +1252,7 @@
                                                 $jats:index-fallback-title)[1]"/></title>
                 </index-title-group>
               </xsl:with-param>
+              <xsl:with-param name="root" select="$root" as="document-node()" tunnel="yes"/>
             </xsl:call-template>
           </xsl:if>
           <xsl:for-each-group select="$root//index-term[not(parent::index-term)]
@@ -1621,7 +1607,7 @@
     <xsl:variable name="twips" select="tr:length-to-unitless-twip(@css:width)" as="xs:double?"/>
     <xsl:choose>
       <xsl:when test="$twips">
-        <table>
+        <table xmlns="">
           <xsl:if test="local-name() eq 'array'">
             <xsl:attribute name="class" select="'array'"/>
           </xsl:if>
@@ -1629,7 +1615,7 @@
             <xsl:with-param name="table-twips" select="$twips" tunnel="yes"/>
             <xsl:with-param name="table-percentage" select="jats2html:table-width-grid($twips, $page-width-twips)" tunnel="yes"/>
           </xsl:apply-templates>
-        </table>    
+        </table>
       </xsl:when>
       <xsl:otherwise>
         <xsl:next-match/>
@@ -2223,7 +2209,7 @@
   </xsl:template>
   
   <xsl:template match="aff" mode="jats2html-create-title">
-    <xsl:analyze-string select="string-join(.//text())" regex="([,;])">
+    <xsl:analyze-string select="string-join(.//text(), '')" regex="([,;])">
       <xsl:matching-substring>
         <xsl:value-of select="regex-group(1)"/><br/>
       </xsl:matching-substring>
