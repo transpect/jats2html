@@ -28,7 +28,7 @@
   <xsl:import href="http://transpect.io/hub2html/xsl/css-rules.xsl"/>
   <xsl:import href="http://transpect.io/hub2html/xsl/css-atts2wrap.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/lengths/xsl/lengths.xsl"/>
-	<xsl:import href="http://transpect.io/xslt-util/hex/xsl/hex.xsl"/>
+  <xsl:import href="http://transpect.io/xslt-util/hex/xsl/hex.xsl"/>
   <xsl:import href="http://transpect.io/xproc-util/unwrap-mml/xsl/unwrap-mml.xsl"/>
 	
   <xsl:param name="debug" select="'yes'"/>
@@ -829,6 +829,10 @@
       <xsl:apply-templates select="* except (label | caption | permissions), caption, permissions" mode="#current"/>
     </div>
   </xsl:template>
+  
+  <xsl:template match="fig/alternatives" mode="jats2html">
+    <xsl:apply-templates select="(media, graphic, inline-graphic)[1]" mode="#current"/>
+  </xsl:template>
 
   <xsl:template match="table-wrap|table-wrap-foot" mode="jats2html">
     <div class="{local-name()} {distinct-values(table/@content-type)}">
@@ -1490,7 +1494,7 @@
     <xsl:element name="{$media-type}">
       <source src="{@xlink:href}" type="{@mimetype}"/>
       <xsl:apply-templates select="alt-text, long-desc" mode="#current"/>
-      <xsl:value-of select="concat('Your device cannot play ', $media-type)"/>
+      <xsl:value-of select="concat('Your browser or device does not support ', $media-type)"/>
     </xsl:element>
   </xsl:template>
   
