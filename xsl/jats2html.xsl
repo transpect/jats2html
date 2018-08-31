@@ -1336,7 +1336,7 @@
     <xsl:param name="level" as="xs:integer"/>
     <li class="ie ie{$level}" epub:type="index-entry">
       <span class="index-term" epub:type="index-term">
-        <xsl:value-of select="current-grouping-key()"/>
+        <xsl:value-of select="current-group()[1]/term"/>
       </span>
       <xsl:text>&#x2002;</xsl:text>
       <xsl:for-each select="current-group()[not(index-term)]">
