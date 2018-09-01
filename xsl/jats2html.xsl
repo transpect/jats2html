@@ -1364,11 +1364,11 @@
           <xsl:text>;</xsl:text>
         </xsl:if>
       </xsl:for-each>
+      <xsl:call-template name="group-index-terms">
+        <xsl:with-param name="index-terms" select="current-group()/index-term"/>
+        <xsl:with-param name="level" select="$level + 1"/>
+      </xsl:call-template>
     </li>
-    <xsl:call-template name="group-index-terms">
-      <xsl:with-param name="index-terms" select="current-group()/index-term"/>
-      <xsl:with-param name="level" select="$level + 1"/>
-    </xsl:call-template>
   </xsl:template>
 
   <xsl:template match="index-term[not(parent::index-term)]" mode="jats2html">
