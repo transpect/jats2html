@@ -1339,7 +1339,7 @@
         <xsl:value-of select="current-group()[1]/term"/>
       </span>
       <xsl:text>&#x2002;</xsl:text>
-      <xsl:for-each select="current-group()[not(index-term)]">
+      <xsl:for-each select="current-group()[empty(index-term | see)]">
         <a href="#it_{@id}" id="ie_{@id}" epub:type="index-locator">
           <xsl:value-of select="position()"/>
         </a>
