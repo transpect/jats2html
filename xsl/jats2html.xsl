@@ -199,10 +199,13 @@
   </xsl:template>
   
   <xsl:template match="book-meta|collection-meta" mode="jats2html">
-    <div class="{local-name()} titlepage">
-      <xsl:apply-templates mode="jats2html-create-title"/>
+    <xsl:element name="{if($xhtml-version eq '5.0') 
+                        then 'section' 
+                        else 'div'}">
+      <xsl:attribute name="class" select="local-name(), 'titlepage'"/>
+      <xsl:apply-templates select="@*, node()" mode="jats2html-create-title"/>
       <xsl:call-template name="render-metadata-sections"/>
-    </div>
+    </xsl:element>
   </xsl:template>
   
    <xsl:template match="sec" mode="epub-alternatives">
@@ -382,6 +385,7 @@
                       |abbrev
                       |table 
                       |caption
+                      |contrib
                       |mixed-citation
                       |element-citation
                       |styled-content
@@ -394,6 +398,7 @@
                       |underline
                       |sub
                       |sup
+                      |string-name
                       |verse-line
                       |verse-group
                       |surname
@@ -495,7 +500,7 @@
     <xsl:attribute name="class" select="name()"/>
   </xsl:template>
   
-  <xsl:template match="@srcpath" mode="jats2html">
+  <xsl:template match="@srcpath" mode="jats2html jats2html-create-title jats2html-create-title-spans">
     <xsl:if test="$srcpaths eq 'yes'">
       <xsl:copy/>  
     </xsl:if>
@@ -1084,11 +1089,15 @@
   </xsl:template>
   
   <xsl:template match="contrib-group/contrib" mode="jats2html">
-    <xsl:apply-templates mode="#current"/>
+    <div>
+      <xsl:next-match/>
+    </div>
   </xsl:template>
 
   <xsl:template match="string-name" mode="jats2html">
-    <xsl:apply-templates mode="#current"/>
+    <span>
+      <xsl:next-match/>
+    </span>
   </xsl:template>
   
   <xsl:template match="p" mode="jats2html">
@@ -2180,7 +2189,7 @@
                       |book-title-group" mode="jats2html-create-title">
     <div class="{local-name()}">
       <h1 class="{if(self::book-title-group) then 'book-title' else 'collection-title'}">
-        <xsl:apply-templates select="label, title, book-title" mode="#current"/>
+        <xsl:apply-templates select="@*, label, title, book-title" mode="#current"/>
       </h1>
       <xsl:apply-templates select="* except (label|title|book-title)" mode="#current"/>
     </div>
@@ -2227,14 +2236,16 @@
         <xsl:apply-templates select="anonymous, (string-name, name)[1]" mode="#current"/>
       </div>
       <div class="aff">
-        <xsl:apply-templates select="xref" mode="#current"/>
+        <xsl:apply-templates select="@*, xref" mode="#current"/>
       </div>
     </div>
   </xsl:template>
   
   <xsl:template match="contrib/xref" mode="jats2html-create-title">
     <xsl:variable name="ref" select="@rid" as="attribute(rid)"/>
-    <xsl:apply-templates select="ancestor::contrib-group/aff[@id eq $ref]" mode="#current"/>
+    <span class="{local-name()}">
+      <xsl:apply-templates select="@*, ancestor::contrib-group/aff[@id eq $ref]" mode="#current"/>  
+    </span>
   </xsl:template>
   
   <xsl:template match="aff" mode="jats2html-create-title">
@@ -2249,18 +2260,17 @@
   </xsl:template>
   
   <xsl:template match="name" mode="jats2html-create-title">
-    <xsl:apply-templates select="surname" mode="#current"/>
-    <xsl:text>&#x20;</xsl:text>
-    <xsl:apply-templates select="given-names" mode="#current"/>
-  </xsl:template>
-  
-  <xsl:template match="award-group" mode="jats2html-create-title">
-    <xsl:apply-templates select="funding-source" mode="#current"/>
+    <div class="{local-name()}">
+      <xsl:apply-templates select="@*, surname" mode="#current"/>
+      <xsl:text>&#x20;</xsl:text>
+      <xsl:apply-templates select="given-names" mode="#current"/>      
+    </div>
   </xsl:template>
   
   <!-- default handler for creating simple divs and spans with *[@class eq local-name()]-->
   
-  <xsl:template match="contrib-group
+  <xsl:template match="award-group
+                      |contrib-group
                       |funding-group
                       |funding-source
                       |funding-statement
@@ -2278,6 +2288,7 @@
   
   <xsl:template match="isbn|issn|issn-l" mode="jats2html-create-title">
     <div class="{local-name()}">
+      <xsl:apply-templates select="@*" mode="#current"/>
       <span class="{local-name()}-name">
         <xsl:value-of select="upper-case(local-name())"/>
       </span>
