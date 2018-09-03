@@ -1381,8 +1381,8 @@
     <xsl:param name="root" as="document-node()" tunnel="yes"/>
     <!-- Context: see or see-also -->
     <xsl:variable name="target" as="element(index-term)?"
-      select="(key('jats2html:by-indext-term', ., $root),
-               key('jats2html:by-indext-term', concat(., ' (', ../term, ')'), $root))[1]"/>
+      select="(key('jats2html:by-indext-term', concat(., ' (', ../term, ')'), $root),
+               key('jats2html:by-indext-term', ., $root))[1]"/>
     <xsl:choose>
       <xsl:when test="exists($target)">
         <a href="#ie_{$target/@id}">
