@@ -810,6 +810,13 @@
     </div>
   </xsl:template>
   
+  <xsl:template match="front-matter/notes" mode="jats2html">
+    <xsl:element name="{if($xhtml-version eq '5.0') then 'section' else 'div'}">
+      <xsl:attribute name="class" select="local-name()"/>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
   <xsl:template match="statement|question-wrap|question|answer|explanation" mode="jats2html">
     <div class="{local-name()}">
       <xsl:call-template name="css:content"/>
