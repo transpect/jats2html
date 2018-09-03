@@ -1339,6 +1339,9 @@
         <xsl:value-of select="current-group()[1]/term"/>
       </span>
       <xsl:text>&#x2002;</xsl:text>
+      <xsl:if test="exists(index-term)">
+        <a id="ie_{@id}"/>
+      </xsl:if>
       <xsl:for-each select="current-group()[empty(index-term | see)]">
         <a href="#it_{@id}" id="ie_{@id}" epub:type="index-locator">
           <xsl:value-of select="position()"/>
@@ -1347,28 +1350,50 @@
           <xsl:text xml:space="preserve">, </xsl:text>
         </xsl:if>
       </xsl:for-each>
-      <xsl:for-each select="distinct-values(current-group()//see)">
+      <xsl:for-each-group select="current-group()//see" group-by="string(.)">
         <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe ' else ' see '" xml:space="preserve"/>
-        <xsl:value-of select="current()"/>
+        <xsl:call-template name="potentiallly-link-to-see-target"/>
         <xsl:if test="not(position() = last())">
           <xsl:text>;</xsl:text>
         </xsl:if>
-      </xsl:for-each>
+      </xsl:for-each-group>
       <xsl:if test="current-group()//see and current-group()//see-also">
         <xsl:text xml:space="preserve">;</xsl:text>
       </xsl:if>
-      <xsl:for-each select="distinct-values(current-group()//see-also)">
+      <xsl:for-each-group select="current-group()//see-also" group-by="string(.)">
         <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe auch ' else ' see also'" xml:space="preserve"/>
-        <xsl:value-of select="current()"/>
+        <xsl:call-template name="potentiallly-link-to-see-target"/>
         <xsl:if test="not(position() = last())">
           <xsl:text>;</xsl:text>
         </xsl:if>
-      </xsl:for-each>
+      </xsl:for-each-group>
       <xsl:call-template name="group-index-terms">
         <xsl:with-param name="index-terms" select="current-group()/index-term"/>
         <xsl:with-param name="level" select="$level + 1"/>
       </xsl:call-template>
     </li>
+  </xsl:template>
+
+  <xsl:key name="jats2html:by-indext-term" match="index-term" 
+    use="term, string-join((parent::index-term/term, term), ', ')"/>
+  
+  <xsl:template name="potentiallly-link-to-see-target">
+    <xsl:param name="root" as="document-node()" tunnel="yes"/>
+    <!-- Context: see or see-also -->
+    <xsl:variable name="target" as="element(index-term)?"
+      select="(key('jats2html:by-indext-term', ., $root),
+               key('jats2html:by-indext-term', concat(., ' (', ../term, ')'), $root))[1]"/>
+    <xsl:choose>
+      <xsl:when test="exists($target)">
+        <a href="#ie_{$target/@id}">
+          <xsl:value-of select="."/>
+        </a>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="."/>
+      </xsl:otherwise>
+    </xsl:choose>
+
   </xsl:template>
 
   <xsl:template match="index-term[not(parent::index-term)]" mode="jats2html">
