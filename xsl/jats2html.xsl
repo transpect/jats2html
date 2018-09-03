@@ -202,7 +202,7 @@
     <xsl:element name="{if($xhtml-version eq '5.0') 
                         then 'section' 
                         else 'div'}">
-      <xsl:attribute name="class" select="local-name(), 'titlepage'"/>
+      <xsl:attribute name="class" select="local-name(), 'title-page'"/>
       <xsl:apply-templates select="@*, node()" mode="jats2html-create-title"/>
       <xsl:call-template name="render-metadata-sections"/>
     </xsl:element>
