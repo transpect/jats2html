@@ -2309,7 +2309,7 @@
   
   <!-- Drop stuff that is mentioned already in the metadata. Override this if you want to render this -->
   
-  <xsl:template match="collection-id|book-id|orcid-id|funding-id|subj-group|object-id" mode="jats2html-create-title"/>
+  <xsl:template match="collection-id|book-id|orcid-id|funding-id|subj-group|object-id|pub-date" mode="jats2html-create-title"/>
   
   <!-- drop all attributes which are not matched by other templates -->
   
