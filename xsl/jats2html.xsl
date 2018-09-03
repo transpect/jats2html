@@ -2316,7 +2316,18 @@
   
   <!-- Drop stuff that is mentioned already in the metadata. Override this if you want to render this -->
   
-  <xsl:template match="award-id|collection-id|book-id|orcid-id|funding-id|subj-group|object-id|pub-date|notes" mode="jats2html-create-title"/>
+  <xsl:template match="aff
+                      |award-id
+                      |collection-id
+                      |book-id
+                      |orcid-id
+                      |funding-id
+                      |subj-group
+                      |object-id
+                      |pub-date
+                      |notes
+                      |kwd-group
+                      |funding-source/award-group" mode="jats2html-create-title"/>
   
   <!-- drop all attributes which are not matched by other templates -->
   
