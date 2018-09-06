@@ -1938,6 +1938,7 @@
         <xsl:sequence select="count($elt/ancestor::*[ancestor::boxed-text]) + 3"/>
       </xsl:when>
       <xsl:when test="$elt/parent::abstract
+                   or $elt/parent::trans-abstract
                    or $elt/parent::ack
                    or $elt/parent::app
                    or $elt/parent::app-group 
