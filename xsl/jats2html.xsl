@@ -2274,6 +2274,12 @@
     </div>
   </xsl:template>
   
+  <xsl:template match="abstract|trans-abstract" mode="jats2html-create-title">
+    <div class="{local-name()}">
+      <xsl:apply-templates select="@*, node()" mode="jats2html"/>      
+    </div>
+  </xsl:template>
+  
   <!-- default handler for creating simple divs and spans with *[@class eq local-name()]-->
   
   <xsl:template match="award-group
