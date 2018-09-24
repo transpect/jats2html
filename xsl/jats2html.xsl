@@ -262,13 +262,11 @@
   
   <!-- everything that goes into a div (except footnote-like content): -->
   <xsl:template match="*[name() = $default-structural-containers][$divify-sections = 'yes']
-                      |fig
-                      |caption
                       |abstract
                       |verse-group" 
                 mode="jats2html" priority="3">
     <xsl:element name="{if($xhtml-version eq '5.0' 
-                           and not(local-name() = ('fig', 'caption', 'abstract', 'verse-group'))) 
+                           and not(local-name() = ('abstract', 'verse-group'))) 
                         then 'section' 
                         else 'div'}">
       <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
@@ -384,7 +382,6 @@
                       |array 
                       |abbrev
                       |table 
-                      |caption
                       |contrib
                       |mixed-citation
                       |element-citation
@@ -836,9 +833,25 @@
   </xsl:template>
   
   <xsl:template match="fig" mode="jats2html">
-    <div class="{local-name()}">
-      <xsl:call-template name="css:other-atts"/>
+    <xsl:element name="{if($xhtml-version eq '5.0') then 'fig' else 'div'}">
+      <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>  
+      <xsl:call-template name="css:other-atts"/>  
       <xsl:apply-templates select="* except (label | caption | permissions), caption, permissions" mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="fig/caption[$xhtml-version eq '5.0']
+                      |graphic/caption[$xhtml-version eq '5.0']" mode="jats2html" priority="5">
+    <figcaption>
+      <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
+      <xsl:call-template name="css:content"/>
+    </figcaption>
+  </xsl:template>
+  
+  <xsl:template match="caption" mode="jats2html">
+    <div class="{local-name()}">
+      <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
+      <xsl:call-template name="css:content"/>
     </div>
   </xsl:template>
   
@@ -1509,9 +1522,15 @@
   
   <xsl:template match="graphic | inline-graphic" mode="jats2html">
     <img alt="{(alt-text, replace((@xlink:title, @xlink:href)[1], '^(.+)/([^/]+)$', '$2'))[1]}">
-    	<xsl:apply-templates select="@srcpath, @xlink:href" mode="#current"/>
-      <xsl:call-template name="css:content"/>
+      <xsl:apply-templates select="@srcpath, @xlink:href" mode="#current"/>
     </img>
+    <xsl:apply-templates select="* except alt-text" mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="graphic[caption and not(parent::fig)][$xhtml-version eq '5.0']" mode="jats2html" priority="5">
+    <figure class="{local-name()}">
+      <xsl:next-match/>
+    </figure>
   </xsl:template>
   
   <xsl:template match="alt-text" mode="jats2html"/>
