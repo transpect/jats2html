@@ -203,9 +203,14 @@
                         then 'section' 
                         else 'div'}">
       <xsl:attribute name="class" select="local-name(), 'title-page'"/>
-      <xsl:apply-templates select="@*, node()" mode="jats2html-create-title"/>
+      <xsl:call-template name="create-title-page"/>
       <xsl:call-template name="render-metadata-sections"/>
     </xsl:element>
+  </xsl:template>
+  
+  <!-- override this if you want to specify which elements appear in what order -->
+  <xsl:template name="create-title-page">
+    <xsl:apply-templates select="@*, node()" mode="jats2html-create-title"/>
   </xsl:template>
   
    <xsl:template match="sec" mode="epub-alternatives">
