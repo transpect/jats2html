@@ -202,14 +202,15 @@
     <xsl:element name="{if($xhtml-version eq '5.0') 
                         then 'section' 
                         else 'div'}">
-      <xsl:attribute name="class" select="local-name(), 'title-page'"/>
-      <xsl:call-template name="create-title-page"/>
+      <xsl:attribute name="class" select="local-name()"/>
+      <xsl:apply-templates select="@*" mode="jats2html"/>
+      <xsl:call-template name="create-title-pages"/>
       <xsl:call-template name="render-metadata-sections"/>
     </xsl:element>
   </xsl:template>
   
   <!-- override this if you want to specify which elements appear in what order -->
-  <xsl:template name="create-title-page">
+  <xsl:template name="create-title-pages">
     <xsl:apply-templates select="@*, node()" mode="jats2html-create-title"/>
   </xsl:template>
   
@@ -2253,6 +2254,25 @@
     </h5>
   </xsl:template>
   
+  <xsl:template match="contrib-group" mode="jats2html-create-title">
+    <div class="{local-name()}">
+      <xsl:for-each-group select="contrib" group-by="@contrib-type">
+        <xsl:sort select="jats2html:sort-contrib(current-grouping-key())"/>
+        <div class="{current-grouping-key()}">
+          <xsl:apply-templates select="current-group()" mode="#current"/>
+        </div>
+      </xsl:for-each-group>
+      <xsl:apply-templates select="* except contrib" mode="#current"/>
+    </div>
+  </xsl:template>
+  
+  <xsl:function name="jats2html:sort-contrib" as="xs:integer">
+    <xsl:param name="contrib-type" as="xs:string?"/>
+    <xsl:sequence select="     if(matches($contrib-type, 'editor', 'i')) then 2 
+                          else if(matches($contrib-type, 'author', 'i')) then 1
+                          else 0"/>
+  </xsl:function>
+  
   <xsl:template match="contrib" mode="jats2html-create-title">
     <div class="{concat(local-name(), ' ', @contrib-type)}">
       <xsl:apply-templates select="anonymous, (string-name, name)[1]" mode="#current"/>
@@ -2311,7 +2331,6 @@
   <!-- default handler for creating simple divs and spans with *[@class eq local-name()]-->
   
   <xsl:template match="award-group
-                      |contrib-group
                       |funding-group
                       |funding-source
                       |funding-statement
