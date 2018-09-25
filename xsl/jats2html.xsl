@@ -497,7 +497,7 @@
     <xsl:attribute name="class" select="name()"/>
   </xsl:template>
   
-  <xsl:template match="@srcpath" mode="jats2html jats2html-create-title jats2html-create-title-spans">
+  <xsl:template match="@srcpath" mode="jats2html jats2html-create-title">
     <xsl:if test="$srcpaths eq 'yes'">
       <xsl:copy/>  
     </xsl:if>
@@ -1903,7 +1903,7 @@
   
   <xsl:template match="ref-type-group[@type = ('sec', 'part', 'chapter')]/rendering[@type = ('title', 'number')]" mode="render-xref">
     <xsl:value-of select="key('l10n-string', if(count(item) gt 1) then ../@type else concat(../@type, 's'), $l10n)"/>
-    <xsl:text>&#xa0;</xsl:text>
+    <xsl:text>&#xa;</xsl:text>
     <xsl:for-each select="item">
       <xsl:apply-templates select="." mode="#current"/>
       <xsl:if test="position() lt last()">
@@ -2222,17 +2222,8 @@
     </div>
   </xsl:template>
   
-  <xsl:template match="collection-meta/title-group/title
-                      |book-title-group/book-title
-                      |collection-meta/title-group/label
-                      |book-title-group/label" mode="jats2html-create-title-spans">
-    <span class="{local-name()}">
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
-    </span>
-  </xsl:template>
-  
   <xsl:template match="subtitle" mode="jats2html-create-title">
-    <h2 class="{local-name()}">
+    <h2 class="{if(ancestor::collection-meta) then 'collection-subtitle' else local-name()}">
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </h2>
   </xsl:template>
@@ -2259,20 +2250,18 @@
   
   <xsl:template match="contrib" mode="jats2html-create-title">
     <div class="{concat(local-name(), ' ', @contrib-type)}">
-      <div class="name">
-        <xsl:apply-templates select="anonymous, (string-name, name)[1]" mode="#current"/>
-      </div>
-      <div class="aff">
-        <xsl:apply-templates select="@*, xref" mode="#current"/>
-      </div>
+      <xsl:apply-templates select="anonymous, (string-name, name)[1]" mode="#current"/>
+      <xsl:apply-templates select="xref" mode="#current"/>
     </div>
   </xsl:template>
   
   <xsl:template match="contrib/xref" mode="jats2html-create-title">
     <xsl:variable name="ref" select="@rid" as="attribute(rid)"/>
-    <span class="{local-name()}">
-      <xsl:apply-templates select="@*, ancestor::contrib-group/aff[@id eq $ref]" mode="#current"/>  
-    </span>
+    <p class="aff">
+      <span class="{local-name()}">
+        <xsl:apply-templates select="@*, ancestor::contrib-group/aff[@id eq $ref]" mode="#current"/>  
+      </span>
+    </p>
   </xsl:template>
   
   <xsl:template match="aff" mode="jats2html-create-title">
@@ -2287,17 +2276,31 @@
   </xsl:template>
   
   <xsl:template match="name" mode="jats2html-create-title">
-    <div class="{local-name()}">
-      <xsl:apply-templates select="@*, surname" mode="#current"/>
-      <xsl:text>&#x20;</xsl:text>
-      <xsl:apply-templates select="given-names" mode="#current"/>      
-    </div>
+    <p class="{local-name()}">
+      <xsl:apply-templates select="@*, given-names" mode="#current"/>
+      <xsl:text>&#xa;</xsl:text>
+      <xsl:apply-templates select="surname" mode="#current"/>
+    </p>
+  </xsl:template>
+  
+  <xsl:template match="string-name" mode="jats2html-create-title">
+    <p class="name">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>  
+    </p>
   </xsl:template>
   
   <xsl:template match="abstract|trans-abstract" mode="jats2html-create-title">
     <div class="{local-name()}">
       <xsl:apply-templates select="@*, node()" mode="jats2html"/>      
     </div>
+  </xsl:template>
+  
+  <xsl:template match="volume-in-collection" mode="jats2html-create-title">
+    <p class="{local-name()}">
+      <xsl:apply-templates select="volume-title" mode="jats2html-create-title"/>
+      <xsl:text>&#xa;</xsl:text>
+      <xsl:apply-templates select="volume-number" mode="jats2html-create-title"/>
+    </p>
   </xsl:template>
   
   <!-- default handler for creating simple divs and spans with *[@class eq local-name()]-->
@@ -2310,13 +2313,25 @@
                       |fn-group
                       |funding-group
                       |string-name
-                      |trans-title-group
-                      |volume-in-collection
-                      |volume-number
-                      |volume-title" mode="jats2html-create-title">
+                      |trans-title-group" mode="jats2html-create-title">
     <div class="{local-name()}">
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </div>
+  </xsl:template>
+  
+  <xsl:template match="collection-meta/title-group/title
+                      |book-title-group/book-title
+                      |collection-meta/title-group/label
+                      |book-title-group/label
+                      |anonymous
+                      |given-names
+                      |string-name
+                      |surname
+                      |volume-title
+                      |volume-number" mode="jats2html-create-title">
+    <span class="{local-name()}">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </span>
   </xsl:template>
   
   <xsl:template match="isbn|issn|issn-l" mode="jats2html-create-title">
@@ -2325,19 +2340,11 @@
       <span class="{local-name()}-name">
         <xsl:value-of select="upper-case(local-name())"/>
       </span>
-        <span class="{local-name()}-value">
-          <xsl:apply-templates mode="#current"/>
-        </span>
+      <xsl:text>&#xa;</xsl:text>
+      <span class="{local-name()}-value">
+        <xsl:apply-templates mode="#current"/>
+      </span>
     </div>
-  </xsl:template>
-  
-  <xsl:template match="anonymous
-                      |given-names
-                      |string-name
-                      |surname" mode="jats2html-create-title">
-    <span class="{local-name()}">
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
-    </span>
   </xsl:template>
   
   <!-- Drop stuff that is mentioned already in the metadata. Override this if you want to render this -->
