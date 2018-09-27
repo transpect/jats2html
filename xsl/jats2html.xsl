@@ -240,7 +240,8 @@
   </xsl:template>
   
   <xsl:variable name="default-structural-containers" as="xs:string+"
-                select="('book-part', 
+                select="('body',
+                         'book-part', 
                          'book-body', 
                          'front', 
                          'front-matter', 
@@ -294,7 +295,7 @@
     </xsl:choose>
    </xsl:template>
   
-  <xsl:template match="body[not(ancestor::body)]
+  <xsl:template match="body[not(descendant::body)]
                       |named-book-part-body
                       |app[not(ancestor::app-group)]
                       |app-group
