@@ -241,7 +241,6 @@
   
   <xsl:variable name="default-structural-containers" as="xs:string+"
                 select="('book-part', 
-                         'body', 
                          'book-body', 
                          'front', 
                          'front-matter', 
@@ -251,8 +250,7 @@
                          'back',
                          'sec', 
                          'ack', 
-                         'abstract', 
-                         'app', 
+                         'abstract',
                          'glossary',
                          'ref-list', 
                          'dedication', 
@@ -261,13 +259,13 @@
                          'contrib-group',
                          'fn-group')"/>
   
-  <xsl:template match="*[name() = $default-structural-containers]" 
+  <xsl:template match="*[local-name() = $default-structural-containers]" 
                 mode="jats2html" priority="2">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
   <!-- everything that goes into a div (except footnote-like content): -->
-  <xsl:template match="*[name() = $default-structural-containers][$divify-sections = 'yes']
+  <xsl:template match="*[local-name() = $default-structural-containers][$divify-sections = 'yes']
                       |abstract
                       |verse-group" 
                 mode="jats2html" priority="3">
@@ -282,11 +280,11 @@
   
   <xsl:variable name="default-title-containers" as="xs:string+" select="('book-title-group', 'title-group')"/>
   
-  <xsl:template match="*[name() = $default-title-containers]" 
+  <xsl:template match="*[local-name() = $default-title-containers]" 
                 mode="jats2html" priority="3">
     <xsl:choose>
       <xsl:when test="$divify-title-groups = 'yes'">
-        <div class="{name()}">
+        <div class="{local-name()}">
           <xsl:call-template name="css:content"/>
         </div>
       </xsl:when>
@@ -296,14 +294,14 @@
     </xsl:choose>
    </xsl:template>
   
-  <xsl:template match="body[not(descendant::body)]
+  <xsl:template match="body[not(ancestor::body)]
                       |named-book-part-body
                       |app[not(ancestor::app-group)]
                       |app-group
                       |glossary" mode="jats2html" priority="1.5">
     <xsl:choose>
       <xsl:when test="$divify-sections = 'yes'">
-        <div class="{name()}">
+        <div class="{local-name()}">
           <xsl:apply-templates mode="#current"/>
         </div>
         <xsl:call-template name="jats2html:footnotes"/>
@@ -2066,10 +2064,6 @@
     <meta name="DCTERMS.title" content="{.}" />
   </xsl:template>
   
-  <xsl:template match="publisher-name" mode="jats2html-create-meta-tags">
-    <meta name="DCTERMS.publisher" content="{.}" />
-  </xsl:template>
-  
   <xsl:template match="contrib" mode="jats2html-create-meta-tags">
     <meta name="DCTERMS.contributor" content="{(string-name, 
                                                 string-join((name/surname, name/given-names), ' '))[1]}" />
@@ -2328,6 +2322,12 @@
     </p>
   </xsl:template>
   
+  <xsl:template match="publisher-name" mode="jats2html-create-title">
+    <p class="{local-name()}">
+      <xsl:apply-templates select="@*, node()" mode="jats2html"/>
+    </p>
+  </xsl:template>
+  
   <!-- default handler for creating simple divs and spans with *[@class eq local-name()]-->
   
   <xsl:template match="award-group
@@ -2336,6 +2336,7 @@
                       |funding-statement
                       |fn-group
                       |funding-group
+                      |publisher
                       |string-name
                       |trans-title-group" mode="jats2html-create-title">
     <div class="{local-name()}">
