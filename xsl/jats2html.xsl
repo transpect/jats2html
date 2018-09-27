@@ -2064,6 +2064,10 @@
     <meta name="DCTERMS.title" content="{.}" />
   </xsl:template>
   
+  <xsl:template match="publisher-name" mode="jats2html-create-meta-tags">
+    <meta name="DCTERMS.publisher" content="{.}" />
+  </xsl:template>
+  
   <xsl:template match="contrib" mode="jats2html-create-meta-tags">
     <meta name="DCTERMS.contributor" content="{(string-name, 
                                                 string-join((name/surname, name/given-names), ' '))[1]}" />
