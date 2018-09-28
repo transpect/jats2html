@@ -891,9 +891,6 @@
       <xsl:when test="$context[self::*:pb]">
         <xsl:attribute name="epub:type" select="'pagebreak'"/>
       </xsl:when>
-      <xsl:when test="$context[self::*:front-matter]">
-        <xsl:attribute name="epub:type" select="'frontmatter'"/>
-      </xsl:when>
       <xsl:when test="$context[self::*:front-matter-part[@book-part-type]
                               [some $class in $frontmatter-parts 
                                satisfies matches($class, @book-part-type)]]">
@@ -939,6 +936,12 @@
       </xsl:when>
       <xsl:when test="$context[self::*:notes]">
         <xsl:attribute name="epub:type" select="'footnotes'"/>
+      </xsl:when>
+      <xsl:when test="$context[self::*:front-matter]">
+        <xsl:attribute name="epub:type" select="'frontmatter'"/>
+      </xsl:when>
+      <xsl:when test="$context[self::*:book-body]">
+        <xsl:attribute name="epub:type" select="'bodymatter'"/>
       </xsl:when>
       <xsl:when test="$context[self::*:book-back]">
         <xsl:attribute name="epub:type" select="'backmatter'"/>
