@@ -133,18 +133,18 @@
   </xsl:template>
 
   <xsl:template match="*" mode="jats2html" priority="-1">
-    <!--<xsl:if test="$debug eq 'yes'">
+    <xsl:if test="$debug eq 'yes'">
       <xsl:message>jats2html: unhandled: <xsl:apply-templates select="." mode="css:unhandled"/></xsl:message>
-    </xsl:if>-->
+    </xsl:if>
     <xsl:copy>
       <xsl:apply-templates select="@* | node()" mode="#current" />  
     </xsl:copy>
   </xsl:template>
   
   <xsl:template match="@*" mode="jats2html">
-    <!--<xsl:if test="$debug eq 'yes'">
-      <xsl:message>jats2html: unhandled attr: <xsl:apply-templates select="." mode="css:unhandled"/></xsl:message>
-    </xsl:if>-->
+    <xsl:if test="$debug eq 'yes'">
+      <!--<xsl:message>jats2html: unhandled attr: <xsl:apply-templates select="." mode="css:unhandled"/></xsl:message>-->
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="@dtd-version" mode="jats2html" />
@@ -240,25 +240,26 @@
   </xsl:template>
   
   <xsl:variable name="default-structural-containers" as="xs:string+"
-                select="('body',
-                         'book-part', 
-                         'book-body', 
-                         'front', 
-                         'front-matter', 
-                         'front-matter-part', 
-                         'book-back',
-                         'book-app',
+                select="('abstract',
+                         'ack',
                          'back',
-                         'sec', 
-                         'ack', 
-                         'abstract',
-                         'glossary',
-                         'ref-list', 
-                         'dedication', 
-                         'foreword', 
-                         'preface', 
+                         'body',
+                         'book-app',
+                         'book-back',
+                         'book-body',
+                         'book-part',
                          'contrib-group',
-                         'fn-group')"/>
+                         'dedication',
+                         'fn-group',
+                         'foreword',
+                         'front',
+                         'front-matter',
+                         'front-matter-part',
+                         'glossary',
+                         'named-book-part-body',
+                         'preface',
+                         'ref-list',
+                         'sec')"/>
   
   <xsl:template match="*[local-name() = $default-structural-containers]" 
                 mode="jats2html" priority="2">
@@ -295,23 +296,14 @@
     </xsl:choose>
    </xsl:template>
   
-  <xsl:template match="body[not(descendant::body)]
+  <xsl:template match="ack
+                      |body[not(ancestor::body)]
                       |named-book-part-body
                       |app[not(ancestor::app-group)]
                       |app-group
-                      |glossary" mode="jats2html" priority="1.5">
-    <xsl:choose>
-      <xsl:when test="$divify-sections = 'yes'">
-        <div class="{local-name()}">
-          <xsl:apply-templates mode="#current"/>
-        </div>
-        <xsl:call-template name="jats2html:footnotes"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates mode="#current"/>
-        <xsl:call-template name="jats2html:footnotes"/>
-      </xsl:otherwise>
-    </xsl:choose>
+                      |glossary" mode="jats2html" priority="5">
+    <xsl:next-match/>
+    <xsl:call-template name="jats2html:footnotes"/>
   </xsl:template>
   
   <xsl:template name="jats2html:footnotes">
@@ -475,7 +467,7 @@
     <xsl:attribute name="class" select="string-join((name(), @publication-type, $att), ' ')"/>
   </xsl:template>
 
-  <xsl:template match="mixed-citation|element-citation" mode="jats2html" priority="2"> 
+  <xsl:template match="mixed-citation|element-citation" mode="jats2html" priority="3"> 
     <span>
       <xsl:next-match/>
     </span>
@@ -1185,13 +1177,13 @@
     <xsl:attribute name="css:font-variant" select="'small-caps'"/>
   </xsl:template>
   
-  <xsl:template match="ref" mode="jats2html">
+  <xsl:template match="ref" mode="jats2html" priority="5">
     <p class="{name()}">
       <xsl:next-match/>
     </p>
   </xsl:template>
 
-  <xsl:template match="ref[@id]/node()[last()][$bib-backlink-type = 'letter']" mode="jats2html">
+  <xsl:template match="ref[@id]/*[last()][$bib-backlink-type = 'letter']" mode="jats2html" priority="2">
     <xsl:next-match/>
     <xsl:text>&#x2002;</xsl:text>
     <xsl:for-each select="key('by-rid', ../@id)">
@@ -1204,7 +1196,7 @@
     </xsl:for-each>
   </xsl:template>
   
-  <xsl:template match="ref" mode="jats2html">
+  <xsl:template match="ref" mode="jats2html" priority="1.5">
     <xsl:apply-templates select="(mixed-citation, element-citation)[1]" mode="#current"/>
   </xsl:template>
 
@@ -1730,6 +1722,7 @@
     
   <!-- will be discarded -->
   <xsl:variable name="jats2html:masterpageobjects-para-regex" select="'tr_(pagenumber|columntitle)'" as="xs:string"/>
+  
   <xsl:template match="*[matches(@role, $jats2html:masterpageobjects-para-regex)]" mode="jats2html"/>
 
   <xsl:template match="@colspan | @rowspan" mode="jats2html">
@@ -1761,6 +1754,12 @@
   <xsl:key name="rule-by-name" match="css:rule" use="@name"/> 
   
   <xsl:variable name="root" select="/" as="document-node()"/>
+  
+  <!--<xsl:template match="xref" mode="jats2html">
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>-->
 
   <xsl:template match="xref" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
@@ -1780,20 +1779,15 @@
                 <!-- in some cases an xref does not have an @id, so we will not create dulicate @id="xref_" attributes -->
                 <xsl:attribute name="id" select="concat('xref_', @id)"/>  
               </xsl:if>
-              <!--<xsl:if test=". is (key('by-rid', $linked-items[1]/@id, $root))[1]">
-                <xsl:attribute name="id" select="concat('xref_', $linked-items[1]/@id)"/>
-              </xsl:if>-->
               <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
             </a>
-            <xsl:if test="$linked-items[1]/@ref-type = 'ref'"><!-- bibliography entry -->
-              <xsl:if test="$bib-backlink-type = 'letter'">
-                <span class="cit">
-                  <xsl:apply-templates select="@srcpath" mode="#current"/>
-                  <xsl:text>[</xsl:text>
-                  <xsl:number format="a" value="index-of(for $xr in key('by-rid', @rid, $root) return $xr/@id, @id)"/>
-                  <xsl:text>]</xsl:text>
-                </span>
-              </xsl:if>
+            <xsl:if test="$linked-items[1]/@ref-type = 'ref' and $bib-backlink-type = 'letter'"><!-- bibliography entry -->
+              <span class="cit">
+                <xsl:apply-templates select="@srcpath" mode="#current"/>
+                <xsl:text>[</xsl:text>
+                <xsl:number format="a" value="index-of(for $xr in key('by-rid', @rid, $root) return $xr/@id, @id)"/>
+                <xsl:text>]</xsl:text>
+              </span>
             </xsl:if>
           </xsl:when>
           <xsl:when test="count($linked-items) eq 0">
@@ -1839,7 +1833,7 @@
           </ref-type-group>
         </xsl:for-each-group>    
       </linked-items>
-    </xsl:variable>    
+    </xsl:variable>
     <xsl:apply-templates select="$grouped-items" mode="render-xref"/>
   </xsl:template>
 
