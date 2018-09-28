@@ -1184,7 +1184,7 @@
   </xsl:template>
 
   <xsl:template match="ref[@id]/*[last()][$bib-backlink-type = 'letter']" mode="jats2html" priority="2">
-    <xsl:variable name="ref-id" select="parent::*/@id" as="xs:string"/>
+    <xsl:variable name="ref-id" select="(parent::*/@id, generate-id(parent::*))[1]" as="xs:string"/>
     <xsl:next-match/>
     <xsl:text>&#x2002;</xsl:text>
     <xsl:for-each select="key('by-rid', parent::ref/@id)">
@@ -1767,7 +1767,7 @@
     <xsl:variable name="linked-items" as="element(linked-item)*">
       <xsl:apply-templates select="key('by-id', tokenize(@rid, '\s+'), $root)" mode="linked-item"/>
     </xsl:variable>
-    <xsl:variable name="xref-id" select="@id" as="xs:string?"/>
+    <xsl:variable name="xref-id" select="(@id, generate-id())[1]" as="xs:string"/>
     <xsl:choose>
       <xsl:when test="node()">
         <!-- explicit referring text -->
@@ -1819,7 +1819,7 @@
   
   <xsl:template name="render-rids">
     <xsl:param name="linked-items" as="element(linked-item)*"/>
-    <xsl:param name="xref-id" as="xs:string?" tunnel="yes"/>
+    <xsl:param name="xref-id" as="xs:string" tunnel="yes"/>
     <xsl:variable name="grouped-items" as="element(linked-items)" xmlns="">
       <linked-items>
         <xsl:for-each-group select="$linked-items" group-by="@ref-type">
