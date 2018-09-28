@@ -1186,7 +1186,7 @@
   <xsl:template match="ref[@id]/*[last()][$bib-backlink-type = 'letter']" mode="jats2html" priority="2">
     <xsl:next-match/>
     <xsl:text>&#x2002;</xsl:text>
-    <xsl:for-each select="key('by-rid', ../@id)">
+    <xsl:for-each select="key('by-rid', parent::ref/@id)">
       <a href="#xref_{@id}">
         <xsl:number format="a" value="position()"/>
       </a>
@@ -1766,6 +1766,7 @@
     <xsl:variable name="linked-items" as="element(linked-item)*">
       <xsl:apply-templates select="key('by-id', tokenize(@rid, '\s+'), $root)" mode="linked-item"/>
     </xsl:variable>
+    <xsl:variable name="xref-id" select="@id" as="xs:string?"/>
     <xsl:choose>
       <xsl:when test="node()">
         <!-- explicit referring text -->
@@ -1809,6 +1810,7 @@
         <xsl:call-template name="render-rids">
           <xsl:with-param name="linked-items" select="$linked-items"/>
           <xsl:with-param name="in-toc" select="$in-toc" tunnel="yes"/>
+          <xsl:with-param name="xref-id" select="$xref-id" tunnel="yes"/>
         </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
@@ -1816,6 +1818,7 @@
   
   <xsl:template name="render-rids">
     <xsl:param name="linked-items" as="element(linked-item)*"/>
+    <xsl:param name="xref-id" as="xs:string?" tunnel="yes"/>
     <xsl:variable name="grouped-items" as="element(linked-items)" xmlns="">
       <linked-items>
         <xsl:for-each-group select="$linked-items" group-by="@ref-type">
@@ -1824,14 +1827,14 @@
               <rendering type="{current-grouping-key()}">
                 <xsl:variable name="context" select="." as="element(*)"/>
                 <xsl:for-each select="current-group()/(@* | *)[name() = current-grouping-key()]">
-                  <item id="{$context/@id}">
+                  <item id="{$context/@id}" xref-id="{$xref-id}">
                     <xsl:apply-templates select="." mode="render-xref"/>
                   </item>
                 </xsl:for-each>
               </rendering>
             </xsl:for-each-group>  
           </ref-type-group>
-        </xsl:for-each-group>    
+        </xsl:for-each-group>
       </linked-items>
     </xsl:variable>
     <xsl:apply-templates select="$grouped-items" mode="render-xref"/>
@@ -1918,7 +1921,7 @@
         <xsl:apply-templates mode="#current"/>
       </xsl:when>
       <xsl:otherwise>
-        <a href="#{@id}">
+        <a href="#{@id}" id="xref_{@xref-id}">
           <xsl:apply-templates mode="#current"/>
         </a>    
       </xsl:otherwise>
