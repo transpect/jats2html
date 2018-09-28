@@ -275,6 +275,9 @@
                            and not(local-name() = ('abstract', 'verse-group'))) 
                         then 'section' 
                         else 'div'}">
+      <xsl:if test="tr:create-epub-type-attribute(.)">
+        <xsl:attribute name="epub:type" select="tr:create-epub-type-attribute(.)"/>
+      </xsl:if>
       <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
       <xsl:next-match/>
     </xsl:element>
@@ -888,6 +891,9 @@
       <xsl:when test="$context[self::*:pb]">
         <xsl:attribute name="epub:type" select="'pagebreak'"/>
       </xsl:when>
+      <xsl:when test="$context[self::*:front-matter]">
+        <xsl:attribute name="epub:type" select="'frontmatter'"/>
+      </xsl:when>
       <xsl:when test="$context[self::*:front-matter-part[@book-part-type]
                               [some $class in $frontmatter-parts 
                                satisfies matches($class, @book-part-type)]]">
@@ -933,6 +939,9 @@
       </xsl:when>
       <xsl:when test="$context[self::*:notes]">
         <xsl:attribute name="epub:type" select="'footnotes'"/>
+      </xsl:when>
+      <xsl:when test="$context[self::*:book-back]">
+        <xsl:attribute name="epub:type" select="'backmatter'"/>
       </xsl:when>
     </xsl:choose>
    </xsl:function>
