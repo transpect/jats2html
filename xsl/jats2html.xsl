@@ -261,8 +261,7 @@
                          'ref-list',
                          'sec')"/>
   
-  <xsl:template match="*[local-name() = $default-structural-containers]" 
-                mode="jats2html" priority="2">
+  <xsl:template match="*[local-name() = $default-structural-containers]" mode="jats2html" priority="2">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
@@ -311,6 +310,7 @@
   
   <xsl:template name="jats2html:footnotes">
     <xsl:param name="recount-footnotes" as="xs:boolean?" tunnel="yes"/>
+    <xsl:param name="static-footnotes" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="footnotes" select=".//fn" as="element(fn)*"/>
     <xsl:if test="$footnotes">
       <div class="footnotes">
@@ -601,20 +601,29 @@
   <xsl:template match="table-wrap[exists(descendant::*[self::p])][every $child in .//p satisfies ($child/@specific-use = 'PrintOnly')]" mode="epub-alternatives"/>
   <xsl:template match="disp-quote[exists(descendant::*[self::p])][every $child in * satisfies ($child/@specific-use = 'PrintOnly')]" mode="epub-alternatives"/>
 
-
   <xsl:template match="*[fn]" mode="jats2html" priority="1">
     <xsl:next-match/>
   </xsl:template>
 
   <xsl:template match="*" mode="footnotes">
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
+    <xsl:param name="static-footnotes" tunnel="yes" as="xs:boolean?"/>
     <div class="{name()}" id="fn_{@id}">
       <span class="note-mark">
-        <a href="#fna_{@id}">
-          <sup>
-            <xsl:value-of select="index-of($footnote-ids, @id)"/>
-          </sup>
-        </a>
+        <xsl:choose>
+          <xsl:when test="$static-footnotes">
+            <sup>
+              <xsl:value-of select="index-of($footnote-ids, @id)"/>
+            </sup>
+          </xsl:when>
+          <xsl:otherwise>
+            <a href="#fna_{@id}">
+              <sup>
+                <xsl:value-of select="index-of($footnote-ids, @id)"/>
+              </sup>
+            </a>
+          </xsl:otherwise>
+        </xsl:choose>
       </span>
       <xsl:apply-templates mode="jats2html"/>
     </div>
@@ -633,6 +642,15 @@
         </a>
       </span>
     </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="fn-group" mode="jats2html" priority="2.5">
+    <xsl:apply-templates select="@*, title" mode="#current"/>
+    <xsl:call-template name="jats2html:footnotes">
+      <xsl:with-param name="recount-footnotes" select="true()" as="xs:boolean?" tunnel="yes"/>
+      <xsl:with-param name="footnote-ids" select=".//fn/@id" as="xs:string*" tunnel="yes"/>
+      <xsl:with-param name="static-footnotes" select="true()" as="xs:boolean?" tunnel="yes"/>
+    </xsl:call-template>
   </xsl:template>
  
   <xsl:template match="xref[starts-with(@rid, 'id_endnote')]" mode="jats2html" priority="5">
