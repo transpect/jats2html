@@ -2291,11 +2291,14 @@
   
   <xsl:template match="contrib/xref" mode="jats2html-create-title">
     <xsl:variable name="ref" select="@rid" as="attribute(rid)"/>
-    <p class="aff">
-      <span class="{local-name()}">
-        <xsl:apply-templates select="@*, ancestor::contrib-group/aff[@id eq $ref]" mode="#current"/>  
-      </span>
-    </p>
+    <xsl:variable name="aff" select="ancestor::contrib-group/aff[@id eq $ref]" as="element(aff)?"/>
+    <xsl:if test="$aff">
+      <p class="aff">
+        <span class="{local-name()}">
+          <xsl:apply-templates select="@*, $aff" mode="#current"/>  
+        </span>
+      </p>  
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="aff" mode="jats2html-create-title">
@@ -2389,8 +2392,7 @@
   
   <!-- Drop stuff that is mentioned already in the metadata. Override this if you want to render this -->
   
-  <xsl:template match="aff
-                      |award-id
+  <xsl:template match="award-id
                       |collection-id
                       |book-id
                       |orcid-id
