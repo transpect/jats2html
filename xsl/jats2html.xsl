@@ -971,36 +971,94 @@
     <!-- Overwrite this regex in your adaptions to exclude titles containing this string in its content-type from being listed in the html toc -->
   </xsl:variable>
   
-  <xsl:template match="toc" mode="jats2html">
-    <div class="toc">
-      <xsl:sequence select="tr:create-epub-type-attribute(.)"/>
+  <!-- if no toc element is given, you can also invoke this with <xsl:call-template name="toc"/> -->
+  
+  <xsl:template match="toc" name="toc" mode="jats2html">
+    <xsl:variable name="headlines" as="element(title)*"
+                  select="//title[parent::sec[not(ancestor::boxed-text)]
+                                 |parent::title-group
+                                 |parent::app
+                                 |parent::ack
+                                 |parent::index-title-group
+                                 |parent::app-group
+                                 |parent::ref-list
+                                 |parent::glossary]
+                                 [not(ancestor::boxed-text or ancestor::toc)]
+                                 [jats2html:heading-level(.) le number((current()/@depth, 100)[1]) + 1]
+                                 [not(matches(@content-type, $jats2html:notoc-regex))]"/>
+    <xsl:variable name="headlines-by-level" as="element()*">
+      <xsl:apply-templates select="$headlines" mode="toc"/>
+    </xsl:variable>
+    <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
+      <xsl:attribute name="class" select="'toc'"/>
+      <xsl:attribute name="epub:type" select="'toc'"/>
       <xsl:choose>
-        <xsl:when test="exists(* except title-group)">
+        <xsl:when test="exists(self::toc/* except title-group)">
           <!-- explicitly rendered toc -->
           <xsl:apply-templates mode="jats2html"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:apply-templates select="title-group" mode="jats2html"/>
-          <xsl:apply-templates
-            select="//title[parent::sec[not(ancestor::boxed-text)]
-                           |parent::title-group
-                           |parent::app
-                           |parent::ack
-                           |parent::index-title-group
-                           |parent::app-group
-                           |parent::ref-list
-                           |parent::glossary]
-                           [not(ancestor::boxed-text or ancestor::toc)]
-                           [jats2html:heading-level(.) le number((current()/@depth, 100)[1]) + 1]
-                           [not(matches(@content-type, $jats2html:notoc-regex))]"
-            mode="toc"/>
+          <xsl:choose>
+            <xsl:when test="$xhtml-version eq '5.0'">
+              <xsl:variable name="max-level" select="max(for $i in $headlines return jats2html:heading-level($i))"/>
+              <ol class="ol-toc1">
+                <xsl:sequence select="jats2html:generate-toc($headlines-by-level, 1, $max-level)"/>  
+              </ol>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:sequence select="$headlines-by-level"/>    
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:otherwise>
       </xsl:choose>
-    </div>
+    </xsl:element>
   </xsl:template>
   
+  <xsl:function name="jats2html:generate-toc">
+    <xsl:param name="seq" as="element()*"/>
+    <xsl:param name="level" as="xs:integer"/>
+    <xsl:param name="max" as="xs:integer"/>
+    <!--<xsl:message select="'-\-\-\-\-', $level, $max"></xsl:message>-->
+    <xsl:choose>
+      <xsl:when test="$level lt $max">
+        <xsl:for-each-group select="$seq" 
+                            group-adjacent="matches(@class, 
+                                                    concat('toc[', 
+                                                    string-join((for $i in ($level to $max) return $i), '|'),
+                                                    ']')
+                                                    )">
+          <xsl:choose>
+            <xsl:when test="current-grouping-key() eq true() and $level ne 1">
+              <li class="toc{$level}">
+                <ol class="ol-toc{$level}">
+                  <xsl:sequence select="jats2html:generate-toc( current-group(), $level + 1, $max )"/>
+                </ol>
+              </li>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:sequence select="jats2html:generate-toc(current-group(), $level + 1, $max)"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each-group>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="$seq"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+  
+  <!--<xsl:function name="jats2html:generate-toc-list">
+    <xsl:param name="seq" as="element()+"/>
+    <xsl:param name="toc-level" as="xs:integer"/>
+    <xsl:for-each-group select="">
+      
+    </xsl:for-each-group>
+  </xsl:function>-->
+  
   <xsl:template match="title" mode="toc">
-    <p class="toc{jats2html:heading-level(.)}">
+    <xsl:element name="{if($xhtml-version eq '5.0') then 'li' else 'p'}">
+      <xsl:attribute name="class" select="concat('toc', jats2html:heading-level(.))"/>
       <a href="#{(@id, generate-id())[1]}">
         <xsl:if test="../label">
           <xsl:apply-templates select="../label/node()" mode="strip-indexterms-etc"/>
@@ -1010,7 +1068,7 @@
           <xsl:with-param name="in-toc" select="true()" as="xs:boolean" tunnel="yes"/>
         </xsl:apply-templates>
       </a>
-    </p>
+    </xsl:element>
   </xsl:template>
   
   <xsl:template match="ext-link" mode="jats2html" priority="3">
