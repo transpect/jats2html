@@ -991,7 +991,9 @@
     </xsl:variable>
     <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
       <xsl:attribute name="class" select="'toc'"/>
-      <xsl:attribute name="epub:type" select="'toc'"/>
+      <xsl:if test="$xhtml-version eq '5.0'">
+        <xsl:attribute name="epub:type" select="'toc'"/>
+      </xsl:if>
       <xsl:choose>
         <xsl:when test="exists(self::toc/* except title-group)">
           <!-- explicitly rendered toc -->
