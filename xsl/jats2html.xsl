@@ -1021,7 +1021,6 @@
     <xsl:param name="seq" as="element()*"/>
     <xsl:param name="level" as="xs:integer"/>
     <xsl:param name="max" as="xs:integer"/>
-    <!--<xsl:message select="'-\-\-\-\-', $level, $max"></xsl:message>-->
     <xsl:choose>
       <xsl:when test="$level lt $max">
         <xsl:for-each-group select="$seq" 
@@ -1049,15 +1048,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
-  
-  <!--<xsl:function name="jats2html:generate-toc-list">
-    <xsl:param name="seq" as="element()+"/>
-    <xsl:param name="toc-level" as="xs:integer"/>
-    <xsl:for-each-group select="">
-      
-    </xsl:for-each-group>
-  </xsl:function>-->
-  
+    
   <xsl:template match="title" mode="toc">
     <xsl:element name="{if($xhtml-version eq '5.0') then 'li' else 'p'}">
       <xsl:attribute name="class" select="concat('toc', jats2html:heading-level(.))"/>
