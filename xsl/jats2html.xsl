@@ -621,7 +621,7 @@
             </sup>
           </xsl:when>
           <xsl:otherwise>
-            <a href="#fna_{@id}">
+            <a href="#fna_{@id}" class="fn-link">
               <sup>
                 <xsl:value-of select="index-of($footnote-ids, @id)"/>
               </sup>
@@ -639,7 +639,7 @@
     <xsl:param name="recount-footnotes" tunnel="yes" as="xs:boolean?"/>
     <xsl:if test="not($in-toc)">
       <span class="note-anchor" id="fna_{@id}"><xsl:if test="$recount-footnotes"><xsl:processing-instruction name="recount" select="'yes'"/></xsl:if>
-        <a href="#fn_{@id}">
+        <a href="#fn_{@id}" class="fn-ref">
           <sup>
             <xsl:value-of select="index-of($footnote-ids, @id)"/>
           </sup>
@@ -1029,7 +1029,7 @@
     <xsl:param name="level" as="xs:integer"/>
     <xsl:param name="max" as="xs:integer"/>
     <xsl:choose>
-      <xsl:when test="$level lt $max">
+      <xsl:when test="$level &lt;= $max">
         <xsl:for-each-group select="$seq" 
                             group-adjacent="matches(@class, 
                                                     concat('toc[', 
