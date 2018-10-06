@@ -1052,7 +1052,7 @@
   <xsl:template match="title" mode="toc">
     <xsl:element name="{if($xhtml-version eq '5.0') then 'li' else 'p'}">
       <xsl:attribute name="class" select="concat('toc', jats2html:heading-level(.))"/>
-      <a href="#{(@id, generate-id())[1]}">
+      <a href="#{(@id, generate-id())[1]}" class="toc-link">
         <xsl:if test="../label">
           <xsl:apply-templates select="../label/node()" mode="strip-indexterms-etc"/>
           <xsl:text>&#x2002;</xsl:text>
