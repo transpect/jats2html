@@ -192,13 +192,10 @@
     </html>
   </xsl:template>
   
-  <xsl:template match="book-part-meta
+  <xsl:template match="book-meta
+                      |collection-meta
                       |front/journal-meta
                       |front/article-meta" mode="jats2html">
-    <xsl:call-template name="render-metadata-sections"/>
-  </xsl:template>
-  
-  <xsl:template match="book-meta|collection-meta" mode="jats2html">
     <xsl:element name="{if($xhtml-version eq '5.0') 
                         then 'section' 
                         else 'div'}">
