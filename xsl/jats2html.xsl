@@ -987,7 +987,10 @@
                                  |parent::app-group
                                  |parent::ref-list
                                  |parent::glossary]
-                                 [not(ancestor::boxed-text or ancestor::toc)]
+                                 [not(   ancestor::boxed-text 
+                                      or ancestor::toc 
+                                      or ancestor::collection-meta
+                                      or ancestor::book-meta)]
                                  [jats2html:heading-level(.) le number((current()/@depth, 100)[1]) + 1]
                                  [not(matches(@content-type, $jats2html:notoc-regex))]"/>
     <xsl:variable name="headlines-by-level" as="element()*">
