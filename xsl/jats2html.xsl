@@ -206,6 +206,13 @@
     </xsl:element>
   </xsl:template>
   
+  <xsl:template match="book-part-meta" mode="jats2html">
+    <xsl:call-template name="render-metadata-sections"/>
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="book-part-meta/*[not(self::title-group or self::contrib-group)]" mode="jats2html"/>
+  
   <!-- override this if you want to specify which elements appear in what order -->
   <xsl:template name="create-title-pages">
     <xsl:apply-templates select="@*, node()" mode="jats2html-create-title"/>
@@ -2240,12 +2247,14 @@
   <xsl:template name="render-metadata-sections">
     <xsl:apply-templates select="collection-meta
                                 |book-meta
+                                |book-part-meta
                                 |front/journal-meta
                                 |front/article-meta" mode="jats2html-render-metadata"/>
   </xsl:template>
   
   <xsl:template match="collection-meta
                       |book-meta
+                      |book-part-meta
                       |journal-meta
                       |article-meta" mode="jats2html-render-metadata">
     <div class="{local-name()} jats-meta">
