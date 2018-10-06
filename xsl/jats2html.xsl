@@ -1026,7 +1026,7 @@
         <xsl:for-each-group select="$seq" 
                             group-adjacent="matches(@class, 
                                                     concat('toc[', 
-                                                    string-join((for $i in ($level to $max) return $i), '|'),
+                                                    string-join((for $i in ($level to $max) return xs:string($i)), '|'),
                                                     ']')
                                                     )">
           <xsl:choose>
