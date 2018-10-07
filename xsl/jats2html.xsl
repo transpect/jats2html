@@ -767,7 +767,7 @@
   
   <xsl:template match="list[matches(@list-type, '^(simple|ndash|bullet)$')]" mode="jats2html">
     <ul>
-      <xsl:apply-templates select="@* except @list-type, node()" mode="#current"/>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
     </ul>
   </xsl:template>
   
