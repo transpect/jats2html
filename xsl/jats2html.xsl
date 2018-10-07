@@ -582,7 +582,8 @@
   <xsl:template match="speech/speaker" mode="jats2html">
     <span>
       <xsl:call-template name="css:content"/>
-    </span>   
+    </span>
+    <xsl:text>&#xa;</xsl:text>
   </xsl:template>
   
   <xsl:template match="*[p[@specific-use eq 'EpubAlternative']]" mode="epub-alternatives" priority="2">
@@ -609,22 +610,18 @@
     <xsl:next-match/>
   </xsl:template>
 
-  <xsl:template match="*" mode="footnotes">
+  <xsl:template match="fn" mode="footnotes">
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <xsl:param name="static-footnotes" tunnel="yes" as="xs:boolean?"/>
     <div class="{name()}" id="fn_{@id}">
       <span class="note-mark">
         <xsl:choose>
           <xsl:when test="$static-footnotes">
-            <sup>
-              <xsl:value-of select="index-of($footnote-ids, @id)"/>
-            </sup>
+            <xsl:value-of select="index-of($footnote-ids, @id)"/>
           </xsl:when>
           <xsl:otherwise>
             <a href="#fna_{@id}" class="fn-link">
-              <sup>
-                <xsl:value-of select="index-of($footnote-ids, @id)"/>
-              </sup>
+              <xsl:value-of select="index-of($footnote-ids, @id)"/>
             </a>
           </xsl:otherwise>
         </xsl:choose>
