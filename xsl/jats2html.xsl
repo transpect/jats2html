@@ -1458,7 +1458,7 @@
         <a id="ie_{@id}"/>
       </xsl:if>
       <xsl:for-each select="current-group()[empty(index-term | see)]">
-        <a href="#it_{@id}" id="ie_{@id}" epub:type="index-locator">
+        <a href="#it_{@id}" id="ie_{@id}" class="index-link" epub:type="index-locator">
           <xsl:value-of select="position()"/>
         </a>
         <xsl:if test="position() ne last()">
