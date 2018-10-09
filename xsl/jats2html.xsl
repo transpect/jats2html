@@ -620,14 +620,19 @@
             <xsl:value-of select="index-of($footnote-ids, @id)"/>
           </xsl:when>
           <xsl:otherwise>
-            <a href="#fna_{@id}" class="fn-link">
-              <xsl:value-of select="index-of($footnote-ids, @id)"/>
-            </a>
+            <xsl:call-template name="footnote-link"/>
           </xsl:otherwise>
         </xsl:choose>
       </span>
       <xsl:apply-templates mode="jats2html"/>
     </div>
+  </xsl:template>
+
+  <xsl:template name="footnote-link">
+    <xsl:param name="footnote-ids" as="xs:string*" tunnel="yes"/>
+    <a href="#fna_{@id}" class="fn-link">
+      <xsl:value-of select="index-of($footnote-ids, @id)"/>
+    </a>
   </xsl:template>
 
   <xsl:template match="fn" mode="jats2html">
