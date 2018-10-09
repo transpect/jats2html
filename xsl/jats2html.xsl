@@ -1454,7 +1454,8 @@
       <xsl:if test="exists(index-term)">
         <a id="ie_{@id}"/>
       </xsl:if>
-      <xsl:for-each select="current-group()[empty(index-term | see)]">
+      <xsl:for-each select="current-group()[empty(index-term | see)]
+                                           [not(jats2html:contains-token(@content-type, 'hub:not-placed-on-page'))]">
         <a href="#it_{@id}" id="ie_{@id}" class="index-link" epub:type="index-locator">
           <xsl:value-of select="position()"/>
         </a>
@@ -1493,7 +1494,8 @@
     <xsl:param name="root" as="document-node()" tunnel="yes"/>
     <!-- Context: see or see-also -->
     <xsl:variable name="target" as="element(index-term)?"
-      select="(key('jats2html:by-indext-term', concat(., ' (', ../term, ')'), $root),
+      select="(key('by-id', @id, $root)/self::index-term,
+               key('jats2html:by-indext-term', concat(., ' (', ../term, ')'), $root),
                key('jats2html:by-indext-term', ., $root))[1]"/>
     <xsl:choose>
       <xsl:when test="exists($target)">
@@ -2482,5 +2484,10 @@
   <!-- drop all attributes which are not matched by other templates -->
   
   <xsl:template match="@*" mode="jats2html-create-title"/>
-  
+
+  <xsl:function name="jats2html:contains-token" as="xs:boolean">
+    <xsl:param name="string" as="xs:string?"/>
+    <xsl:param name="token" as="xs:string"/>
+    <xsl:sequence select="tokenize($string, '\s+') = $token"/>
+  </xsl:function>
 </xsl:stylesheet>
