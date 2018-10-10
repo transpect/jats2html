@@ -150,6 +150,12 @@
   <xsl:template match="@dtd-version" mode="jats2html" />
   
   <xsl:template match="/*" mode="jats2html">
+    <xsl:param name="footnote-roots" tunnel="yes" select="//(ack
+                                                            |body[not(ancestor::body)]
+                                                            |named-book-part-body
+                                                            |app[not(ancestor::app-group)]
+                                                            |app-group
+                                                            |glossary)"/>
     <html>
       <xsl:apply-templates select="@xml:*" mode="#current"/>
       <head>
@@ -187,6 +193,7 @@
         <xsl:apply-templates mode="#current">
           <xsl:with-param name="footnote-ids" select="//fn/@id" as="xs:string*" tunnel="yes"/>
           <xsl:with-param name="root" select="root(.)" as="document-node()" tunnel="yes"/>
+          <xsl:with-param name="footnote-roots" as="element(*)*" tunnel="yes" select="$footnote-roots"/>
         </xsl:apply-templates>
       </body>
     </html>
@@ -302,25 +309,32 @@
     </xsl:choose>
    </xsl:template>
   
-  <xsl:template match="ack
-                      |body[not(ancestor::body)]
-                      |named-book-part-body
-                      |app[not(ancestor::app-group)]
-                      |app-group
-                      |glossary" mode="jats2html" priority="5">
+  <xsl:template match="*" mode="jats2html" priority="5">
+    <xsl:param name="footnote-roots" as="element(*)*" tunnel="yes"/>
     <xsl:next-match/>
-    <xsl:call-template name="jats2html:footnotes"/>
+    <xsl:if test="exists(. intersect $footnote-roots)">
+      <xsl:call-template name="jats2html:footnotes"/>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template name="jats2html:footnotes">
     <xsl:param name="recount-footnotes" as="xs:boolean?" tunnel="yes"/>
     <xsl:param name="static-footnotes" as="xs:boolean?" tunnel="yes"/>
-    <xsl:variable name="footnotes" select=".//fn" as="element(fn)*"/>
-    <xsl:if test="$footnotes">
+    <xsl:param name="footnote-roots" as="element(*)*" tunnel="yes"/>
+    <xsl:variable name="context" as="element(*)" select="."/>
+    <xsl:variable name="footnotes" 
+      select=".//fn[not(some $fnroot in ($footnote-roots intersect current()/descendant::*) 
+                        satisfies (exists($fnroot/descendant::* intersect .))
+                       )]" as="element(fn)*"/>
+    <xsl:if test="exists($footnotes)">
       <div class="footnotes">
         <xsl:if test="$recount-footnotes">
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
+        <!--<xsl:comment select="'ancestor: ', name(), @*, '          ', count($footnote-roots intersect current()/descendant::*), ' ;; ',
+          count(.//fn[some $fnr in ($footnote-roots intersect current()/descendant::*) 
+                        satisfies (exists($fnr/descendant::* intersect .))]), for $f in .//fn return ('  :: ', $f/ancestor::*/name()), 
+                        '  ++  ', $footnote-roots/name()"></xsl:comment>-->
         <xsl:apply-templates select="$footnotes" mode="footnotes"/>
       </div>  
     </xsl:if>
