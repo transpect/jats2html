@@ -149,6 +149,27 @@
   
   <xsl:template match="@dtd-version" mode="jats2html" />
   
+  <!-- A customizing of the following template may look like this:
+  <xsl:template match="/*" mode="jats2html">
+    <xsl:next-match>
+      <xsl:with-param name="footnote-roots" tunnel="yes" 
+        select="//(
+                   book-part[not(every $c in body/* satisfies $c/self::book-part)]
+                  |front-matter-part | foreword | preface | dedication[book-part-meta/title-group/node()]
+                  |named-book-part-body
+                  |body[not(descendant::body)] |  named-book-part-body | glossary | title-group | front-matter
+                  |book/book-back/ref-list | book/book-back/glossary | front-matter/ack
+                  |app[empty(ancestor::app-group | ancestor::app)]
+                  |app-group
+                  |index[$use-print-index]
+                  )"/>
+    </xsl:next-match>
+  </xsl:template>
+  List all matching patterns of templates that invoke jats2html:footnotes.
+  jats2html:footnotes will make sure that no footnote div will be generated if all footnotes of the context element 
+  are contained in a footnote root that it nested within the context element.
+  -->
+  
   <xsl:template match="/*" mode="jats2html">
     <xsl:param name="footnote-roots" tunnel="yes" select="//(ack
                                                             |body[not(ancestor::body)]
@@ -331,7 +352,7 @@
         <xsl:if test="$recount-footnotes">
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
-        <!--<xsl:comment select="'ancestor: ', name(), @*, '          ', count($footnote-roots intersect current()/descendant::*), ' ;; ',
+        <!--<xsl:comment select="'ancestor: ', name(../..), '/', name(..),'/', name(), @*, '          ', count($footnote-roots intersect current()/descendant::*), ' ;; ',
           count(.//fn[some $fnr in ($footnote-roots intersect current()/descendant::*) 
                         satisfies (exists($fnr/descendant::* intersect .))]), for $f in .//fn return ('  :: ', $f/ancestor::*/name()), 
                         '  ++  ', $footnote-roots/name()"></xsl:comment>-->
