@@ -1491,9 +1491,11 @@
         <xsl:value-of select="current-group()[1]/term"/>
       </span>
       <xsl:text>&#x2002;</xsl:text>
-      <xsl:if test="exists(index-term)">
+      <xsl:for-each select="current-group()[exists(index-term | see)
+                                            or
+                                            jats2html:contains-token(@content-type, 'hub:not-placed-on-page')]">
         <a id="ie_{@id}"/>
-      </xsl:if>
+      </xsl:for-each>
       <xsl:for-each select="current-group()[empty(index-term | see)]
                                            [not(jats2html:contains-token(@content-type, 'hub:not-placed-on-page'))]">
         <a href="#it_{@id}" id="ie_{@id}" class="index-link" epub:type="index-locator">
