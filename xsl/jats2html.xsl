@@ -1552,7 +1552,8 @@
 
   </xsl:template>
 
-  <xsl:template match="index-term[not(parent::index-term)]" mode="jats2html">
+  <xsl:template match="index-term[empty(parent::index-term)]
+                                 [empty(see)]" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
     <xsl:if test="not($in-toc)">
       <span class="indexterm" id="it_{descendant-or-self::index-term[last()]/@id}">
@@ -1573,7 +1574,10 @@
       </span>
     </xsl:if>
   </xsl:template>
-  
+
+  <xsl:template match="index-term[empty(parent::index-term)]
+                                 [exists(see)]" mode="jats2html"/>
+
   <!-- <index-term-range-end> is a marker to specify the range of an index-term.
        Its @rid must match the @id of a previous <index-term>. -->
   
