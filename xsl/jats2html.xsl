@@ -1048,9 +1048,10 @@
           <xsl:choose>
             <xsl:when test="$xhtml-version eq '5.0'">
               <xsl:variable name="max-level" select="max(for $i in $headlines return jats2html:heading-level($i))"/>
-              <ol class="ol-toc1">
-                <xsl:sequence select="jats2html:generate-toc($headlines-by-level, 1, $max-level)"/>  
-              </ol>
+              <xsl:variable name="toc-as-tree">
+                <xsl:sequence select="jats2html:flat-toc-to-tree($headlines-by-level, 1, $max-level)"/>
+              </xsl:variable>
+              <xsl:apply-templates select="$toc-as-tree" mode="patch-toc-for-epub3"/>
             </xsl:when>
             <xsl:otherwise>
               <xsl:sequence select="$headlines-by-level"/>    
@@ -1061,36 +1062,55 @@
     </xsl:element>
   </xsl:template>
   
-  <xsl:function name="jats2html:generate-toc">
+  <xsl:template match="html:li[following-sibling::*[1][self::html:ol]]" mode="patch-toc-for-epub3" priority="10">
+    <xsl:variable name="next-ol" select="following-sibling::*[1][self::html:ol]" as="element(html:ol)"/>
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="jats2html"/>
+      <xsl:if test="$next-ol">
+        <ol>
+          <xsl:apply-templates select="$next-ol/@*, $next-ol/html:*" mode="#current"/>
+        </ol>  
+      </xsl:if>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="html:ol" mode="patch-toc-for-epub3">
+    <xsl:if test="not(preceding-sibling::*[1][self::html:li])">
+      <xsl:copy>
+        <xsl:apply-templates select="@*, node()" mode="#current"/>
+      </xsl:copy>
+    </xsl:if> 
+  </xsl:template>
+  
+  <xsl:template match="html:li" mode="patch-toc-for-epub3">
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="jats2html"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="*|@*" mode="patch-toc-for-epub3" priority="-3">
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:function name="jats2html:flat-toc-to-tree" as="element()*">
     <xsl:param name="seq" as="element()*"/>
     <xsl:param name="level" as="xs:integer"/>
     <xsl:param name="max" as="xs:integer"/>
-    <xsl:choose>
-      <xsl:when test="$level &lt;= $max">
-        <xsl:for-each-group select="$seq" 
-                            group-adjacent="matches(@class, 
-                                                    concat('toc[', 
-                                                    string-join((for $i in ($level to $max) return xs:string($i)), '|'),
-                                                    ']')
-                                                    )">
-          <xsl:choose>
-            <xsl:when test="current-grouping-key() eq true() and $level ne 1">
-              <li class="toc{$level}">
-                <ol class="ol-toc{$level}">
-                  <xsl:sequence select="jats2html:generate-toc( current-group(), $level + 1, $max )"/>
-                </ol>
-              </li>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:sequence select="jats2html:generate-toc(current-group(), $level + 1, $max)"/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:for-each-group>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:sequence select="$seq"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <ol class="ol-toc{$level}">
+      <xsl:for-each-group select="$seq" 
+                          group-adjacent="boolean(self::html:li[@class = concat('toc', $level)])">
+        <xsl:choose>
+          <xsl:when test="current-grouping-key()">
+            <xsl:sequence select="current-group()"/>
+          </xsl:when>
+          <xsl:when test="$level lt $max">
+            <xsl:sequence select="jats2html:flat-toc-to-tree(current-group(), $level + 1, $max)"/>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:for-each-group>
+    </ol>
   </xsl:function>
     
   <xsl:template match="title" mode="toc">
