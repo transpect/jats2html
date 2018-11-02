@@ -29,6 +29,7 @@
   <xsl:import href="http://transpect.io/hub2html/xsl/css-atts2wrap.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/lengths/xsl/lengths.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/hex/xsl/hex.xsl"/>
+  <xsl:import href="http://transpect.io/xslt-util/flat-list-to-tree/xsl/flat-list-to-tree.xsl"/>
   <xsl:import href="http://transpect.io/xproc-util/unwrap-mml/xsl/unwrap-mml.xsl"/>
 	
   <xsl:param name="debug" select="'yes'"/>
@@ -1051,7 +1052,10 @@
               <xsl:variable name="toc-as-tree">
                 <xsl:sequence select="jats2html:flat-toc-to-tree($headlines-by-level, 1, $max-level)"/>
               </xsl:variable>
-              <xsl:apply-templates select="$toc-as-tree" mode="patch-toc-for-epub3"/>
+              <xsl:variable name="patched-toc">
+                <xsl:apply-templates select="$toc-as-tree" mode="patch-toc-for-epub3"/>
+              </xsl:variable>
+              <xsl:sequence select="$patched-toc"/>
             </xsl:when>
             <xsl:otherwise>
               <xsl:sequence select="$headlines-by-level"/>    
@@ -1065,7 +1069,7 @@
   <xsl:template match="html:li[following-sibling::*[1][self::html:ol]]" mode="patch-toc-for-epub3" priority="10">
     <xsl:variable name="next-ol" select="following-sibling::*[1][self::html:ol]" as="element(html:ol)"/>
     <xsl:copy>
-      <xsl:apply-templates select="@*, node()" mode="jats2html"/>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
       <xsl:if test="$next-ol">
         <ol>
           <xsl:apply-templates select="$next-ol/@*, $next-ol/html:*" mode="#current"/>
@@ -1079,16 +1083,10 @@
       <xsl:copy>
         <xsl:apply-templates select="@*, node()" mode="#current"/>
       </xsl:copy>
-    </xsl:if> 
+    </xsl:if>
   </xsl:template>
   
-  <xsl:template match="html:li" mode="patch-toc-for-epub3">
-    <xsl:copy>
-      <xsl:apply-templates select="@*, node()" mode="jats2html"/>
-    </xsl:copy>
-  </xsl:template>
-  
-  <xsl:template match="*|@*" mode="patch-toc-for-epub3" priority="-3">
+  <xsl:template match="@*|*" mode="patch-toc-for-epub3">
     <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:copy>
@@ -1098,19 +1096,12 @@
     <xsl:param name="seq" as="element()*"/>
     <xsl:param name="level" as="xs:integer"/>
     <xsl:param name="max" as="xs:integer"/>
-    <ol class="ol-toc{$level}">
-      <xsl:for-each-group select="$seq" 
-                          group-adjacent="boolean(self::html:li[@class = concat('toc', $level)])">
-        <xsl:choose>
-          <xsl:when test="current-grouping-key()">
-            <xsl:sequence select="current-group()"/>
-          </xsl:when>
-          <xsl:when test="$level lt $max">
-            <xsl:sequence select="jats2html:flat-toc-to-tree(current-group(), $level + 1, $max)"/>
-          </xsl:when>
-        </xsl:choose>
-      </xsl:for-each-group>
-    </ol>
+    <xsl:sequence select="tr:flat-list-to-tree($seq, 
+                                               $level, 
+                                               $max, 
+                                               QName('http://www.w3.org/1999/xhtml', 'ol'), 
+                                               'class', 
+                                               '[a-z]+')"/>
   </xsl:function>
     
   <xsl:template match="title" mode="toc">
