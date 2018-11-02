@@ -133,7 +133,7 @@
   </xsl:template>
 
   <xsl:template match="*" mode="jats2html" priority="-1">
-    <xsl:if test="$debug eq 'yes'">
+    <xsl:if test="$debug eq 'yes' and not(self::html:*)">
       <xsl:message>jats2html: unhandled: <xsl:apply-templates select="." mode="css:unhandled"/></xsl:message>
     </xsl:if>
     <xsl:copy>
@@ -367,7 +367,7 @@
     </div>
   </xsl:template>
   
-  <xsl:template match="book-back" mode="jats2html" priority="5">
+  <xsl:template match="book-back" mode="jats2html" priority="7">
     <xsl:variable name="available-index-types"  as="xs:string*" select="distinct-values(//index-term/@index-type)"/>
     <xsl:variable name="pre-rendered-index-types"  as="xs:string*" select="index/@index-type"/>
     <xsl:element name="{if($xhtml-version eq '5.0') then 'section' else 'div'}">
@@ -900,7 +900,7 @@
   </xsl:template>
   
   <xsl:template match="fig/caption[$xhtml-version eq '5.0']
-                      |graphic/caption[$xhtml-version eq '5.0']" mode="jats2html" priority="5">
+                      |graphic/caption[$xhtml-version eq '5.0']" mode="jats2html" priority="7">
     <figcaption>
       <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
       <xsl:call-template name="css:content"/>
@@ -1322,7 +1322,7 @@
     <xsl:attribute name="css:font-variant" select="'small-caps'"/>
   </xsl:template>
   
-  <xsl:template match="ref" mode="jats2html" priority="5">
+  <xsl:template match="ref" mode="jats2html" priority="7">
     <p class="{name()}">
       <xsl:next-match/>
     </p>
