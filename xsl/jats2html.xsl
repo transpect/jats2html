@@ -2461,12 +2461,6 @@
     </p>
   </xsl:template>
   
-  <xsl:template match="string-name" mode="jats2html-create-title">
-    <p class="name">
-      <xsl:apply-templates select="@*, node()" mode="#current"/>  
-    </p>
-  </xsl:template>
-  
   <xsl:template match="abstract|trans-abstract" mode="jats2html-create-title">
     <div class="{local-name()}">
       <xsl:apply-templates select="@*, node()" mode="jats2html"/>      
