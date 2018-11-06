@@ -30,7 +30,7 @@
   <xsl:import href="http://transpect.io/xslt-util/lengths/xsl/lengths.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/hex/xsl/hex.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/flat-list-to-tree/xsl/flat-list-to-tree.xsl"/>
-  <xsl:import href="http://transpect.io/xproc-util/unwrap-mml/xsl/unwrap-mml.xsl"/>
+  <xsl:import href="http://transpect.io/unwrap-mml/xsl/unwrap-mml.xsl"/>
 	
   <xsl:param name="debug" select="'yes'"/>
   <xsl:param name="debug-dir-uri" select="'debug'"/>
