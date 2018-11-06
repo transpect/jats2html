@@ -275,6 +275,7 @@
   <xsl:variable name="default-structural-containers" as="xs:string+"
                 select="('abstract',
                          'ack',
+                         'app',
                          'back',
                          'body',
                          'book-app',
