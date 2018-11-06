@@ -909,8 +909,12 @@
   </xsl:template>
   
   <xsl:template match="caption" mode="jats2html">
-    <div class="{local-name()}">
-      <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
+    <div>
+      <xsl:attribute name="class" select="string-join((
+                                            name(), 
+                                            @book-part-type, @sec-type, @content-type, 
+                                            if(normalize-space(title) = '') then 'empty-title' else ''), 
+                                            ' ')"/>
       <xsl:call-template name="css:content"/>
     </div>
   </xsl:template>
