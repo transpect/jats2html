@@ -474,6 +474,8 @@
                       |speech
                       |boxed-text
                       |disp-formula-group
+                      |disp-formula
+                      |inline-formula
                       |prefix
                       |suffix" mode="jats2html" priority="-0.25">
     <xsl:call-template name="css:content"/>
@@ -1721,16 +1723,10 @@
   
   <!-- formulas -->
   
-  <xsl:template match="disp-formula-group" mode="jats2html">
-    <div class="{local-name()}">
-      <xsl:next-match/>
-    </div>
-  </xsl:template>
-  
-  <xsl:template match="disp-formula" mode="jats2html">
-    <xsl:element name="{if(parent::p) then 'span' else 'div'}">
+  <xsl:template match="disp-formula-group|disp-formula" mode="jats2html">
+    <xsl:element name="{if(ancestor::p) then 'span' else 'div'}">
       <xsl:attribute name="class" select="local-name()"/>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:next-match/>
     </xsl:element>
   </xsl:template>
   
