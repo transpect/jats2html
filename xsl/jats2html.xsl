@@ -820,6 +820,21 @@
     </ol>
   </xsl:template>
   
+  <xsl:template match="list[@list-type eq 'custom'][list-item[label]]" mode="jats2html">
+    <dl>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </dl>
+  </xsl:template>
+  
+  <xsl:template match="list[@list-type eq 'custom']/list-item" mode="jats2html">
+    <dt>
+      <xsl:apply-templates select="label" mode="#current"/>
+    </dt>
+    <dd>
+      <xsl:apply-templates select="@*, node() except label" mode="#current"/>
+    </dd>
+  </xsl:template>
+  
   <xsl:template match="@list-type" mode="jats2html">
     <xsl:choose>
       <xsl:when test=". = 'order'"/>
@@ -1634,14 +1649,25 @@
     <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe auch ' else ' see also '" xml:space="preserve"/>
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
+  
+  <xsl:variable name="block-element-names" as="xs:string+" 
+                select="'boxed-text',
+                        'def-list',
+                        'disp-formula',
+                        'disp-formula-group',
+                        'fig',
+                        'list',
+                        'table-wrap'"/>
 
-  <xsl:template match="p[boxed-text | fig | table-wrap]" mode="jats2html" priority="1.2">
-    <xsl:for-each-group select="node()" group-adjacent="boolean(self::boxed-text | self::fig | self::table-wrap)">
+  <xsl:template match="p[*[local-name() = $block-element-names]]" mode="jats2html" priority="1.2">
+    <xsl:for-each-group select="node()" 
+                        group-adjacent="boolean(self::*[local-name() = $block-element-names])">
       <xsl:choose>
         <xsl:when test="current-grouping-key()">
           <xsl:apply-templates select="current-group()" mode="#current"/>
         </xsl:when>
-        <xsl:when test="every $item in current-group() satisfies ($item/self::text()[not(normalize-space())])"/>
+        <xsl:when test="every $item in current-group() 
+                        satisfies ($item/self::text()[not(normalize-space())])"/>
         <xsl:otherwise>
           <xsl:element name="{name(..)}">
             <xsl:for-each select="..">
@@ -1651,7 +1677,7 @@
           </xsl:element>
         </xsl:otherwise>
       </xsl:choose>
-    </xsl:for-each-group>  
+    </xsl:for-each-group>
   </xsl:template>
   
   <xsl:template match="boxed-text" mode="jats2html">
@@ -1724,10 +1750,9 @@
   <!-- formulas -->
   
   <xsl:template match="disp-formula-group|disp-formula" mode="jats2html">
-    <xsl:element name="{if(ancestor::p) then 'span' else 'div'}">
-      <xsl:attribute name="class" select="local-name()"/>
+    <div class="{local-name()}">
       <xsl:next-match/>
-    </xsl:element>
+    </div>
   </xsl:template>
   
   <xsl:template match="inline-formula" mode="jats2html">
