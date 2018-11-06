@@ -1006,7 +1006,8 @@
         <xsl:attribute name="epub:type" select="'tr:bio'"/>
       </xsl:when>
       <xsl:when test="$context[self::*:ref-list]">
-        <xsl:attribute name="epub:type" select="'bibliograpy'"/>
+        <!--<xsl:attribute name="epub:type" select="'bibliograpy'"/>--><!-- epubcheck not updated yet -->
+        <xsl:attribute name="epub:type" select="'appendix'"/>
       </xsl:when>
       <xsl:when test="$context[self::*[local-name() = ('preface', 'foreword', 'dedication', 'glossary', 'index', 'index-term', 'toc')]]">
         <xsl:attribute name="epub:type" select="$context/local-name()"/>
