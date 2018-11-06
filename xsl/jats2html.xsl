@@ -432,6 +432,7 @@
                       |bold
                       |monospace
                       |sc
+                      |label
                       |private-char
                       |underline
                       |sub
@@ -472,6 +473,7 @@
                       |uri[not(@xlink:href)]
                       |speech
                       |boxed-text
+                      |disp-formula-group
                       |prefix
                       |suffix" mode="jats2html" priority="-0.25">
     <xsl:call-template name="css:content"/>
@@ -1174,7 +1176,6 @@
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="label" mode="jats2html"/>
   <xsl:variable name="subtitle-separator-in-ncx" as="xs:string?" select="'&#x2002;'"/>
 
   <xsl:template match="title
@@ -1302,7 +1303,7 @@
     </abbr>
   </xsl:template>
   
-  <xsl:template match="monospace|named-content|underline|sc|private-char" mode="jats2html">
+  <xsl:template match="monospace|named-content|underline|sc|private-char|label" mode="jats2html">
     <span class="{local-name()}">
       <xsl:next-match/>
     </span>
@@ -1720,11 +1721,17 @@
   
   <!-- formulas -->
   
-  <xsl:template match="disp-formula-group
-                      |disp-formula" mode="jats2html">
-    <div class="{name()}">
-      <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
+  <xsl:template match="disp-formula-group" mode="jats2html">
+    <div class="{local-name()}">
+      <xsl:next-match/>
     </div>
+  </xsl:template>
+  
+  <xsl:template match="disp-formula" mode="jats2html">
+    <xsl:element name="{if(parent::p) then 'span' else 'div'}">
+      <xsl:attribute name="class" select="local-name()"/>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:element>
   </xsl:template>
   
   <xsl:template match="inline-formula" mode="jats2html">
@@ -1735,7 +1742,9 @@
   
   <xsl:template match="disp-formula/alternatives
                       |inline-formula/alternatives" mode="jats2html">
-    <xsl:apply-templates select="(mml:math, tex-math, media, (graphic|inline-graphic))[1]" mode="#current"/>  
+    <span class="{local-name()}">
+      <xsl:apply-templates select="@*, (mml:math, tex-math, media, (graphic|inline-graphic))[1]" mode="#current"/>  
+    </span>
   </xsl:template>
   
   <xsl:template match="mml:math" mode="jats2html">
