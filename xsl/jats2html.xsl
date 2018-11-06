@@ -2509,7 +2509,6 @@
                       |book-title-group/label
                       |anonymous
                       |given-names
-                      |string-name
                       |surname
                       |volume-title
                       |volume-number" mode="jats2html-create-title">
