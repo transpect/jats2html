@@ -1350,8 +1350,15 @@
     <xsl:next-match/>
     <xsl:text>&#x2002;</xsl:text>
     <xsl:for-each select="key('by-rid', parent::ref/@id)">
-      <a href="#xref_{@id}" id="{$ref-id}">
-        <xsl:number format="a" value="position()"/>
+      <a href="#xref_{@id}" id="{$ref-id}" class="ref-link">
+        <xsl:choose>
+          <xsl:when test="position() eq 1 and position() eq last()">
+            <xsl:text>→</xsl:text>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:number format="a" value="position()"/>    
+          </xsl:otherwise>
+        </xsl:choose>
       </a>
       <xsl:if test="position() ne last()">
         <xsl:text xml:space="preserve">, </xsl:text>
