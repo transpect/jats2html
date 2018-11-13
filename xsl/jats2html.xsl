@@ -1966,7 +1966,9 @@
               </xsl:if>
               <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
             </a>
-            <xsl:if test="$linked-items[1]/@ref-type = 'ref' and $bib-backlink-type = 'letter'"><!-- bibliography entry -->
+            <xsl:if test="    $linked-items[1]/@ref-type = 'ref' 
+                          and $bib-backlink-type = 'letter'
+                          and not(text())"><!-- bibliography entry, render only symbol when no content exists in the 1st place -->
               <span class="cit">
                 <xsl:apply-templates select="@srcpath" mode="#current"/>
                 <xsl:text>[</xsl:text>
