@@ -1689,19 +1689,18 @@
   </xsl:template>
   
   <xsl:template match="boxed-text" mode="jats2html">
-    <xsl:choose>
-      <xsl:when test="alternatives">
-        <!-- If alternative images for the box have been defined only those will be displayed -->
-        <div class="box {@content-type} alt-image">
-          <xsl:apply-templates select="alternatives" mode="#current"/>
-        </div>
-      </xsl:when>
-      <xsl:otherwise>
-        <div class="box {@content-type}">
-          <xsl:apply-templates select="@* except @content-type, node()" mode="#current"/>
-        </div>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:element name="{if($xhtml-version eq '5.0' and @position = ('margin', 'float')) 
+                        then 'aside' 
+                        else 'div'}">
+      <xsl:attribute name="class" 
+                     select="string-join(('box', 
+                                          @content-type, 
+                                          @position,
+                                          if(alternatives) then 'alt-image' else ()), ' ')"/>
+      <xsl:apply-templates select="if(alternatives) 
+                                   then alternatives 
+                                   else @* except @content-type, node()" mode="#current"/>
+    </xsl:element>
   </xsl:template>
   
   <!-- graphics -->
