@@ -1367,7 +1367,7 @@
   </xsl:template>
   
   <xsl:template match="ref" mode="jats2html" priority="1.5">
-    <xsl:apply-templates select="(mixed-citation, element-citation)[1]" mode="#current"/>
+    <xsl:apply-templates select="label, (mixed-citation, element-citation, citation-alternatives)[1], note, x" mode="#current"/>
   </xsl:template>
 
   <xsl:template match="surname
