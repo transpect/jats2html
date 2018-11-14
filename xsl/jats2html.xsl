@@ -1166,7 +1166,7 @@
   </xsl:template>
 
   <xsl:template match="label[../title union ../caption/title]" mode="jats2html">
-    <xsl:param name="actually-process-it" as="xs:boolean?"/>
+    <xsl:param name="actually-process-it" select="true()" as="xs:boolean"/>
     <xsl:if test="$actually-process-it">
       <span>
         <xsl:call-template name="css:content"/>
@@ -1177,7 +1177,7 @@
 
   <xsl:template match="label[named-content[@content-type = 'post-identifier']]
                             [../title union ../caption/title]" mode="jats2html" priority="3">
-    <xsl:param name="actually-process-it" as="xs:boolean?"/>
+    <xsl:param name="actually-process-it" select="true()" as="xs:boolean"/>
     <xsl:if test="$actually-process-it">
       <xsl:apply-templates select="." mode="label-sep"/>
       <span>
@@ -1233,14 +1233,14 @@
         </xsl:if>
       </xsl:attribute>
       <xsl:apply-templates select="$label" mode="#current">
-        <xsl:with-param name="actually-process-it" select="true()"/>
+        <xsl:with-param name="actually-process-it" select="true()" as="xs:boolean"/>
       </xsl:apply-templates>
       <xsl:if test="not($in-toc)">
         <a id="{generate-id()}" />  
       </xsl:if>
       <xsl:apply-templates mode="#current"/>
       <xsl:apply-templates select="$post-label" mode="#current">
-        <xsl:with-param name="actually-process-it" select="true()"/>
+        <xsl:with-param name="actually-process-it" select="true()" as="xs:boolean"/>
       </xsl:apply-templates>
     </xsl:element>
   </xsl:template>
