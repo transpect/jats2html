@@ -29,6 +29,7 @@
   <xsl:import href="http://transpect.io/hub2html/xsl/css-atts2wrap.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/lengths/xsl/lengths.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/hex/xsl/hex.xsl"/>
+  <xsl:import href="http://transpect.io/xslt-util/iso-lang/xsl/iso-lang.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/flat-list-to-tree/xsl/flat-list-to-tree.xsl"/>
   <xsl:import href="http://transpect.io/unwrap-mml/xsl/unwrap-mml.xsl"/>
 	
@@ -198,7 +199,9 @@
           <xsl:call-template name="create-meta-tags"/>  
         </xsl:if>
         <title>
-          <xsl:apply-templates select="book-meta/book-title-group/book-title/node()
+          <xsl:apply-templates select="book-meta/book-title-group/book-title/@*
+                                      |book-meta/book-title-group/book-title/node()
+                                      |front/article-meta/title-group/article-title/@*
                                       |front/article-meta/title-group/article-title/node()"
                                mode="#current">
             <!-- suppress replicated target with id: -->
@@ -558,11 +561,21 @@
     <xsl:copy/>
   </xsl:template>
   
-  <xsl:template match="@xml:lang" mode="jats2html">
+  <xsl:template match="@xml:lang" mode="jats2html jats2html-create-title">
     <xsl:attribute name="lang" select="."/>
+    <xsl:if test="tr:is-valid-iso-lang-code(.) and tr:lang-is-rtl(.)">
+      <xsl:attribute name="dir" select="'rtl'"/>
+    </xsl:if>
   </xsl:template>
   
-  <xsl:template match="@xml:base" mode="jats2html">
+  <xsl:template match="*[@dir]" mode="clean-up">
+    <xsl:copy>
+      <xsl:attribute name="class" select="concat(@class, ' ', @dir)"/>
+      <xsl:apply-templates select="@* except @class, node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="@xml:base" mode="jats2html jats2html-create-title">
     <xsl:attribute name="xml:base" select="replace(. , '\.[a-z]+$', '.html')"/>
   </xsl:template>
   
@@ -806,7 +819,6 @@
   </xsl:template>
 
   <xsl:template match="*:dd/*:label" mode="clean-up"/>
-   
   
   <xsl:template match="list[matches(@list-type, '^(simple|ndash|bullet)$')]" mode="jats2html">
     <ul>
@@ -1186,7 +1198,7 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="*[local-name() = ('h7', 'h8')]" mode="clean-up" priority="3">
+  <xsl:template match="h7|h8" mode="clean-up" priority="3">
     <xsl:element name="h6">
       <xsl:apply-templates select="@* except @class" mode="#current"/>
        <xsl:attribute name="class" select="concat(@class, ' ', local-name(current()))"/>
