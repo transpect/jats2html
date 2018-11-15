@@ -918,12 +918,6 @@
     </div>
   </xsl:template>
   
-  <xsl:template match="option/label" mode="jats2html">
-    <div class="{local-name()}">
-      <xsl:call-template name="css:content"/>
-    </div>
-  </xsl:template>
-  
   <xsl:template match="fig" mode="jats2html">
     <xsl:element name="{if($xhtml-version eq '5.0') then 'figure' else 'div'}">
       <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>  
