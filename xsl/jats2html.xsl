@@ -563,8 +563,8 @@
   
   <xsl:template match="@xml:lang" mode="jats2html jats2html-create-title">
     <xsl:attribute name="lang" select="."/>
-    <xsl:if test="tr:is-valid-iso-lang-code(.) and tr:lang-is-rtl(.)">
-      <xsl:attribute name="dir" select="'rtl'"/>
+    <xsl:if test="tr:is-valid-iso-lang-code(.)">
+      <xsl:attribute name="dir" select="tr:lang-dir(.)"/>
     </xsl:if>
   </xsl:template>
   
