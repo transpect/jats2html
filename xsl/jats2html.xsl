@@ -1927,7 +1927,7 @@
   </xsl:template>
   
   <xsl:template match="ext-link|uri[@xlink:href]" mode="jats2html">
-    <a>
+    <a class="{local-name()}">
       <xsl:apply-templates select="@*, node()" mode="#current"/>
       <xsl:if test="not(node())">
         <xsl:value-of select="@xlink:href"/>
@@ -1972,7 +1972,7 @@
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
           <xsl:when test="count($linked-items) eq 1">
-            <a href="#{$linked-items[1]/@id}">
+            <a href="#{$linked-items[1]/@id}" class="xref">
               <xsl:if test="@id">
                 <!-- in some cases an xref does not have an @id, so we will not create dulicate @id="xref_" attributes -->
                 <xsl:attribute name="id" select="concat('xref_', @id)"/>  
