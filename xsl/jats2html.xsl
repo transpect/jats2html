@@ -922,7 +922,7 @@
     <xsl:element name="{if($xhtml-version eq '5.0') then 'figure' else 'div'}">
       <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>  
       <xsl:call-template name="css:other-atts"/>  
-      <xsl:apply-templates select="* except (label | caption | permissions), caption, permissions" mode="#current"/>
+      <xsl:apply-templates select="* except (label | caption | permissions), caption" mode="#current"/>
     </xsl:element>
   </xsl:template>
   
@@ -931,6 +931,7 @@
     <figcaption>
       <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
       <xsl:call-template name="css:content"/>
+      <xsl:apply-templates select="../permissions" mode="#current"/>
     </figcaption>
   </xsl:template>
   
