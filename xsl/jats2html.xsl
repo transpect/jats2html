@@ -349,10 +349,10 @@
     <xsl:param name="footnote-roots" as="element(*)*" tunnel="yes"/>
     <xsl:variable name="context" as="element(*)" select="."/>
     <xsl:variable name="footnotes" 
-      select=".//fn[not(some $fnroot in ($footnote-roots intersect current()/descendant::*) 
-                        satisfies (exists($fnroot/descendant::* intersect .))
-                       )]" as="element(fn)*"/>
-    <xsl:if test="exists($footnotes)">
+                  select=".//fn[not(some $fnroot in ($footnote-roots intersect current()/descendant::*) 
+                                    satisfies (exists($fnroot/descendant::* intersect .))
+                                    )]" as="element(fn)*"/>
+    <xsl:if test="exists($footnotes) and $xhtml-version ne '5.0'">
       <div class="footnotes">
         <xsl:if test="$recount-footnotes">
           <xsl:processing-instruction name="recount" select="'yes'"/>
@@ -667,7 +667,10 @@
   <xsl:template match="fn" mode="footnotes">
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <xsl:param name="static-footnotes" tunnel="yes" as="xs:boolean?"/>
-    <div class="{name()}" id="fn_{@id}">
+    <xsl:element name="{if($xhtml-version eq '5.0') then 'aside' else 'div'}">
+      <xsl:attribute name="id" select="concat('fn_', @id)"/>
+      <xsl:attribute name="class" select="'fn'"/>
+      <xsl:attribute name="epub:type" select="'footnote'"/>
       <span class="note-mark">
         <xsl:choose>
           <xsl:when test="$static-footnotes">
@@ -679,7 +682,7 @@
         </xsl:choose>
       </span>
       <xsl:apply-templates mode="jats2html"/>
-    </div>
+    </xsl:element>
   </xsl:template>
 
   <xsl:template name="footnote-link">
@@ -694,15 +697,38 @@
     <xsl:param name="in-toc" tunnel="yes" as="xs:boolean?"/>
     <xsl:param name="recount-footnotes" tunnel="yes" as="xs:boolean?"/>
     <xsl:if test="not($in-toc)">
-      <span class="note-anchor" id="fna_{@id}"><xsl:if test="$recount-footnotes"><xsl:processing-instruction name="recount" select="'yes'"/></xsl:if>
-        <a href="#fn_{@id}" class="fn-ref">
-          <sup>
-            <xsl:value-of select="index-of($footnote-ids, @id)"/>
-          </sup>
-        </a>
-      </span>
+      <xsl:choose>
+        <xsl:when test="(:$xhtml-version eq '5.0':) true()">
+          <a id="fna_{@id}" href="#fn_{@id}" class="fn-ref" epub:type="noteref" >
+            <sup>
+              <xsl:value-of select="index-of($footnote-ids, @id)"/>
+            </sup>
+          </a>
+          <xsl:apply-templates select="." mode="footnotes"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <span class="note-anchor" id="fna_{@id}"><xsl:if test="$recount-footnotes"><xsl:processing-instruction name="recount" select="'yes'"/></xsl:if>
+            <a href="#fn_{@id}" class="fn-ref" epub:type="noteref">
+              <sup>
+                <xsl:value-of select="index-of($footnote-ids, @id)"/>
+              </sup>
+            </a>
+          </span>    
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
   </xsl:template>
+  
+  <!-- put aside below p for valid html5 -->
+  
+  <xsl:template match="html:p[.//html:aside[@epub:type eq 'footnote']]" mode="clean-up">
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
+    <xsl:copy-of select=".//html:aside[@epub:type eq 'footnote']"/>
+  </xsl:template>
+  
+  <xsl:template match="html:p//html:aside[@epub:type eq 'footnote']" mode="clean-up"/>
   
   <xsl:template match="fn-group" mode="jats2html" priority="2.5">
     <xsl:apply-templates select="@*, title" mode="#current"/>
