@@ -1746,6 +1746,7 @@
     <xsl:variable name="media-type" as="xs:string"
                   select="if(matches(@mimetype, '^audio')) then 'audio' else 'video'" />
     <xsl:element name="{$media-type}">
+      <xsl:attribute name="controls" select="'controls'"/>
       <source src="{@xlink:href}" type="{@mimetype}"/>
       <xsl:apply-templates select="alt-text, long-desc" mode="#current"/>
       <xsl:value-of select="concat('Your browser or device does not support ', $media-type)"/>
