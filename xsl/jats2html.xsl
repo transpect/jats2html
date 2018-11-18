@@ -1033,7 +1033,7 @@
         </xsl:choose>
       </xsl:when>
       <xsl:when test="$context[self::*:ack]">
-        <xsl:attribute name="epub:type" select="'acknowledgements'"/>
+        <xsl:attribute name="epub:type" select="'acknowledgments'"/>
       </xsl:when>
       <xsl:when test="$context[self::*:bio]">
         <xsl:attribute name="epub:type" select="'tr:bio'"/>
