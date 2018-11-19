@@ -130,7 +130,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="html:span[not(@*)]" mode="clean-up">
+  <xsl:template match="html:span[not(@*)]|html:a[not(@*)]" mode="clean-up">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
