@@ -422,65 +422,69 @@
     And don’t ever change the priority unless you’ve made sure that no other template
     relies on this value to be 0.25.
     -->
-  <xsl:template match="p
-                      |array 
-                      |abbrev
-                      |table 
-                      |contrib
-                      |mixed-citation
-                      |element-citation
-                      |styled-content
-                      |named-content
-                      |italic
-                      |bold
-                      |monospace
-                      |sc
-                      |label
-                      |private-char
-                      |underline
-                      |sub
-                      |sup
-                      |string-name
-                      |verse-line
-                      |verse-group
-                      |surname
-                      |given-names
-                      |volume
-                      |source
-                      |year
-                      |issue
-                      |etal
-                      |date
-                      |string-date
-                      |fpage
-                      |lpage
+  <xsl:template match="abbrev
+                      |addr-line
+                      |array
                       |article-title
+                      |bold
+                      |boxed-text
                       |chapter-title
-                      |pub-id
-                      |volume-series
-                      |series
-                      |person-group
+                      |city
+                      |collab
+                      |comment
+                      |comment
+                      |contrib
+                      |contrib-id
+                      |country
+                      |date
+                      |disp-formula
+                      |disp-formula-group
                       |edition
+                      |edition
+                      |element-citation
+                      |etal
+                      |fpage
+                      |given-names
+                      |inline-formula
+                      |institution
+                      |issue
+                      |italic
+                      |label
+                      |lpage
+                      |mixed-citation
+                      |monospace
+                      |named-content
+                      |p
+                      |person-group
+                      |prefix
+                      |private-char
+                      |pub-id
                       |publisher-loc
                       |publisher-name
-                      |edition
-                      |comment
                       |role
-                      |collab
-                      |trans-title
+                      |sc
+                      |series
+                      |source
+                      |speech
+                      |string-date
+                      |string-name
+                      |styled-content
+                      |sub
+                      |subtitle
+                      |suffix
+                      |sup
+                      |surname
+                      |table
                       |trans-source
                       |trans-subtitle
-                      |subtitle
-                      |comment
-                      |contrib-id
+                      |trans-title
+                      |underline
                       |uri[not(@xlink:href)]
-                      |speech
-                      |boxed-text
-                      |disp-formula-group
-                      |disp-formula
-                      |inline-formula
-                      |prefix
-                      |suffix" mode="jats2html" priority="-0.25">
+                      |verse-group
+                      |verse-line
+                      |volume
+                      |volume-series
+                      |year" mode="jats2html" priority="-0.25">
     <xsl:call-template name="css:content"/>
   </xsl:template>
   
@@ -1302,7 +1306,7 @@
   </xsl:template>
   
   <xsl:template match="contrib-group/contrib" mode="jats2html">
-    <div>
+    <div class="contrib">
       <xsl:next-match/>
     </div>
   </xsl:template>
@@ -1404,7 +1408,11 @@
     <xsl:apply-templates select="label, (mixed-citation, element-citation, citation-alternatives)[1], note, x" mode="#current"/>
   </xsl:template>
 
-  <xsl:template match="surname
+  <xsl:template match="addr-line
+                      |city
+                      |country
+                      |institution
+                      |surname
                       |given-names
                       |volume
                       |prefix
@@ -2537,6 +2545,14 @@
       <xsl:text>&#xa;</xsl:text>
       <xsl:apply-templates select="surname" mode="#current"/>
     </p>
+  </xsl:template>
+  
+  <xsl:template match="email" mode="jats2html">
+    <a href="{if(starts-with(@xlink:href, 'mailto:')) 
+              then @xlink:href 
+              else concat('mailto:', @xlink:href)}" class="email">
+      <xsl:apply-templates select="@* except @xlink:href, node()" mode="#current"/>
+    </a>
   </xsl:template>
   
   <xsl:template match="abstract|trans-abstract" mode="jats2html-create-title">
