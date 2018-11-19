@@ -1698,6 +1698,7 @@
                         'def-list',
                         'disp-formula',
                         'disp-formula-group',
+                        'disp-quote',
                         'fig',
                         'list',
                         'table-wrap'"/>
