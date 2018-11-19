@@ -2531,7 +2531,7 @@
     </xsl:analyze-string>
   </xsl:template>
   
-  <xsl:template match="name" mode="jats2html-create-title">
+  <xsl:template match="name" mode="jats2html jats2html-create-title">
     <p class="{local-name()}">
       <xsl:apply-templates select="@*, given-names" mode="#current"/>
       <xsl:text>&#xa;</xsl:text>
