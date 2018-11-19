@@ -897,9 +897,10 @@
   </xsl:template>
   
   <xsl:template match="code" mode="jats2html">
-    <code>
+    <pre><code class="{string-join(for $i in @* except @srcpath
+                                   return concat($i/local-name(), '_', $i), ' ')}">
       <xsl:call-template name="css:content"/>
-    </code>
+    </code></pre>
   </xsl:template>
 
   <xsl:template match="disp-quote" mode="jats2html">
@@ -1693,6 +1694,7 @@
   
   <xsl:variable name="block-element-names" as="xs:string+" 
                 select="'boxed-text',
+                        'code',
                         'def-list',
                         'disp-formula',
                         'disp-formula-group',
