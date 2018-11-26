@@ -1306,9 +1306,9 @@
   </xsl:template>
   
   <xsl:template match="contrib-group/contrib" mode="jats2html">
-    <div class="contrib">
+    <p class="contrib">
       <xsl:next-match/>
-    </div>
+    </p>
   </xsl:template>
 
   <xsl:template match="string-name" mode="jats2html">
@@ -1991,11 +1991,25 @@
   
   <xsl:variable name="root" select="/" as="document-node()"/>
   
-  <!--<xsl:template match="xref" mode="jats2html">
-    <xsl:copy>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
-    </xsl:copy>
-  </xsl:template>-->
+  <xsl:template match="contrib/xref[@rid][not(node())]" mode="jats2html">
+    <xsl:variable name="affiliation-ids" select="ancestor::contrib-group[1]/aff/@id" as="attribute(id)*"/>
+    <xsl:variable name="index" select="index-of($affiliation-ids, @rid)" as="xs:integer*"/>
+    <a class="aff-ref" href="#{@rid}" id="{(@id, generate-id())[1]}">
+      <sup><xsl:value-of select="$index"/></sup>
+    </a>
+  </xsl:template>
+  
+  <xsl:template match="contrib-group/aff[@id]" mode="jats2html">
+    <xsl:variable name="affiliations" select="parent::*/aff" as="element(aff)+"/>
+    <xsl:variable name="pos" select="index-of($affiliations, .)" as="xs:integer"/>
+    <p class="aff">
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <span class="label">
+        <xsl:value-of select="$pos"/>
+      </span>
+      <xsl:apply-templates mode="#current"/>
+    </p>
+  </xsl:template>
 
   <xsl:template match="xref" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
@@ -2029,6 +2043,7 @@
               </span>
             </xsl:if>
           </xsl:when>
+          <!-- no items with matching @rid could be found -->
           <xsl:when test="count($linked-items) eq 0">
             <a>
               <xsl:apply-templates select="@srcpath" mode="#current"/>
@@ -2510,10 +2525,10 @@
   </xsl:function>
   
   <xsl:template match="contrib" mode="jats2html-create-title">
-    <div class="{concat(local-name(), ' ', @contrib-type)}">
+    <p class="{concat(local-name(), ' ', @contrib-type)}">
       <xsl:apply-templates select="anonymous, (string-name, name)[1]" mode="#current"/>
       <xsl:apply-templates select="xref" mode="#current"/>
-    </div>
+    </p>
   </xsl:template>
   
   <xsl:template match="contrib/xref" mode="jats2html-create-title">
@@ -2540,11 +2555,11 @@
   </xsl:template>
   
   <xsl:template match="name" mode="jats2html jats2html-create-title">
-    <p class="{local-name()}">
+    <span class="{local-name()}">
       <xsl:apply-templates select="@*, given-names" mode="#current"/>
       <xsl:text>&#xa;</xsl:text>
       <xsl:apply-templates select="surname" mode="#current"/>
-    </p>
+    </span>
   </xsl:template>
   
   <xsl:template match="email" mode="jats2html">
