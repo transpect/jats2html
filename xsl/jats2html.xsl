@@ -436,6 +436,7 @@
                       |comment
                       |contrib
                       |contrib-id
+                      |corresp
                       |country
                       |date
                       |disp-formula
@@ -508,15 +509,14 @@
   <xsl:template match="*[@content-type | @style-type]" mode="class-att">
     <xsl:apply-templates select="@content-type | @style-type" mode="#current"/>
   </xsl:template>
-
-  <xsl:template match="*[name() = ('verse-line', 'fig')]" mode="class-att" priority="2">
-    <xsl:variable name="att" as="attribute(class)?">
+  
+  <xsl:template match="corresp" mode="jats2html">
+    <div class="{local-name()}">
       <xsl:next-match/>
-    </xsl:variable>
-    <xsl:attribute name="class" select="string-join((name(), $att), ' ')"/>
+    </div>
   </xsl:template>
 
-  <xsl:template match="mixed-citation|element-citation" mode="class-att" priority="2">
+  <xsl:template match="mixed-citation|element-citation|verse-line|fig" mode="class-att" priority="2">
     <xsl:variable name="att" as="attribute(class)?">
       <xsl:next-match/>
     </xsl:variable>
