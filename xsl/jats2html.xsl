@@ -276,7 +276,8 @@
   </xsl:template>
   
   <xsl:variable name="default-structural-containers" as="xs:string+"
-                select="('abstract',
+                select="('author-notes',
+                         'abstract',
                          'ack',
                          'app',
                          'back',
@@ -2592,7 +2593,8 @@
   
   <!-- default handler for creating simple divs and spans with *[@class eq local-name()]-->
   
-  <xsl:template match="award-group
+  <xsl:template match="author-notes
+                      |award-group
                       |funding-group
                       |funding-source
                       |funding-statement
