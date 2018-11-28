@@ -463,6 +463,7 @@
                       |pub-id
                       |publisher-loc
                       |publisher-name
+                      |related-object
                       |role
                       |sc
                       |series
@@ -2384,6 +2385,7 @@
                       |history
                       |kwd-group
                       |notes
+                      |related-object
                       |supplementary-material
                       |x" mode="jats2html-create-meta-tags"/>
   
