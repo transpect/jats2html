@@ -353,7 +353,7 @@
                   select=".//fn[not(some $fnroot in ($footnote-roots intersect current()/descendant::*) 
                                     satisfies (exists($fnroot/descendant::* intersect .))
                                     )]" as="element(fn)*"/>
-    <xsl:if test="exists($footnotes) and $xhtml-version ne '5.0'">
+    <xsl:if test="exists($footnotes)">
       <div class="footnotes">
         <xsl:if test="$recount-footnotes">
           <xsl:processing-instruction name="recount" select="'yes'"/>
@@ -703,39 +703,16 @@
     <xsl:param name="in-toc" tunnel="yes" as="xs:boolean?"/>
     <xsl:param name="recount-footnotes" tunnel="yes" as="xs:boolean?"/>
     <xsl:if test="not($in-toc)">
-      <xsl:choose>
-        <xsl:when test="(:$xhtml-version eq '5.0':) true()">
-          <a id="fna_{@id}" href="#fn_{@id}" class="fn-ref" epub:type="noteref" >
-            <sup>
-              <xsl:value-of select="index-of($footnote-ids, @id)"/>
-            </sup>
-          </a>
-          <xsl:apply-templates select="." mode="footnotes"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <span class="note-anchor" id="fna_{@id}"><xsl:if test="$recount-footnotes"><xsl:processing-instruction name="recount" select="'yes'"/></xsl:if>
-            <a href="#fn_{@id}" class="fn-ref" epub:type="noteref">
-              <sup>
-                <xsl:value-of select="index-of($footnote-ids, @id)"/>
-              </sup>
-            </a>
-          </span>    
-        </xsl:otherwise>
-      </xsl:choose>
+      <span class="note-anchor" id="fna_{@id}"><xsl:if test="$recount-footnotes"><xsl:processing-instruction name="recount" select="'yes'"/></xsl:if>
+        <a href="#fn_{@id}" class="fn-ref" epub:type="noteref">
+          <sup>
+            <xsl:value-of select="index-of($footnote-ids, @id)"/>
+          </sup>
+        </a>
+      </span>    
     </xsl:if>
   </xsl:template>
-  
-  <!-- put aside below p for valid html5 -->
-  
-  <xsl:template match="html:p[.//html:aside[@epub:type eq 'footnote']]" mode="clean-up">
-    <xsl:copy>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
-    </xsl:copy>
-    <xsl:copy-of select=".//html:aside[@epub:type eq 'footnote']"/>
-  </xsl:template>
-  
-  <xsl:template match="html:p//html:aside[@epub:type eq 'footnote']" mode="clean-up"/>
-  
+    
   <xsl:template match="fn-group" mode="jats2html" priority="2.5">
     <xsl:apply-templates select="@*, title" mode="#current"/>
     <xsl:call-template name="jats2html:footnotes">
