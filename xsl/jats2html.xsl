@@ -172,13 +172,13 @@
   are contained in a footnote root that it nested within the context element.
   -->
   
-  <xsl:template match="/*" mode="jats2html">
-    <xsl:param name="footnote-roots" tunnel="yes" select="//(ack
-                                                            |body[not(ancestor::body)]
-                                                            |named-book-part-body
-                                                            |app[not(ancestor::app-group)]
-                                                            |app-group
-                                                            |glossary)"/>
+  <xsl:template match="/*" mode="jats2html"> 
+    <xsl:param name="footnote-roots" tunnel="yes" 
+               select="//(collection-meta
+                         |book-meta
+                         |frontmatter
+                         |book-body
+                         |book-back)"/>
     <html>
       <xsl:apply-templates select="@xml:*" mode="#current"/>
       <head>
