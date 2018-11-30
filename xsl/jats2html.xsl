@@ -113,6 +113,14 @@
   
   <xsl:variable name="l10n" select="document(concat('../l10n/l10n.', ($lang, 'en')[1], '.xml'))"
     as="document-node(element(l10n:l10n))"/>
+  
+  <xsl:variable name="footnote-title" as="xs:string" 
+                select="     if($lang eq 'de') then 'Anmerkungen'
+                        else if($lang eq 'fr') then 'Notes'
+                        else if($lang eq 'es') then 'Notas'
+                        else if($lang eq 'pl') then 'Przypisy'
+                        else if($lang eq 'cz') then 'vysvětlivky'
+                        else                        'Notes'"/>
 
   <xsl:key name="l10n-string" match="l10n:string" use="@id"/>
   
@@ -354,6 +362,9 @@
         <xsl:if test="$recount-footnotes">
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
+        <h1 class="footnote-heading">
+          <xsl:sequence select="$footnote-title"/>
+        </h1>
         <!--<xsl:comment select="'ancestor: ', name(../..), '/', name(..),'/', name(), @*, '          ', count($footnote-roots intersect current()/descendant::*), ' ;; ',
           count(.//fn[some $fnr in ($footnote-roots intersect current()/descendant::*) 
                         satisfies (exists($fnr/descendant::* intersect .))]), for $f in .//fn return ('  :: ', $f/ancestor::*/name()), 
