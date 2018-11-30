@@ -325,7 +325,8 @@
         </div>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:apply-templates select="node()" mode="#current"/>
+        <!-- <label> is already processed in template which matches <title> -->
+        <xsl:apply-templates select="node() except label" mode="#current"/>
       </xsl:otherwise>
     </xsl:choose>
    </xsl:template>
