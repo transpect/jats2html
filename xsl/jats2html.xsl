@@ -39,6 +39,7 @@
   <xsl:param name="create-metadata-head" select="'yes'"/>
   <xsl:param name="render-metadata" select="'no'"/>
   <xsl:param name="xhtml-version" select="'1.0'"/><!-- supported values: '1.0', '5.0' -->
+  <xsl:param name="default-container-name" select="if($xhtml-version eq '5.0') then 'section' else 'div'" as="xs:string"/>
 
   <xsl:param name="s9y1-path" as="xs:string?"/>
   <xsl:param name="s9y2-path" as="xs:string?"/>
@@ -174,11 +175,7 @@
   
   <xsl:template match="/*" mode="jats2html"> 
     <xsl:param name="footnote-roots" tunnel="yes" 
-               select="//(collection-meta
-                         |book-meta
-                         |frontmatter
-                         |book-body
-                         |book-back)"/>
+               select="."/>
     <html>
       <xsl:apply-templates select="@xml:*" mode="#current"/>
       <head>
@@ -228,9 +225,7 @@
                       |collection-meta
                       |front/journal-meta
                       |front/article-meta" mode="jats2html">
-    <xsl:element name="{if($xhtml-version eq '5.0') 
-                        then 'section' 
-                        else 'div'}">
+    <xsl:element name="{$default-container-name}">
       <xsl:attribute name="class" select="local-name()"/>
       <xsl:apply-templates select="@*" mode="jats2html"/>
       <xsl:call-template name="create-title-pages"/>
@@ -308,10 +303,9 @@
                       |abstract
                       |verse-group" 
                 mode="jats2html" priority="3">
-    <xsl:element name="{if($xhtml-version eq '5.0' 
-                           and not(local-name() = ('abstract', 'verse-group'))) 
-                        then 'section' 
-                        else 'div'}">
+    <xsl:element name="{if(local-name() = ('abstract', 'verse-group')) 
+                        then 'div' 
+                        else $default-container-name}">
       <xsl:if test="tr:create-epub-type-attribute(.)">
         <xsl:attribute name="epub:type" select="tr:create-epub-type-attribute(.)"/>
       </xsl:if>
@@ -354,7 +348,8 @@
                                     satisfies (exists($fnroot/descendant::* intersect .))
                                     )]" as="element(fn)*"/>
     <xsl:if test="exists($footnotes)">
-      <div class="footnotes">
+      <xsl:element name="{$default-container-name}">
+        <xsl:attribute name="class" select="'footnotes'"/>        
         <xsl:if test="$recount-footnotes">
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
@@ -363,7 +358,7 @@
                         satisfies (exists($fnr/descendant::* intersect .))]), for $f in .//fn return ('  :: ', $f/ancestor::*/name()), 
                         '  ++  ', $footnote-roots/name()"></xsl:comment>-->
         <xsl:apply-templates select="$footnotes" mode="footnotes"/>
-      </div>  
+      </xsl:element>
     </xsl:if>
   </xsl:template>
   
@@ -376,7 +371,7 @@
   <xsl:template match="book-back" mode="jats2html" priority="7">
     <xsl:variable name="available-index-types"  as="xs:string*" select="distinct-values(//index-term/@index-type)"/>
     <xsl:variable name="pre-rendered-index-types"  as="xs:string*" select="index/@index-type"/>
-    <xsl:element name="{if($xhtml-version eq '5.0') then 'section' else 'div'}">
+    <xsl:element name="{$default-container-name}">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:attribute name="class" select="local-name()"/>
       <xsl:for-each select="$available-index-types[not(. = $pre-rendered-index-types)]">
@@ -910,7 +905,7 @@
   </xsl:template>
   
   <xsl:template match="front-matter/notes" mode="jats2html">
-    <xsl:element name="{if($xhtml-version eq '5.0') then 'section' else 'div'}">
+    <xsl:element name="{$default-container-name}">
       <xsl:attribute name="class" select="local-name()"/>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:element>
@@ -1454,7 +1449,7 @@
     <xsl:param name="context" select="."              as="element()?"/>
     <xsl:param name="root" select="/"                 as="document-node()"/>
     <xsl:param name="index-type" select="@index-type" as="xs:string?"/>
-    <xsl:element name="{if($xhtml-version eq '5.0') then 'section' else 'div'}">
+    <xsl:element name="{$default-container-name}">
       <xsl:variable name="index-type" select="$index-type" as="xs:string?"/>
       <xsl:attribute name="class" select="string-join(('index', $index-type), ' ')"/>
       <xsl:attribute name="epub:type" select="'index'"/>
