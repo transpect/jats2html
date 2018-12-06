@@ -1269,7 +1269,7 @@
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="index-term | fn" mode="strip-indexterms-etc"/>
+  <xsl:template match="index-term | fn | target" mode="strip-indexterms-etc"/>
   
   <xsl:template match="html:a[@href]
                              [html:span[@class = 'indexterm']]" mode="clean-up">
