@@ -322,7 +322,7 @@
     </xsl:element>
   </xsl:template>
   
-  <xsl:variable name="default-title-containers" as="xs:string+" select="('book-title-group', 'title-group')"/>
+  <xsl:variable name="default-title-containers" as="xs:string+" select="('book-title-group', 'title-group', 'toc-title-group')"/>
   
   <xsl:template match="*[local-name() = $default-title-containers]" 
                 mode="jats2html" priority="3">
@@ -463,6 +463,7 @@
                       |mixed-citation
                       |monospace
                       |named-content
+                      |nav-pointer
                       |p
                       |person-group
                       |prefix
@@ -485,6 +486,7 @@
                       |sup
                       |surname
                       |table
+                      |toc-entry
                       |trans-source
                       |trans-subtitle
                       |trans-title
@@ -1086,7 +1088,9 @@
       <xsl:apply-templates select="$headlines" mode="toc"/>
     </xsl:variable>
     <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
-      <xsl:attribute name="id" select="'toc'"/>
+      <xsl:if test="not(self::toc)"><!-- assign id just to generated toc -->
+        <xsl:attribute name="id" select="'toc'"/>        
+      </xsl:if>
       <xsl:attribute name="class" select="'toc'"/>
       <xsl:if test="$xhtml-version eq '5.0'">
         <xsl:attribute name="epub:type" select="'toc'"/>
@@ -1186,6 +1190,12 @@
         </xsl:apply-templates>
       </a>
     </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="toc-entry" mode="jats2html">
+    <div class="{local-name()}">
+      <xsl:next-match/>
+    </div>
   </xsl:template>
   
   <xsl:template match="ext-link" mode="jats2html" priority="3">
@@ -2029,7 +2039,7 @@
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
           <xsl:when test="count($linked-items) eq 1">
-            <a href="#{$linked-items[1]/@id}" class="xref">
+            <a href="#{$linked-items[1]/@id}" class="{local-name()}">
               <xsl:if test="@id">
                 <!-- in some cases an xref does not have an @id, so we will not create dulicate @id="xref_" attributes -->
                 <xsl:attribute name="id" select="concat('xref_', @id)"/>  
@@ -2071,6 +2081,12 @@
         </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="nav-pointer" mode="jats2html">
+    <a href="#{@rid}" class="{local-name()}">
+      <xsl:next-match/>
+    </a>
   </xsl:template>
   
   <xsl:template name="render-rids">
