@@ -1117,6 +1117,22 @@
     </xsl:element>
   </xsl:template>
   
+  <xsl:template name="page-list">
+    <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
+      <xsl:attribute name="epub:type" select="'page-list'"/>
+      <xsl:attribute name="aria-label" select="'Page list'"/>
+      <ol>
+        <xsl:for-each select="//target">
+          <li>
+            <a href="#{@id}">
+              <xsl:value-of select="."/>
+            </a>
+          </li>
+        </xsl:for-each>
+      </ol>
+    </xsl:element>
+  </xsl:template>
+  
   <xsl:template match="html:li[following-sibling::*[1][self::html:ol]]" mode="patch-toc-for-epub3">
     <xsl:variable name="next-ol" select="following-sibling::*[1][self::html:ol]" as="element(html:ol)"/>
     <xsl:copy>
