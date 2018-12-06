@@ -1121,7 +1121,7 @@
     <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
       <xsl:attribute name="epub:type" select="'page-list'"/>
       <xsl:attribute name="aria-label" select="'Page list'"/>
-      <ol>
+      <ol hidden="">
         <xsl:for-each select="//target">
           <li>
             <a href="#{@id}">
