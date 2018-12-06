@@ -303,7 +303,7 @@
                          'sec')"/>
   
   <xsl:template match="*[local-name() = $default-structural-containers]" mode="jats2html" priority="2">
-    <xsl:apply-templates mode="#current"/>
+    <xsl:apply-templates select="if(self::sec) then node() except label else node()" mode="#current"/>
   </xsl:template>
   
   <!-- everything that goes into a div (except footnote-like content): -->
