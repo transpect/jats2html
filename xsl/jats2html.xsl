@@ -1086,6 +1086,7 @@
       <xsl:apply-templates select="$headlines" mode="toc"/>
     </xsl:variable>
     <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
+      <xsl:attribute name="id" select="'toc'"/>
       <xsl:attribute name="class" select="'toc'"/>
       <xsl:if test="$xhtml-version eq '5.0'">
         <xsl:attribute name="epub:type" select="'toc'"/>
@@ -1119,6 +1120,7 @@
   
   <xsl:template name="page-list">
     <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
+      <xsl:attribute name="id" select="'page-list'"/>
       <xsl:attribute name="epub:type" select="'page-list'"/>
       <xsl:attribute name="aria-label" select="'Page list'"/>
       <ol hidden="">
