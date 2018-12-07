@@ -1123,20 +1123,22 @@
   </xsl:template>
   
   <xsl:template name="page-list">
-    <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
-      <xsl:attribute name="id" select="'page-list'"/>
-      <xsl:attribute name="epub:type" select="'page-list'"/>
-      <xsl:attribute name="aria-label" select="'Page list'"/>
-      <ol hidden="">
-        <xsl:for-each select="//target">
-          <li>
-            <a href="#{@id}">
-              <xsl:value-of select="."/>
-            </a>
-          </li>
-        </xsl:for-each>
-      </ol>
-    </xsl:element>
+    <xsl:if test="//target">
+      <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
+        <xsl:attribute name="id" select="'page-list'"/>
+        <xsl:attribute name="epub:type" select="'page-list'"/>
+        <xsl:attribute name="aria-label" select="'Page list'"/>
+        <ol hidden="">
+          <xsl:for-each select="//target">
+            <li>
+              <a href="#{@id}">
+                <xsl:value-of select="."/>
+              </a>
+            </li>
+          </xsl:for-each>
+        </ol>
+      </xsl:element>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="html:li[following-sibling::*[1][self::html:ol]]" mode="patch-toc-for-epub3">
