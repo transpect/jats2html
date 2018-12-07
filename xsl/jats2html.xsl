@@ -1398,11 +1398,10 @@
   </xsl:template>
 
   <xsl:template match="ref[@id]/*[last()][$bib-backlink-type = 'letter']" mode="jats2html" priority="2">
-    <xsl:variable name="ref-id" select="(parent::*/@id, generate-id(parent::*))[1]" as="xs:string"/>
     <xsl:next-match/>
     <xsl:text>&#x2002;</xsl:text>
     <xsl:for-each select="key('by-rid', parent::ref/@id)">
-      <a href="#xref_{@id}" id="{$ref-id}" class="ref-link">
+      <a href="#xref_{@id}" id="{generate-id()}" class="ref-link">
         <xsl:choose>
           <xsl:when test="position() eq 1 and position() eq last()">
             <xsl:text>→</xsl:text>
