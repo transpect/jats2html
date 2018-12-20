@@ -380,23 +380,6 @@
     </div>
   </xsl:template>
   
-  <xsl:template match="book-back" mode="jats2html" priority="7">
-    <xsl:variable name="available-index-types"  as="xs:string*" select="distinct-values(//index-term/@index-type)"/>
-    <xsl:variable name="pre-rendered-index-types"  as="xs:string*" select="index/@index-type"/>
-    <xsl:element name="{$default-container-name}">
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:attribute name="class" select="local-name()"/>
-      <xsl:for-each select="$available-index-types[not(. = $pre-rendered-index-types)]">
-        <xsl:call-template name="create-index">
-          <xsl:with-param name="context" select="()" as="element()?"/>
-          <xsl:with-param name="root" select="$root" as="document-node()"/>
-          <xsl:with-param name="index-type" select="." as="xs:string"/>
-        </xsl:call-template>
-      </xsl:for-each>
-      <xsl:apply-templates mode="#current"/>
-    </xsl:element>
-  </xsl:template>
-  
   <xsl:template match="subtitle|aff" mode="jats2html">
     <p class="{local-name()}">
       <xsl:call-template name="css:content"/>
@@ -1484,6 +1467,28 @@
   <xsl:variable name="jats:index-heading-elt-name" as="xs:string"  select="$index-heading-elt-name"/>
   <xsl:variable name="jats:index-heading-class"    as="xs:string"  select="$index-heading-class"/>
   
+  <!-- create index sections and generate titles first. in jats2html the 
+       sections will be poulated and the index section is inserted into the toc -->
+  
+  <xsl:template match="book-back" mode="epub-alternatives">
+    <xsl:variable name="available-index-types"  as="xs:string*" select="distinct-values(//index-term/@index-type)"/>
+    <xsl:variable name="pre-rendered-index-types"  as="xs:string*" select="index/@index-type"/>
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:for-each select="$available-index-types[not(. = $pre-rendered-index-types)]">
+        <xsl:variable name="index-type" select="." as="xs:string"/>
+        <index xmlns="" index-type="{$index-type}">
+          <index-title-group>
+            <title>
+              <xsl:value-of select="(concat(upper-case(substring($index-type, 1, 1)), substring($index-type, 2)),
+                                     $jats:index-fallback-title)[1]"/>
+            </title>
+          </index-title-group>
+        </index>
+      </xsl:for-each>
+    </xsl:copy>
+  </xsl:template>
+  
   <!-- this template either renders an existing index 
        or is invoked with call-template to create a new index -->
   
@@ -1501,18 +1506,7 @@
           <xsl:call-template name="group-index-entries"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:apply-templates select="$context/@*" mode="#current"/>
-          <xsl:if test="$jats:index-generate-title">
-            <xsl:call-template name="create-index-title-group">
-              <xsl:with-param name="context" as="element(index-title-group)">
-                <index-title-group xmlns="">
-                  <title><xsl:value-of select="(concat(upper-case(substring($index-type, 1, 1)), substring($index-type, 2)),
-                                                $jats:index-fallback-title)[1]"/></title>
-                </index-title-group>
-              </xsl:with-param>
-              <xsl:with-param name="root" select="$root" as="document-node()" tunnel="yes"/>
-            </xsl:call-template>
-          </xsl:if>
+          <xsl:apply-templates select="$context/@*, index-title-group" mode="#current"/>
           <xsl:for-each-group select="$root//index-term[not(parent::index-term)]
                                                        [if(@index-type) then @index-type eq $index-type else true()]"
                               group-by="if (matches(substring(jats2html:strip-combining((@sort-key, term)[1]), 1, 1), 
