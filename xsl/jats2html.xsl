@@ -33,11 +33,11 @@
   <xsl:import href="http://transpect.io/xslt-util/flat-list-to-tree/xsl/flat-list-to-tree.xsl"/>
   <xsl:import href="http://transpect.io/unwrap-mml/xsl/unwrap-mml.xsl"/>
 	
-  <xsl:param name="debug" select="'yes'"/>
-  <xsl:param name="debug-dir-uri" select="'debug'"/>
-  <xsl:param name="srcpaths" select="'no'"/>
-  <xsl:param name="create-metadata-head" select="'yes'"/>
-  <xsl:param name="render-metadata" select="'no'"/>
+  <xsl:param name="debug" select="'yes'" as="xs:string"/>
+  <xsl:param name="debug-dir-uri" select="'debug'" as="xs:string"/>
+  <xsl:param name="srcpaths" select="'no'" as="xs:string"/>
+  <xsl:param name="create-metadata-head" select="'yes'" as="xs:string"/>
+  <xsl:param name="render-metadata" select="'no'" as="xs:string"/>
   <xsl:param name="xhtml-version" select="'1.0'"/><!-- supported values: '1.0', '5.0' -->
   <xsl:param name="default-container-name" select="if($xhtml-version eq '5.0') then 'section' else 'div'" as="xs:string"/>
 
@@ -95,6 +95,8 @@
        letter: link from entry with a letter
        none: go figure -->
   <xsl:param name="bib-backlink-type" select="'letter'"/>
+  <!-- numbering consecutively <ref> entries in case <label> doesn't exists -->
+  <xsl:param name="number-bibliography" select="'no'" as="xs:string"/>
   <!-- change markup for indices -->
   <xsl:param name="index-symbol-heading"   as="xs:string"  select="'0'"/>
   <xsl:param name="index-generate-title"   as="xs:string"  select="'no'"/>
@@ -1403,8 +1405,17 @@
     </xsl:for-each>
   </xsl:template>
   
+  <xsl:variable name="ref-index" select="ref-list/ref" as="element(ref)*"/>
+  
   <xsl:template match="ref" mode="jats2html" priority="1.5">
-    <xsl:apply-templates select="@*, label, (mixed-citation, element-citation, citation-alternatives)[1], note, x" mode="#current"/>
+    <xsl:apply-templates select="@*" mode="#current"/>
+    <xsl:if test="not(label) and $number-bibliography eq 'yes'">
+      <xsl:variable name="id" select="@id" as="attribute(id)?"/>
+      <span class="ref-number">
+        <xsl:value-of select="(//xref[@rid eq $id][string-length(.) gt 0], index-of($ref-index, .))[1]"/>
+      </span>
+    </xsl:if>
+    <xsl:apply-templates select="label, (mixed-citation, element-citation, citation-alternatives)[1], note, x" mode="#current"/>
   </xsl:template>
 
   <xsl:template match="addr-line
@@ -2037,7 +2048,7 @@
           <xsl:when test="count($linked-items) eq 1">
             <a href="#{$linked-items[1]/@id}" class="{local-name()}">
               <xsl:if test="@id">
-                <!-- in some cases an xref does not have an @id, so we will not create dulicate @id="xref_" attributes -->
+                <!-- in some cases an xref does not have an @id, so we will not create duplicate @id="xref_" attributes -->
                 <xsl:attribute name="id" select="concat('xref_', @id)"/>  
               </xsl:if>
               <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
