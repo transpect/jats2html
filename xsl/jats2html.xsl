@@ -206,10 +206,10 @@
           <xsl:call-template name="create-meta-tags"/>  
         </xsl:if>
         <title>
-          <xsl:apply-templates select="*/book-meta/book-title-group/book-title/@*
-                                      |*/book-meta/book-title-group/book-title/node()
-                                      |*/front/article-meta/title-group/article-title/@*
-                                      |*/front/article-meta/title-group/article-title/node()"
+          <xsl:apply-templates select="book/book-meta/book-title-group/book-title/@*
+                                      |book/book-meta/book-title-group/book-title/node()
+                                      |article/front/article-meta/title-group/article-title/@*
+                                      |article/front/article-meta/title-group/article-title/node()"
                                mode="#current">
             <!-- suppress replicated target with id: -->
             <xsl:with-param name="in-toc" select="true()" tunnel="yes"/>
