@@ -183,15 +183,15 @@
   are contained in a footnote root that it nested within the context element.
   -->
   
-  <xsl:template match="/*" mode="jats2html"> 
+  <xsl:template match="/" mode="jats2html"> 
     <xsl:param name="footnote-roots" tunnel="yes" 
-               select="."/>
+               select="*" as="element(*)"/>
     <html>
-      <xsl:apply-templates select="@xml:*" mode="#current"/>
+      <xsl:apply-templates select="*/@xml:*" mode="#current"/>
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <xsl:if test="@source-dir-uri">
-          <meta name="source-dir-uri" content="{@source-dir-uri}"/>
+        <xsl:if test="*/@source-dir-uri">
+          <meta name="source-dir-uri" content="{*/@source-dir-uri}"/>
         </xsl:if>
         <xsl:if test="$css-location ne ''">
           <link rel="stylesheet" type="text/css" href="{$css-location}"/>  
@@ -206,10 +206,10 @@
           <xsl:call-template name="create-meta-tags"/>  
         </xsl:if>
         <title>
-          <xsl:apply-templates select="book-meta/book-title-group/book-title/@*
-                                      |book-meta/book-title-group/book-title/node()
-                                      |front/article-meta/title-group/article-title/@*
-                                      |front/article-meta/title-group/article-title/node()"
+          <xsl:apply-templates select="*/book-meta/book-title-group/book-title/@*
+                                      |*/book-meta/book-title-group/book-title/node()
+                                      |*/front/article-meta/title-group/article-title/@*
+                                      |*/front/article-meta/title-group/article-title/node()"
                                mode="#current">
             <!-- suppress replicated target with id: -->
             <xsl:with-param name="in-toc" select="true()" tunnel="yes"/>
@@ -224,11 +224,15 @@
         </xsl:if>-->
         <xsl:apply-templates mode="#current">
           <xsl:with-param name="footnote-ids" select="//fn/@id" as="xs:string*" tunnel="yes"/>
-          <xsl:with-param name="root" select="root(.)" as="document-node()" tunnel="yes"/>
+          <xsl:with-param name="root" select="root(*)" as="document-node()" tunnel="yes"/>
           <xsl:with-param name="footnote-roots" as="element(*)*" tunnel="yes" select="$footnote-roots"/>
         </xsl:apply-templates>
       </body>
     </html>
+  </xsl:template>
+  
+  <xsl:template match="book" mode="jats2html">
+    <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
   <xsl:template match="book-meta
