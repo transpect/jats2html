@@ -121,7 +121,7 @@
                         else if($lang eq 'fr') then 'Notes'
                         else if($lang eq 'es') then 'Notas'
                         else if($lang eq 'pl') then 'Przypisy'
-                        else if($lang eq 'cz') then 'vysvětlivky'
+                        else if($lang eq 'cz') then 'Vysvětlivky'
                         else                        'Notes'"/>
 
   <xsl:key name="l10n-string" match="l10n:string" use="@id"/>
