@@ -1022,8 +1022,10 @@
         <xsl:attribute name="epub:type" select="'tr:bio'"/>
       </xsl:when>
       <xsl:when test="$context[self::*:ref-list]">
-        <!--<xsl:attribute name="epub:type" select="'bibliograpy'"/>--><!-- epubcheck not updated yet -->
-        <xsl:attribute name="epub:type" select="'appendix'"/>
+        <xsl:attribute name="epub:type" select="'bibliography'"/>
+      </xsl:when>
+      <xsl:when test="$context[self::ref]">
+        <xsl:attribute name="epub:type" select="'biblioentry'"/>
       </xsl:when>
       <xsl:when test="$context[self::*[local-name() = ('preface', 'foreword', 'dedication', 'glossary', 'index', 'index-term', 'toc')]]">
         <xsl:attribute name="epub:type" select="$context/local-name()"/>
@@ -1412,6 +1414,7 @@
   <xsl:variable name="ref-index" select="ref-list/ref" as="element(ref)*"/>
   
   <xsl:template match="ref" mode="jats2html" priority="1.5">
+    <xsl:attribute name="epub:type" select="tr:create-epub-type-attribute(.)"/>
     <xsl:apply-templates select="@*" mode="#current"/>
     <xsl:if test="not(label) and $number-bibliography eq 'yes'">
       <xsl:variable name="id" select="@id" as="attribute(id)?"/>
