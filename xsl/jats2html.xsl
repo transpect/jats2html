@@ -298,6 +298,7 @@
                          'contrib-group',
                          'dedication',
                          'fn-group',
+                         'index-group',
                          'foreword',
                          'front',
                          'front-matter',
@@ -1520,7 +1521,7 @@
       <xsl:attribute name="epub:type" select="'index'"/>
       <!-- if a rendered index exists, we don't generate a new one from index-terms -->
       <xsl:choose>
-        <xsl:when test="$context/index-entry">
+        <xsl:when test="$context//index-entry">
           <xsl:call-template name="group-index-entries"/>
         </xsl:when>
         <xsl:otherwise>
@@ -1556,9 +1557,10 @@
   </xsl:template>
   
   <xsl:template name="group-index-entries">
-    <xsl:for-each-group select="index-entry|index-title-group" group-adjacent="local-name()">
+    <xsl:for-each-group select=".//index-entry|index-title-group" group-adjacent="local-name()">
       <xsl:choose>
         <xsl:when test="current-grouping-key() eq 'index-entry'">
+          <xsl:message select="."></xsl:message>
           <ul class="index-entry-list" epub:type="index-entry-list">
             <xsl:for-each select="current-group()">
               <li class="index-entry" epub:type="index-entry">          
@@ -1578,6 +1580,12 @@
     <span class="indexterm" epub:type="index-term">
       <xsl:apply-templates mode="jats2html"/>
     </span>
+  </xsl:template>
+  
+  <xsl:template match="nav-pointer[@rid]" mode="rendered-index-entry">
+    <a class="{local-name()}" href="#{@rid}">
+      <xsl:apply-templates mode="jats2html"/>
+    </a>
   </xsl:template>
   
   <xsl:template name="group-index-terms">
