@@ -1560,11 +1560,16 @@
     <xsl:for-each-group select=".//index-entry|index-title-group" group-adjacent="local-name()">
       <xsl:choose>
         <xsl:when test="current-grouping-key() eq 'index-entry'">
-          <xsl:message select="."></xsl:message>
           <ul class="index-entry-list" epub:type="index-entry-list">
             <xsl:for-each select="current-group()">
               <li class="index-entry" epub:type="index-entry">          
-                <xsl:apply-templates mode="rendered-index-entry"/>
+                <xsl:apply-templates select="* except nav-pointer" mode="rendered-index-entry"/>
+                <xsl:for-each select="nav-pointer">
+                  <xsl:apply-templates select="." mode="rendered-index-entry"/>
+                  <xsl:if test="position() ne last()">
+                    <xsl:text>,&#x20;</xsl:text>
+                  </xsl:if>
+                </xsl:for-each>
               </li>
             </xsl:for-each>
           </ul>
