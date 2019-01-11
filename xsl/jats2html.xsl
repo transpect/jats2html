@@ -867,7 +867,7 @@
   <xsl:template match="@list-type" mode="jats2html">
     <xsl:attribute name="class" 
                    select="     if(. = 'order') then ()
-                           else if(matches(., '^(alpha|roman)')) 
+                           else if(matches(., '^(alpha|roman)-')) 
                                                 then string-join(reverse(tokenize(., '-')), '-')
                            else ."/>
   </xsl:template>
