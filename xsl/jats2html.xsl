@@ -787,14 +787,20 @@
                        and (every $term in def-item/term satisfies $term = def-item[1]/term)">
         <ul>
           <xsl:call-template name="css:content">
-            <xsl:with-param name="discard-term" as="xs:boolean" select="if (normalize-space($former-list-type)) then true() else false()" tunnel="yes"/>
+            <xsl:with-param name="discard-term" as="xs:boolean" 
+                            select="if (normalize-space($former-list-type)) 
+                                    then true() 
+                                    else false()" tunnel="yes"/>
           </xsl:call-template>
         </ul>
       </xsl:when>
       <xsl:when test="($former-list-type = 'orderedlist') and (matches(def-item[1]/term, '^[1a]\.$'))">
         <ol>
           <xsl:call-template name="css:content">
-            <xsl:with-param name="discard-term" as="xs:boolean" select="if (normalize-space($former-list-type)) then true() else false()" tunnel="yes"/>
+            <xsl:with-param name="discard-term" as="xs:boolean" 
+                                  select="if (normalize-space($former-list-type)) 
+                                          then true() 
+                                          else false()" tunnel="yes"/>
           </xsl:call-template>
         </ol>
       </xsl:when>
@@ -829,13 +835,15 @@
 
   <xsl:template match="*:dd/*:label" mode="clean-up"/>
   
-  <xsl:template match="list[matches(@list-type, '^(simple|ndash|bullet)$')]" mode="jats2html">
+  <xsl:template match="list[matches(@list-type, '^(simple|ndash|bullet)$')]" 
+                mode="jats2html">
     <ul>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </ul>
   </xsl:template>
   
-  <xsl:template match="list[matches(@list-type, '^(order|alpha|roman|alpha-lower|alpha-upper|roman-lower|roman-upper)$')]" mode="jats2html">
+  <xsl:template match="list[matches(@list-type, '^(order|alpha|roman|alpha-lower|alpha-upper|roman-lower|roman-upper)$')]" 
+                mode="jats2html">
     <ol>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </ol>
@@ -857,14 +865,11 @@
   </xsl:template>
   
   <xsl:template match="@list-type" mode="jats2html">
-    <xsl:choose>
-      <xsl:when test=". = 'order'"/>
-      <xsl:when test=". = 'alpha-lower'"><xsl:attribute name="class" select="'lower-alpha'"/></xsl:when>
-      <xsl:when test=". = 'alpha-upper'"><xsl:attribute name="class" select="'upper-alpha'"/></xsl:when>
-      <xsl:when test=". = 'roman-lower'"><xsl:attribute name="class" select="'lower-roman'"/></xsl:when>
-      <xsl:when test=". = 'roman-upper'"><xsl:attribute name="class" select="'upper-roman'"/></xsl:when>
-      <xsl:otherwise><xsl:attribute name="class" select="."/></xsl:otherwise>
-    </xsl:choose>
+    <xsl:attribute name="class" 
+                   select="     if(. = 'order') then ()
+                           else if(matches(., '^(alpha|roman)')) 
+                                                then string-join(reverse(tokenize(., '-')), '-')
+                           else ."/>
   </xsl:template>
   
   <xsl:template match="list-item" mode="jats2html">
