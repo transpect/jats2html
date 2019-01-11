@@ -247,6 +247,13 @@
     </xsl:element>
   </xsl:template>
   
+  <xsl:template match="book-part-meta[$divify-sections eq 'yes']" mode="jats2html">
+    <div class="{local-name(), parent::book-part/@book-part-type}">
+      <xsl:call-template name="render-metadata-sections"/>
+      <xsl:apply-templates mode="#current"/>      
+    </div>
+  </xsl:template>
+  
   <xsl:template match="book-part-meta" mode="jats2html">
     <xsl:call-template name="render-metadata-sections"/>
     <xsl:apply-templates mode="#current"/>
