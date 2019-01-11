@@ -865,11 +865,12 @@
   </xsl:template>
   
   <xsl:template match="@list-type" mode="jats2html">
-    <xsl:attribute name="class" 
-                   select="     if(. = 'order') then ()
-                           else if(matches(., '^(alpha|roman)-')) 
-                                                then string-join(reverse(tokenize(., '-')), '-')
-                           else ."/>
+    <xsl:if test="not(. = 'order')">
+      <xsl:attribute name="class" 
+                     select="if(matches(., '^(alpha|roman)-')) 
+                             then string-join(reverse(tokenize(., '-')), '-')
+                             else ."/>  
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="list-item" mode="jats2html">
