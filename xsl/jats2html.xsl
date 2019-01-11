@@ -1386,6 +1386,18 @@
     <xsl:attribute name="css:font-variant" select="'small-caps'"/>
   </xsl:template>
   
+  <xsl:template match="strike" mode="hub2htm:css-style-overrides">
+    <xsl:attribute name="css:text-decoration" select="'line-through'"/>
+  </xsl:template>
+  
+  <xsl:template match="overline" mode="hub2htm:css-style-overrides">
+    <xsl:attribute name="css:text-decoration" select="'overline'"/>
+  </xsl:template>
+  
+  <xsl:template match="underline" mode="hub2htm:css-style-overrides">
+    <xsl:attribute name="css:text-decoration" select="'underline'"/>
+  </xsl:template>
+  
   <xsl:template match="ref" mode="jats2html" priority="7">
     <p class="{name()}">
       <xsl:next-match/>
