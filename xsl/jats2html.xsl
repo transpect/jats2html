@@ -1796,7 +1796,9 @@
                                           if(alternatives) then 'alt-image' else ()), ' ')"/>
       <xsl:apply-templates select="@* except @content-type, label" mode="#current"/>
       <div class="box-content">
-        <xsl:apply-templates select="(alternatives, *[not(self::label)])[1]" mode="#current"/>
+        <xsl:apply-templates select="if(alternatives) 
+                                     then alternatives 
+                                     else *[not(self::label)]" mode="#current"/>
       </div>
     </xsl:element>
   </xsl:template>
