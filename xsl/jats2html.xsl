@@ -1129,7 +1129,7 @@
             <xsl:when test="$xhtml-version eq '5.0'">
               <xsl:variable name="max-level" select="max(for $i in $headlines return jats2html:heading-level($i))"/>
               <xsl:variable name="toc-as-tree">
-                <xsl:sequence select="jats2html:flat-toc-to-tree($headlines-by-level, 1, $max-level)"/>
+                <xsl:sequence select="jats2html:flat-toc-to-tree($headlines-by-level, 0, $max-level)"/>
               </xsl:variable>
               <xsl:variable name="patched-toc">
                 <xsl:apply-templates select="$toc-as-tree" mode="patch-toc-for-epub3"/>
@@ -1177,11 +1177,16 @@
   </xsl:template>
   
   <xsl:template match="html:ol" mode="patch-toc-for-epub3">
-    <xsl:if test="not(preceding-sibling::*[1][self::html:li])">
-      <xsl:copy>
-        <xsl:apply-templates select="@*, node()" mode="#current"/>
-      </xsl:copy>
-    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="parent::html:ol and count(*) eq 1 and position() eq 1">
+        <xsl:apply-templates mode="#current"/>
+      </xsl:when>
+      <xsl:when test="not(preceding-sibling::*[1][self::html:li])">
+        <xsl:copy>
+          <xsl:apply-templates select="@*, node()" mode="#current"/>
+        </xsl:copy>
+      </xsl:when>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template match="@*|*" mode="patch-toc-for-epub3">
