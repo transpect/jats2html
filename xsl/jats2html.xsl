@@ -690,7 +690,7 @@
       <span class="note-mark">
         <xsl:choose>
           <xsl:when test="$static-footnotes">
-            <xsl:value-of select="index-of($footnote-ids, @id)"/>
+            <xsl:value-of select="(@symbol, index-of($footnote-ids, @id))[1]"/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:call-template name="footnote-link"/>
@@ -704,7 +704,7 @@
   <xsl:template name="footnote-link">
     <xsl:param name="footnote-ids" as="xs:string*" tunnel="yes"/>
     <a href="#fna_{@id}" class="fn-link">
-      <xsl:value-of select="index-of($footnote-ids, @id)"/>
+      <xsl:value-of select="(@symbol, index-of($footnote-ids, @id))[1]"/>
     </a>
   </xsl:template>
 
@@ -716,7 +716,7 @@
       <span class="note-anchor" id="fna_{@id}"><xsl:if test="$recount-footnotes"><xsl:processing-instruction name="recount" select="'yes'"/></xsl:if>
         <a href="#fn_{@id}" class="fn-ref" epub:type="noteref">
           <sup>
-            <xsl:value-of select="index-of($footnote-ids, @id)"/>
+            <xsl:value-of select="(@symbol, index-of($footnote-ids, @id))[1]"/>
           </sup>
         </a>
       </span>    
