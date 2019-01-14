@@ -1384,7 +1384,7 @@
     </abbr>
   </xsl:template>
   
-  <xsl:template match="monospace|named-content|underline|sc|private-char|label" mode="jats2html">
+  <xsl:template match="monospace|named-content|overline|underline|sc|strike|private-char|label" mode="jats2html">
     <span class="{local-name()}">
       <xsl:next-match/>
     </span>
