@@ -38,7 +38,9 @@
   <xsl:param name="srcpaths" select="'no'" as="xs:string"/>
   <xsl:param name="create-metadata-head" select="'yes'" as="xs:string"/>
   <xsl:param name="render-metadata" select="'no'" as="xs:string"/>
-  <xsl:param name="xhtml-version" select="'1.0'"/><!-- supported values: '1.0', '5.0' -->
+  <!-- supported values: '1.0', '5.0' -->
+  <xsl:param name="xhtml-version" select="'1.0'" as="xs:string"/>
+  <!-- if xhtml-version is set to '5.0' and value here is 'yes', the footnotes are set as endnotes -->
   <xsl:param name="default-container-name" select="if($xhtml-version eq '5.0') then 'section' else 'div'" as="xs:string"/>
 
   <xsl:param name="s9y1-path" as="xs:string?"/>
@@ -377,9 +379,11 @@
         <xsl:if test="$recount-footnotes">
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
-        <h1 class="footnote-heading">
-          <xsl:apply-templates select="(title/node(), $footnote-title)[1]" mode="#current"/>
-        </h1>
+        <xsl:if test="not($xhtml-version eq '5.0')">
+          <h1 class="footnote-heading">
+            <xsl:apply-templates select="(title/node(), $footnote-title)[1]" mode="#current"/>
+          </h1>
+        </xsl:if>
         <!--<xsl:comment select="'ancestor: ', name(../..), '/', name(..),'/', name(), @*, '          ', count($footnote-roots intersect current()/descendant::*), ' ;; ',
           count(.//fn[some $fnr in ($footnote-roots intersect current()/descendant::*) 
                         satisfies (exists($fnr/descendant::* intersect .))]), for $f in .//fn return ('  :: ', $f/ancestor::*/name()), 
@@ -703,7 +707,7 @@
 
   <xsl:template name="footnote-link">
     <xsl:param name="footnote-ids" as="xs:string*" tunnel="yes"/>
-    <a href="#fna_{@id}" class="fn-link">
+    <a href="#fna_{@id}" class="fn-link" epub:type="noteref">
       <xsl:value-of select="(@symbol, index-of($footnote-ids, @id))[1]"/>
     </a>
   </xsl:template>
@@ -722,7 +726,7 @@
       </span>    
     </xsl:if>
   </xsl:template>
-    
+
   <xsl:template match="fn-group" mode="jats2html" priority="2.5">
     <xsl:apply-templates select="@*" mode="#current"/>
     <xsl:call-template name="jats2html:footnotes">
