@@ -828,10 +828,10 @@
 
   <xsl:template match="def-item/term" mode="jats2html">
     <xsl:param name="discard-term" as="xs:boolean?" tunnel="yes"/>
-  <xsl:if test="not($discard-term)">
+    <xsl:if test="not($discard-term)">
       <dt>
         <xsl:copy-of select="../@id"/>
-        <xsl:call-template name="css:content"/>
+        <xsl:next-match/>
       </dt>
     </xsl:if>
   </xsl:template>
@@ -839,8 +839,18 @@
   <xsl:template match="def-item/def" mode="jats2html">
     <xsl:param name="discard-term" as="xs:boolean?" tunnel="yes"/>
     <xsl:element name="{if ($discard-term) then 'li' else 'dd'}">
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:next-match/>
     </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="glossary/def-list/def-item/term" mode="jats2html" priority="-0.5">
+    <xsl:attribute name="epub:type" select="'glossterm'"/>
+    <xsl:call-template name="css:content"/>
+  </xsl:template>
+  
+  <xsl:template match="glossary/def-list/def-item/def" mode="jats2html" priority="-0.5">
+    <xsl:attribute name="epub:type" select="'glossdef'"/>
+    <xsl:call-template name="css:content"/>
   </xsl:template>
 
   <xsl:template match="*:dd/*:label" mode="clean-up"/>
