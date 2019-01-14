@@ -469,12 +469,14 @@
                       |pub-id
                       |publisher-loc
                       |publisher-name
+                      |overline
                       |related-object
                       |role
                       |sc
                       |series
                       |source
                       |speech
+                      |strike
                       |string-date
                       |string-name
                       |styled-content
@@ -1406,10 +1408,6 @@
   
   <xsl:template match="overline" mode="hub2htm:css-style-overrides">
     <xsl:attribute name="css:text-decoration" select="'overline'"/>
-  </xsl:template>
-  
-  <xsl:template match="underline" mode="hub2htm:css-style-overrides">
-    <xsl:attribute name="css:text-decoration" select="'underline'"/>
   </xsl:template>
   
   <xsl:template match="ref" mode="jats2html" priority="7">
