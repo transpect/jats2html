@@ -328,6 +328,7 @@
     <xsl:element name="{if(local-name() = ('abstract', 'verse-group')) 
                         then 'div' 
                         else $default-container-name}">
+      <xsl:apply-templates select="@* except (@book-part-type|@sec-type|@content-type)" mode="#current"/>
       <xsl:if test="tr:create-epub-type-attribute(.)">
         <xsl:attribute name="epub:type" select="tr:create-epub-type-attribute(.)"/>
       </xsl:if>
