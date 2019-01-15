@@ -1178,7 +1178,7 @@
   
   <xsl:template match="html:ol" mode="patch-toc-for-epub3">
     <xsl:choose>
-      <xsl:when test="parent::html:ol and count(*) eq 1 and position() eq 1">
+      <xsl:when test="count(*) eq 1 and */self::html:ol">
         <xsl:apply-templates mode="#current"/>
       </xsl:when>
       <xsl:when test="not(preceding-sibling::*[1][self::html:li])">
