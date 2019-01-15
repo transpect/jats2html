@@ -1600,19 +1600,23 @@
   </xsl:template>
   
   <xsl:template name="group-index-entries">
-    <xsl:for-each-group select=".//index-entry|index-title-group" group-adjacent="local-name()">
+    <xsl:for-each-group select="index-entry|index-div/index-entry|index-title-group" group-adjacent="local-name()">
       <xsl:choose>
         <xsl:when test="current-grouping-key() eq 'index-entry'">
           <ul class="index-entry-list" epub:type="index-entry-list">
             <xsl:for-each select="current-group()">
-              <li class="index-entry" epub:type="index-entry">          
-                <xsl:apply-templates select="* except nav-pointer" mode="rendered-index-entry"/>
+              <li class="index-entry" epub:type="index-entry">
+                <xsl:apply-templates select="* except (index-entry|nav-pointer)" mode="rendered-index-entry"/>
                 <xsl:for-each select="nav-pointer">
                   <xsl:apply-templates select="." mode="rendered-index-entry"/>
                   <xsl:if test="position() ne last()">
                     <xsl:text>,&#x20;</xsl:text>
                   </xsl:if>
                 </xsl:for-each>
+                <xsl:if test="index-entry">
+                  <!-- recurse into sub index entries -->
+                  <xsl:call-template name="group-index-entries"/>
+                </xsl:if>
               </li>
             </xsl:for-each>
           </ul>
