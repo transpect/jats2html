@@ -187,7 +187,7 @@
   
   <xsl:template match="/" mode="jats2html"> 
     <xsl:param name="footnote-roots" tunnel="yes" 
-               select="*" as="element()*"/>
+               select="*" as="element(*)*"/>
     <html>
       <xsl:apply-templates select="*/@xml:*" mode="#current"/>
       <head>
@@ -227,7 +227,7 @@
         <xsl:apply-templates mode="#current">
           <xsl:with-param name="footnote-ids" select="//fn/@id" as="xs:string*" tunnel="yes"/>
           <xsl:with-param name="root" select="root(*)" as="document-node()" tunnel="yes"/>
-          <xsl:with-param name="footnote-roots" as="element()*" tunnel="yes" select="$footnote-roots"/>
+          <xsl:with-param name="footnote-roots" as="element(*)*" tunnel="yes" select="$footnote-roots"/>
         </xsl:apply-templates>
       </body>
     </html>
