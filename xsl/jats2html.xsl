@@ -1206,14 +1206,23 @@
                                                'class', 
                                                '[a-z]+')"/>
   </xsl:function>
-    
+  
   <xsl:template match="title" mode="toc">
     <xsl:element name="{if($xhtml-version eq '5.0') then 'li' else 'p'}">
       <xsl:attribute name="class" select="concat('toc', jats2html:heading-level(.))"/>
       <a href="#{(@id, generate-id())[1]}" class="toc-link">
+        <xsl:if test="ancestor::book-part-meta/contrib-group/contrib">
+          <span class="toc-authors">
+            <xsl:value-of select="string-join(for $i in ancestor::book-part-meta/contrib-group/contrib 
+                                              return concat($i/name/given-names, ' ', $i/name/surname),
+                                              ', ')"/>
+          </span>
+        </xsl:if>
         <xsl:if test="../label">
-          <xsl:apply-templates select="../label/node()" mode="strip-indexterms-etc"/>
-          <xsl:text>&#x2002;</xsl:text>
+          <span class="toc-label">
+            <xsl:apply-templates select="../label/node()" mode="strip-indexterms-etc"/>
+            <xsl:text>&#x2002;</xsl:text>
+          </span>
         </xsl:if>
         <xsl:apply-templates mode="jats2html">
           <xsl:with-param name="in-toc" select="true()" as="xs:boolean" tunnel="yes"/>
