@@ -966,10 +966,16 @@
     </xsl:element>
   </xsl:template>
   
+  <xsl:template match="fig/permissions" mode="jats2html"/>
+  
   <xsl:template match="fig/caption[$xhtml-version eq '5.0']
                       |graphic/caption[$xhtml-version eq '5.0']" mode="jats2html" priority="7">
     <figcaption>
       <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
+      <xsl:if test="../label">
+        <xsl:apply-templates select="../label" mode="#current"/>
+        <xsl:text>&#x20;</xsl:text>
+      </xsl:if>
       <xsl:call-template name="css:content"/>
       <xsl:apply-templates select="../permissions" mode="#current"/>
     </figcaption>
