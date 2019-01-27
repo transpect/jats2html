@@ -965,9 +965,7 @@
       <xsl:apply-templates select="* except (label | caption | permissions), caption" mode="#current"/>
     </xsl:element>
   </xsl:template>
-  
-  <xsl:template match="fig/permissions" mode="jats2html"/>
-  
+    
   <xsl:template match="fig/caption[$xhtml-version eq '5.0']
                       |graphic/caption[$xhtml-version eq '5.0']" mode="jats2html" priority="7">
     <figcaption>
@@ -1223,6 +1221,7 @@
                                               return concat($i/name/given-names, ' ', $i/name/surname),
                                               ', ')"/>
           </span>
+          <xsl:text>&#x20;</xsl:text>
         </xsl:if>
         <xsl:if test="../label">
           <span class="toc-label">
