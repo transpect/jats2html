@@ -975,8 +975,7 @@
         <xsl:apply-templates select="../label" mode="#current"/>
         <xsl:text>&#x20;</xsl:text>
       </xsl:if>
-      <xsl:apply-templates mode="#current"/>
-      <xsl:apply-templates select="../permissions" mode="#current"/>
+      <xsl:apply-templates select="node(), ../permissions" mode="#current"/>
     </figcaption>
   </xsl:template>
   
