@@ -970,11 +970,12 @@
                       |graphic/caption[$xhtml-version eq '5.0']" mode="jats2html" priority="7">
     <figcaption>
       <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:if test="../label">
         <xsl:apply-templates select="../label" mode="#current"/>
         <xsl:text>&#x20;</xsl:text>
       </xsl:if>
-      <xsl:call-template name="css:content"/>
+      <xsl:apply-templates mode="#current"/>
       <xsl:apply-templates select="../permissions" mode="#current"/>
     </figcaption>
   </xsl:template>
