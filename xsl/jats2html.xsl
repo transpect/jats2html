@@ -998,7 +998,12 @@
 
   <xsl:template match="table-wrap|table-wrap-foot" mode="jats2html">
     <div class="{local-name()} {distinct-values(table/@content-type)}">
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:apply-templates select="@*, * except (label|caption)" mode="#current"/>
+      <xsl:if test="label|caption">
+        <div class="caption">
+          <xsl:apply-templates select="label, caption/node()" mode="#current"/>
+        </div>
+      </xsl:if>
     </div>
   </xsl:template>
 
