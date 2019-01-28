@@ -1000,7 +1000,7 @@
     <div class="{local-name()} {distinct-values(table/@content-type)}">
       <xsl:apply-templates select="@*, * except (label|caption)" mode="#current"/>
       <xsl:if test="label|caption">
-        <div class="table-caption">
+        <div class="table-caption caption">
           <xsl:apply-templates select="label, caption/node()" mode="#current"/>
         </div>
       </xsl:if>
