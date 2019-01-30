@@ -399,7 +399,7 @@
     </div>
   </xsl:template>
   
-  <xsl:template match="subtitle|aff" mode="jats2html">
+  <xsl:template match="subtitle|aff|attrib" mode="jats2html">
     <p class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </p>
@@ -920,12 +920,6 @@
     <blockquote>
       <xsl:call-template name="css:content"/>
     </blockquote>
-  </xsl:template>
-  
-  <xsl:template match="attrib" mode="jats2html">
-    <p class="{local-name()}">
-      <xsl:call-template name="css:content"/>
-    </p>
   </xsl:template>
   
   <!-- please note that <notes> can include notes 
@@ -2700,7 +2694,11 @@
     </p>
   </xsl:template>
   
-  <xsl:template match="publisher-name" mode="jats2html-create-title">
+  <!-- everything that goes into a <p> -->
+  
+  <xsl:template match="funding-source
+                      |funding-statement
+                      |publisher-name" mode="jats2html-create-title">
     <p class="{local-name()}">
       <xsl:apply-templates select="@*, node()" mode="jats2html"/>
     </p>
@@ -2711,8 +2709,6 @@
   <xsl:template match="author-notes
                       |award-group
                       |funding-group
-                      |funding-source
-                      |funding-statement
                       |fn-group
                       |funding-group
                       |publisher
