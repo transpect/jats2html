@@ -2700,7 +2700,7 @@
                       |funding-statement
                       |publisher-name" mode="jats2html-create-title">
     <p class="{local-name()}">
-      <xsl:apply-templates select="@*, node()" mode="jats2html"/>
+      <xsl:call-template name="css:content"/>
     </p>
   </xsl:template>
   
