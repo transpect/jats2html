@@ -999,7 +999,12 @@
       <xsl:apply-templates select="@*, * except (label|caption)" mode="#current"/>
       <xsl:if test="label|caption">
         <div class="table-caption caption">
-          <xsl:apply-templates select="label, caption/node()" mode="#current"/>
+          <xsl:if test="label">
+            <p>
+              <xsl:apply-templates select="label, caption/*[1]/node()" mode="#current"/>
+            </p>
+          </xsl:if>
+          <xsl:apply-templates select="if(label) then caption/*[position() ne 1] else caption" mode="#current"/>
         </div>
       </xsl:if>
     </div>
