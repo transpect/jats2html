@@ -42,6 +42,8 @@
   <xsl:param name="xhtml-version" select="'1.0'" as="xs:string"/>
   <!-- if xhtml-version is set to '5.0' and value here is 'yes', the footnotes are set as endnotes -->
   <xsl:param name="default-container-name" select="if($xhtml-version eq '5.0') then 'section' else 'div'" as="xs:string"/>
+  <xsl:param name="toc" select="'no'" as="xs:string"/>
+  <xsl:param name="toc-max-level" as="xs:integer?"/>
 
   <xsl:param name="s9y1-path" as="xs:string?"/>
   <xsl:param name="s9y2-path" as="xs:string?"/>
@@ -224,6 +226,11 @@
           <xsl:if test="$render-metadata eq 'yes'">
           <xsl:call-template name="render-metadata-sections"/>
         </xsl:if>-->
+        <xsl:if test="$toc eq 'yes'">
+          <xsl:call-template name="toc">
+            <xsl:with-param name="toc-max-level" select="$toc-max-level" as="xs:integer?"/>
+          </xsl:call-template>
+        </xsl:if>
         <xsl:apply-templates mode="#current">
           <xsl:with-param name="footnote-ids" select="//fn/@id" as="xs:string*" tunnel="yes"/>
           <xsl:with-param name="root" select="root(*)" as="document-node()" tunnel="yes"/>
@@ -1104,6 +1111,7 @@
   <!-- if no toc element is given, you can also invoke this with <xsl:call-template name="toc"/> -->
   
   <xsl:template match="toc" name="toc" mode="jats2html">
+    <xsl:param name="toc-max-level" as="xs:integer?"/>
     <xsl:variable name="headlines" as="element(title)*"
                   select="//title[parent::sec[not(ancestor::boxed-text)]
                                  |parent::title-group
@@ -1139,7 +1147,7 @@
           <xsl:apply-templates select="title-group" mode="jats2html"/>
           <xsl:choose>
             <xsl:when test="$xhtml-version eq '5.0'">
-              <xsl:variable name="max-level" select="max(for $i in $headlines return jats2html:heading-level($i))"/>
+              <xsl:variable name="max-level" select="($toc-max-level, max(for $i in $headlines return jats2html:heading-level($i)))[1]"/>
               <xsl:variable name="toc-as-tree">
                 <xsl:sequence select="jats2html:flat-toc-to-tree($headlines-by-level, 0, $max-level)"/>
               </xsl:variable>
