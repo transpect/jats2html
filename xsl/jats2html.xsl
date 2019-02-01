@@ -966,10 +966,14 @@
       <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:if test="../label">
-        <xsl:apply-templates select="../label" mode="#current"/>
-        <xsl:text>&#x20;</xsl:text>
+        <p>
+          <xsl:apply-templates select="../label" mode="#current"/>
+          <xsl:text>&#x20;</xsl:text>
+          <xsl:apply-templates select="*[1]/node()" mode="#current"/>
+        </p>
       </xsl:if>
-      <xsl:apply-templates select="node(), ../permissions" mode="#current"/>
+      <xsl:apply-templates select="if(../label) then *[not(position() eq 1)] else node(), 
+                                   ../permissions" mode="#current"/>
     </figcaption>
   </xsl:template>
   
