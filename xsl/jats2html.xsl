@@ -1871,7 +1871,7 @@
   <!-- graphics -->
   
   <xsl:template match="graphic | inline-graphic" mode="jats2html">
-    <img alt="{(alt-text, @xlink:title, replace(@xlink:href, '^(.+)/([^/]+)$', '$2')))[. != ''][1]}">
+    <img alt="{(alt-text, @xlink:title)[1]}">
       <xsl:apply-templates select="@srcpath, @xlink:href" mode="#current"/>
       <xsl:apply-templates select="." mode="class-att"/>
     </img>
