@@ -441,6 +441,7 @@
     -->
   <xsl:template match="abbrev
                       |addr-line
+                      |address
                       |array
                       |article-title
                       |bold
