@@ -529,7 +529,7 @@
   
   <xsl:template match="corresp|statement|question-wrap|question|answer|explanation" mode="jats2html">
     <div class="{local-name()}">
-      <xsl:next-match/>
+      <xsl:call-template name="css:content"/>
     </div>
   </xsl:template>
 
