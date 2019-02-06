@@ -305,6 +305,7 @@
                          'abstract',
                          'ack',
                          'app',
+                         'app-group',
                          'back',
                          'body',
                          'book-app',
@@ -532,7 +533,7 @@
     <xsl:apply-templates select="@content-type | @style-type" mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="corresp" mode="jats2html">
+  <xsl:template match="corresp|address|statement|question-wrap|question|answer|explanation" mode="jats2html">
     <div class="{local-name()}">
       <xsl:next-match/>
     </div>
@@ -946,12 +947,6 @@
       <xsl:attribute name="class" select="local-name()"/>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:element>
-  </xsl:template>
-  
-  <xsl:template match="statement|question-wrap|question|answer|explanation" mode="jats2html">
-    <div class="{local-name()}">
-      <xsl:call-template name="css:content"/>
-    </div>
   </xsl:template>
   
   <xsl:template match="option" mode="jats2html">
@@ -1392,13 +1387,7 @@
     </span>
   </xsl:template>
   
-  <xsl:template match="p" mode="jats2html">
-    <p>
-      <xsl:next-match/>
-    </p>
-  </xsl:template>
-  
-  <xsl:template match="verse-line" mode="jats2html">
+  <xsl:template match="p|verse-line" mode="jats2html">
     <p>
       <xsl:next-match/>
     </p>
