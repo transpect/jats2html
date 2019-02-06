@@ -2677,7 +2677,7 @@
   <xsl:template match="email" mode="jats2html">
     <a href="{if(starts-with(@xlink:href, 'mailto:')) 
               then @xlink:href 
-              else concat('mailto:', @xlink:href)}" class="email">
+              else concat('mailto:', (@xlink:href, .)[1])}" class="email">
       <xsl:apply-templates select="@* except @xlink:href, node()" mode="#current"/>
     </a>
   </xsl:template>
