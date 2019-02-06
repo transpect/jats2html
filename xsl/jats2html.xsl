@@ -334,7 +334,7 @@
                       |abstract
                       |verse-group" 
                 mode="jats2html" priority="3">
-    <xsl:element name="{if(local-name() = ('abstract', 'verse-group')) 
+    <xsl:element name="{if(local-name() = ('abstract', 'verse-group', 'contrib-group') or parent::book-part) 
                         then 'div' 
                         else $default-container-name}">
       <xsl:apply-templates select="@* except (@book-part-type|@sec-type|@content-type)" mode="#current"/>
