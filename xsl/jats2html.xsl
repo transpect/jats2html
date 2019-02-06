@@ -533,7 +533,7 @@
     <xsl:apply-templates select="@content-type | @style-type" mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="corresp|address|statement|question-wrap|question|answer|explanation" mode="jats2html">
+  <xsl:template match="corresp|statement|question-wrap|question|answer|explanation" mode="jats2html">
     <div class="{local-name()}">
       <xsl:next-match/>
     </div>
@@ -1423,12 +1423,6 @@
     </abbr>
   </xsl:template>
   
-  <xsl:template match="monospace|named-content|overline|underline|sc|strike|private-char|label" mode="jats2html">
-    <span class="{local-name()}">
-      <xsl:next-match/>
-    </span>
-  </xsl:template>
-  
   <xsl:template match="underline" mode="hub2htm:css-style-overrides">
     <xsl:attribute name="css:text-decoration" select="'underline'"/>
   </xsl:template>
@@ -1490,43 +1484,50 @@
   </xsl:template>
 
   <xsl:template match="addr-line
-                      |city
-                      |country
-                      |institution
-                      |surname
-                      |given-names
-                      |volume
-                      |prefix
-                      |suffix
-                      |source
-                      |year
-                      |date
-                      |etal
-                      |issue
-                      |string-date
-                      |fpage
-                      |lpage
+                      |address
                       |article-title
                       |chapter-title
-                      |uri[not(@xlink:href)]
-                      |pub-id
-                      |volume-series
-                      |series
-                      |person-group
+                      |city
+                      |collab
+                      |comment
+                      |country
+                      |country
+                      |date
                       |edition
+                      |etal
+                      |fpage
+                      |given-names
+                      |institution
+                      |issue
+                      |kwd
+                      |label
+                      |lpage
+                      |monospace
+                      |named-content
+                      |nested-kwd
+                      |overline
+                      |person-group
+                      |prefix
+                      |private-char
+                      |pub-id
                       |publisher-loc
                       |publisher-name
-                      |edition
-                      |person-group
                       |role
-                      |collab
-                      |trans-title
+                      |sc
+                      |series
+                      |source
+                      |strike
+                      |string-date
+                      |suffix
+                      |surname
                       |trans-source
                       |trans-subtitle
-                      |comment
-                      |kwd
-                      |nested-kwd
-                      |country" mode="jats2html"> 
+                      |trans-title
+                      |underline
+                      |uri[not(@xlink:href)]
+                      |volume
+                      |volume-series
+                      |year" mode="jats2html"> 
     <span class="{local-name()}">
       <xsl:next-match/>
     </span> 
