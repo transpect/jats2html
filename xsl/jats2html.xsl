@@ -210,14 +210,8 @@
           <xsl:call-template name="create-meta-tags"/>  
         </xsl:if>
         <title>
-          <xsl:apply-templates select="book/book-meta/book-title-group/book-title/@*
-                                      |book/book-meta/book-title-group/book-title/node()
-                                      |article/front/article-meta/title-group/article-title/@*
-                                      |article/front/article-meta/title-group/article-title/node()"
-                               mode="#current">
-            <!-- suppress replicated target with id: -->
-            <xsl:with-param name="in-toc" select="true()" tunnel="yes"/>
-          </xsl:apply-templates>
+          <xsl:value-of select="book/book-meta/book-title-group/book-title
+                               |article/front/article-meta/title-group/article-title"/>
         </title>
         <xsl:apply-templates select=".//custom-meta-group/css:rules" mode="hub2htm:css"/>
       </head>
