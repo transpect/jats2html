@@ -1547,12 +1547,14 @@
   <!-- create index sections and generate titles first. in jats2html the 
        sections will be poulated and the index section is inserted into the toc -->
   
-  <xsl:template match="book-back" mode="epub-alternatives">
-    <xsl:variable name="available-index-types"  as="xs:string*" select="distinct-values(//index-term/@index-type)"/>
-    <xsl:variable name="pre-rendered-index-types"  as="xs:string*" select="index/@index-type"/>
+  <xsl:template match="book" mode="epub-alternatives">
+    <xsl:variable name="available-index-types" as="xs:string*"
+                  select="distinct-values(for $i in //index-term
+                                          return ($i/@index-type, 'index')[1])"/>
+    <xsl:variable name="existing-indexes" select="//index/@index-type" as="xs:string*"/>
     <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
-      <xsl:for-each select="$available-index-types[not(. = $pre-rendered-index-types)]">
+      <xsl:for-each select="$available-index-types[not(. = $existing-indexes)]">
         <xsl:variable name="index-type" select="." as="xs:string"/>
         <index xmlns="" index-type="{$index-type}">
           <index-title-group>
@@ -1577,13 +1579,15 @@
       <xsl:variable name="index-type" select="$index-type" as="xs:string?"/>
       <xsl:attribute name="class" select="string-join(('index', $index-type), ' ')"/>
       <xsl:attribute name="epub:type" select="'index'"/>
+      <xsl:if test="$context">
+        <xsl:apply-templates select="$context/@*, index-title-group" mode="#current"/>  
+      </xsl:if>
       <!-- if a rendered index exists, we don't generate a new one from index-terms -->
       <xsl:choose>
         <xsl:when test="$context//index-entry">
           <xsl:call-template name="group-index-entries"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:apply-templates select="$context/@*, index-title-group" mode="#current"/>
           <xsl:for-each-group select="$root//index-term[not(parent::index-term)]
                                                        [if(@index-type) then @index-type eq $index-type else true()]"
                               group-by="if (matches(substring(jats2html:strip-combining((@sort-key, term)[1]), 1, 1), 
