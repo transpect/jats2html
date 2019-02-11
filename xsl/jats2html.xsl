@@ -547,6 +547,11 @@
       <xsl:next-match/>
     </span>
   </xsl:template>
+  
+  <xsl:template match="mixed-citation" mode="jats2html" priority="4">
+    <xsl:next-match/>
+    <xsl:apply-templates select="../element-citation//target" mode="#current"/>
+  </xsl:template>
 
   <xsl:variable name="jats2html:ignore-style-name-regex-x"
     select="'^(NormalParagraphStyle|Hyperlink)$'"
