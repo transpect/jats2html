@@ -698,7 +698,7 @@
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <xsl:param name="static-footnotes" tunnel="yes" as="xs:boolean?"/>
     <xsl:element name="{if($xhtml-version eq '5.0') then 'aside' else 'div'}">
-      <xsl:attribute name="id" select="concat('fn_', @id)"/>
+      <xsl:attribute name="id" select="(@id, concat('fn_', @id))[1]"/>
       <xsl:attribute name="class" select="'fn'"/>
       <xsl:attribute name="epub:type" select="'footnote'"/>
       <span class="note-mark">
