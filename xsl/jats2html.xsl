@@ -543,7 +543,7 @@
   </xsl:template>
 
   <xsl:template match="mixed-citation|element-citation" mode="jats2html" priority="3"> 
-    <span>
+    <span class="{replace(local-name(), '-.+$', '')}">
       <xsl:next-match/>
     </span>
   </xsl:template>
@@ -608,7 +608,7 @@
   <xsl:template match="@content-type | @style-type | @specific-use" mode="jats2html"/>
 
   <xsl:template match="contrib-id" mode="jats2html">
-    <span>
+    <span class="{local-name()}">
       <xsl:next-match/>
     </span>
   </xsl:template>
@@ -659,7 +659,7 @@
   </xsl:template>
   
   <xsl:template match="speech/speaker" mode="jats2html">
-    <span>
+    <span class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </span>
     <xsl:text>&#xa;</xsl:text>
@@ -1279,7 +1279,7 @@
   <xsl:template match="label[../title union ../caption/title]" mode="jats2html">
     <xsl:param name="actually-process-it" select="true()" as="xs:boolean"/>
     <xsl:if test="$actually-process-it">
-      <span>
+      <span class="label">
         <xsl:call-template name="css:content"/>
       </span>
       <xsl:apply-templates select="." mode="label-sep"/>
@@ -1291,7 +1291,7 @@
     <xsl:param name="actually-process-it" select="true()" as="xs:boolean"/>
     <xsl:if test="$actually-process-it">
       <xsl:apply-templates select="." mode="label-sep"/>
-      <span>
+      <span class="label">
         <xsl:call-template name="css:content"/>
       </span>
     </xsl:if>
@@ -1385,7 +1385,7 @@
   </xsl:template>
 
   <xsl:template match="string-name" mode="jats2html">
-    <span>
+    <span class="{local-name()}">
       <xsl:next-match/>
     </span>
   </xsl:template>
@@ -1397,7 +1397,7 @@
   </xsl:template>
   
   <xsl:template match="styled-content" mode="jats2html">
-    <span>
+    <span class="{string-join((local-name(), @style, @style-type, @specific-use), ' ')}">
       <xsl:next-match/>
     </span>
   </xsl:template>
