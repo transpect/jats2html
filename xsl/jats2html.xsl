@@ -634,7 +634,7 @@
   </xsl:template>
      
   <xsl:template match="target
-                      |milestone-start" mode="jats2html">
+                      |milestone-start" mode="jats2html" priority="1.5">
     <a class="{local-name()}" id="{(@id, generate-id())[1]}"/>
   </xsl:template>
   
