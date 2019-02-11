@@ -1007,11 +1007,11 @@
     <div class="{local-name()} {distinct-values(table/@content-type)}">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:if test="(label|caption) and $table-caption-side eq 'top'">
-        <xsl:apply-templates select="$table-caption" mode="#current"/>
+        <xsl:sequence select="$table-caption"/>
       </xsl:if>
       <xsl:apply-templates select="* except (label|caption)" mode="#current"/>
       <xsl:if test="(label|caption) and $table-caption-side eq 'bottom'">
-        <xsl:apply-templates select="$table-caption" mode="#current"/>
+        <xsl:sequence select="$table-caption"/>
       </xsl:if>
     </div>
   </xsl:template>
