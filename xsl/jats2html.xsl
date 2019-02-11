@@ -104,9 +104,11 @@
   <!-- change markup for indices -->
   <xsl:param name="index-symbol-heading"   as="xs:string"  select="'0'"/>
   <xsl:param name="index-generate-title"   as="xs:string"  select="'no'"/>
-  <xsl:param name="index-fallback-title"    as="xs:string"  select="'Index'"/>
+  <xsl:param name="index-fallback-title"   as="xs:string"  select="'Index'"/>
   <xsl:param name="index-heading-elt-name" as="xs:string"  select="'h4'"/>
   <xsl:param name="index-heading-class"    as="xs:string"  select="'index-subheading'"/>
+  <!-- position of table captions. Permitted values are: 'top' or 'bottom' -->
+  <xsl:param name="table-caption-side"     as="xs:string"  select="'top'"/>
   
   <xsl:output method="xhtml" indent="no" 
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
@@ -992,17 +994,23 @@
   </xsl:template>
 
   <xsl:template match="table-wrap|table-wrap-foot" mode="jats2html">
+    <xsl:variable name="table-caption">
+      <div class="table-caption caption">
+        <xsl:if test="label">
+          <p>
+            <xsl:apply-templates select="label, caption/*[1]/node()" mode="#current"/>
+          </p>
+        </xsl:if>
+        <xsl:apply-templates select="if(label) then caption/*[position() ne 1] else caption" mode="#current"/>
+      </div>
+    </xsl:variable>
     <div class="{local-name()} {distinct-values(table/@content-type)}">
+      <xsl:if test="(label|caption) and $table-caption-side eq 'top'">
+        <xsl:apply-templates select="$table-caption" mode="#current"/>
+      </xsl:if>
       <xsl:apply-templates select="@*, * except (label|caption)" mode="#current"/>
-      <xsl:if test="label|caption">
-        <div class="table-caption caption">
-          <xsl:if test="label">
-            <p>
-              <xsl:apply-templates select="label, caption/*[1]/node()" mode="#current"/>
-            </p>
-          </xsl:if>
-          <xsl:apply-templates select="if(label) then caption/*[position() ne 1] else caption" mode="#current"/>
-        </div>
+      <xsl:if test="(label|caption) and $table-caption-side eq 'bottom'">
+        <xsl:apply-templates select="$table-caption" mode="#current"/>
       </xsl:if>
     </div>
   </xsl:template>
