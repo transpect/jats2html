@@ -539,7 +539,7 @@
     <xsl:variable name="att" as="attribute(class)?">
       <xsl:next-match/>
     </xsl:variable>
-    <xsl:attribute name="class" select="string-join((name(), @publication-type, $att), ' ')"/>
+    <xsl:attribute name="class" select="string-join((replace(local-name(), '-.+$', ''), @publication-type, $att), ' ')"/>
   </xsl:template>
 
   <xsl:template match="mixed-citation|element-citation" mode="jats2html" priority="3"> 
