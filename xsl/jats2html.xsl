@@ -1551,7 +1551,8 @@
     <xsl:variable name="available-index-types" as="xs:string*"
                   select="distinct-values(for $i in //index-term
                                           return ($i/@index-type, 'index')[1])"/>
-    <xsl:variable name="existing-indexes" select="//index/@index-type" as="xs:string*"/>
+    <xsl:variable name="existing-indexes" as="xs:string+"
+                  select="if(//index/@index-type) then //index/@index-type else 'index'"/>
     <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
       <xsl:for-each select="$available-index-types[not(. = $existing-indexes)]">
