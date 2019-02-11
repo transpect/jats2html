@@ -994,7 +994,7 @@
   </xsl:template>
 
   <xsl:template match="table-wrap|table-wrap-foot" mode="jats2html">
-    <xsl:variable name="table-caption">
+    <xsl:variable name="table-caption" as="element()">
       <div class="table-caption caption">
         <xsl:if test="label">
           <p>
@@ -1005,10 +1005,11 @@
       </div>
     </xsl:variable>
     <div class="{local-name()} {distinct-values(table/@content-type)}">
+      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:if test="(label|caption) and $table-caption-side eq 'top'">
         <xsl:apply-templates select="$table-caption" mode="#current"/>
       </xsl:if>
-      <xsl:apply-templates select="@*, * except (label|caption)" mode="#current"/>
+      <xsl:apply-templates select="* except (label|caption)" mode="#current"/>
       <xsl:if test="(label|caption) and $table-caption-side eq 'bottom'">
         <xsl:apply-templates select="$table-caption" mode="#current"/>
       </xsl:if>
