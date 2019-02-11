@@ -146,6 +146,19 @@
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>
+  
+  <!-- render table footnotes below the table and do not include them into 
+       the regular footnote listing as they're usually have another numbering anyways -->
+  
+  <xsl:template match="table-wrap-foot/fn-group" mode="epub-alternatives">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="table-wrap-foot/fn-group/fn" mode="epub-alternatives">
+    <div class="{local-name()}">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </div>
+  </xsl:template>
 
   <xsl:template match="html:span[not(@*)]|html:a[not(@*)]" mode="clean-up">
     <xsl:apply-templates mode="#current"/>
