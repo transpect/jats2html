@@ -129,7 +129,9 @@
                         else if($lang eq 'pl') then 'Przypisy'
                         else if($lang eq 'cz') then 'Vysvětlivky'
                         else                        'Notes'"/>
-
+  
+  <xsl:variable name="footnote-title-element-name" select="'h1'" as="xs:string"/>
+  
   <xsl:key name="l10n-string" match="l10n:string" use="@id"/>
   
   <xsl:template match="* | @*" mode="expand-css clean-up table-widths epub-alternatives">
@@ -397,9 +399,10 @@
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
         <xsl:if test="not($xhtml-version eq '5.0')">
-          <h1 class="footnote-heading">
+          <xsl:element name="{$footnote-title-element-name}">
+            <xsl:attribute name="class" select="'footnote-heading'"/>
             <xsl:apply-templates select="(title/node(), $footnote-title)[1]" mode="#current"/>
-          </h1>
+          </xsl:element>
         </xsl:if>
         <!--<xsl:comment select="'ancestor: ', name(../..), '/', name(..),'/', name(), @*, '          ', count($footnote-roots intersect current()/descendant::*), ' ;; ',
           count(.//fn[some $fnr in ($footnote-roots intersect current()/descendant::*) 
@@ -741,7 +744,7 @@
     <xsl:param name="recount-footnotes" tunnel="yes" as="xs:boolean?"/>
     <xsl:if test="not($in-toc)">
       <span class="note-anchor" id="fna_{@id}"><xsl:if test="$recount-footnotes"><xsl:processing-instruction name="recount" select="'yes'"/></xsl:if>
-        <a href="#fn_{@id}" class="fn-ref" epub:type="noteref">
+        <a href="#{(@id, concat('fn_', @id))[1]}" class="fn-ref" epub:type="noteref">
           <sup>
             <xsl:value-of select="(@symbol, index-of($footnote-ids, @id))[1]"/>
           </sup>
