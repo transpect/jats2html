@@ -386,6 +386,7 @@
   <xsl:template name="jats2html:footnotes">
     <xsl:param name="recount-footnotes" as="xs:boolean?" tunnel="yes"/>
     <xsl:param name="static-footnotes" as="xs:boolean?" tunnel="yes"/>
+    <xsl:param name="output-footnote-title-element" select="true()" as="xs:boolean?" tunnel="yes"/>
     <xsl:param name="footnote-roots" as="element(*)*" tunnel="yes"/>
     <xsl:variable name="context" as="element(*)" select="."/>
     <xsl:variable name="footnotes" 
@@ -399,10 +400,12 @@
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
         <xsl:if test="not($xhtml-version eq '5.0')">
-          <xsl:element name="{$footnote-title-element-name}">
-            <xsl:attribute name="class" select="'footnote-heading'"/>
-            <xsl:apply-templates select="(title/node(), $footnote-title)[1]" mode="#current"/>
-          </xsl:element>
+          <xsl:if test="$output-footnote-title-element">
+            <xsl:element name="{$footnote-title-element-name}">
+              <xsl:attribute name="class" select="'footnote-heading'"/>
+              <xsl:apply-templates select="(title/node(), $footnote-title)[1]" mode="#current"/>
+            </xsl:element>
+          </xsl:if>
         </xsl:if>
         <!--<xsl:comment select="'ancestor: ', name(../..), '/', name(..),'/', name(), @*, '          ', count($footnote-roots intersect current()/descendant::*), ' ;; ',
           count(.//fn[some $fnr in ($footnote-roots intersect current()/descendant::*) 
