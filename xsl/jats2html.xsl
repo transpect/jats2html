@@ -132,6 +132,8 @@
   
   <xsl:variable name="footnote-title-element-name" select="'h1'" as="xs:string"/>
   
+  <xsl:variable name="output-footnote-title-element-generally" select="true()" as="xs:boolean"/>
+  
   <xsl:key name="l10n-string" match="l10n:string" use="@id"/>
   
   <xsl:template match="* | @*" mode="expand-css clean-up table-widths epub-alternatives">
@@ -386,7 +388,7 @@
   <xsl:template name="jats2html:footnotes">
     <xsl:param name="recount-footnotes" as="xs:boolean?" tunnel="yes"/>
     <xsl:param name="static-footnotes" as="xs:boolean?" tunnel="yes"/>
-    <xsl:param name="output-footnote-title-element" select="true()" as="xs:boolean?" tunnel="yes"/>
+    <xsl:param name="output-footnote-title-element" select="$output-footnote-title-element-generally" as="xs:boolean?" tunnel="yes"/>
     <xsl:param name="footnote-roots" as="element(*)*" tunnel="yes"/>
     <xsl:variable name="context" as="element(*)" select="."/>
     <xsl:variable name="footnotes" 
