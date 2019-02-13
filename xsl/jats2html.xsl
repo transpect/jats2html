@@ -340,7 +340,9 @@
                          'sec')"/>
   
   <xsl:template match="*[local-name() = $default-structural-containers]" mode="jats2html" priority="2">
-    <xsl:apply-templates select="if(self::sec) then node() except label else node()" mode="#current"/>
+    <xsl:apply-templates select="if(title) 
+                                 then node() except label (: label is already processed in title template :) 
+                                 else node() (: no title, we process all nodes :)" mode="#current"/>
   </xsl:template>
   
   <!-- everything that goes into a div (except footnote-like content): -->
@@ -1137,8 +1139,9 @@
   
   <xsl:template match="toc" name="toc" mode="jats2html">
     <xsl:param name="toc-max-level" as="xs:integer?"/>
-    <xsl:variable name="headlines" as="element(title)*"
-                  select="//title[parent::sec[not(ancestor::boxed-text)]
+    <xsl:variable name="headlines" as="element()*"
+                  select="//*[self::title or self::label[parent::sec[not(title)] or title-group[not(title)]]]
+                                 [parent::sec[not(ancestor::boxed-text)]
                                  |parent::title-group
                                  |parent::app
                                  |parent::ack
@@ -1152,6 +1155,7 @@
                                       or ancestor::book-meta)]
                                  [jats2html:heading-level(.) le number((current()/@depth, 100)[1]) + 1]
                                  [not(matches(@content-type, $jats2html:notoc-regex))]"/>
+    <xsl:message select="$headlines"></xsl:message>
     <xsl:variable name="headlines-by-level" as="element()*">
       <xsl:apply-templates select="$headlines" mode="toc"/>
     </xsl:variable>
@@ -1252,7 +1256,9 @@
                                                '[a-z]+')"/>
   </xsl:function>
   
-  <xsl:template match="title" mode="toc">
+  <xsl:template match="title
+                      |sec[not(title)]/label
+                      |title-group[not(title)]/label" mode="toc">
     <xsl:element name="{if($xhtml-version eq '5.0') then 'li' else 'p'}">
       <xsl:attribute name="class" select="concat('toc', jats2html:heading-level(.))"/>
       <a href="#{(@id, generate-id())[1]}" class="toc-link">
@@ -1264,7 +1270,7 @@
           </span>
           <xsl:text>&#x20;</xsl:text>
         </xsl:if>
-        <xsl:if test="../label">
+        <xsl:if test="not(self::label) and ../label">
           <span class="toc-label">
             <xsl:apply-templates select="../label/node()" mode="strip-indexterms-etc"/>
             <xsl:text>&#x2002;</xsl:text>
@@ -1332,6 +1338,18 @@
   </xsl:template>
   
   <xsl:variable name="subtitle-separator-in-ncx" as="xs:string?" select="'&#x2002;'"/>
+
+  <!-- sections where the label is the title, think of capitalized roman numbers in novels -->
+
+  <xsl:template match="sec[not(title)]/label
+                      |title-group[not(title)]/label" mode="jats2html" priority="6">
+    <xsl:variable name="level" select="jats2html:heading-level(.)" as="xs:integer?"/>
+    <xsl:element name="{if ($level) then concat('h', $level) else 'p'}">
+      <xsl:call-template name="css:content"/>
+    </xsl:element>
+  </xsl:template>
+
+  <!-- regular titles -->
 
   <xsl:template match="title
                       |book-title
