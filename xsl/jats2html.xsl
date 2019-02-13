@@ -109,6 +109,12 @@
   <xsl:param name="index-heading-class"    as="xs:string"  select="'index-subheading'"/>
   <!-- position of table captions. Permitted values are: 'top' or 'bottom' -->
   <xsl:param name="table-caption-side"     as="xs:string"  select="'top'"/>
+  <!-- Generates a footnote title element. This parameter applies only to generated footnote 
+       sections. The title of an existing <fn-group> is rendered anyways. 
+       For XHTML5 (EPUB3) output, the title is omitted generally, because the footnotes
+       are typically rendered as popup-windows in the content.
+  -->
+  <xsl:param name="generate-footnote-title" select="'yes'" as="xs:string"/>
   
   <xsl:output method="xhtml" indent="no" 
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
@@ -131,8 +137,6 @@
                         else                        'Notes'"/>
   
   <xsl:variable name="footnote-title-element-name" select="'h1'" as="xs:string"/>
-  
-  <xsl:variable name="output-footnote-title-element-generally" select="true()" as="xs:boolean"/>
   
   <xsl:key name="l10n-string" match="l10n:string" use="@id"/>
   
@@ -385,7 +389,6 @@
   <xsl:template name="jats2html:footnotes">
     <xsl:param name="recount-footnotes" as="xs:boolean?" tunnel="yes"/>
     <xsl:param name="static-footnotes" as="xs:boolean?" tunnel="yes"/>
-    <xsl:param name="output-footnote-title-element" select="$output-footnote-title-element-generally" as="xs:boolean?" tunnel="yes"/>
     <xsl:param name="footnote-roots" as="element(*)*" tunnel="yes"/>
     <xsl:variable name="context" as="element(*)" select="."/>
     <xsl:variable name="footnotes" 
@@ -398,13 +401,11 @@
         <xsl:if test="$recount-footnotes">
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
-        <xsl:if test="not($xhtml-version eq '5.0')">
-          <xsl:if test="$output-footnote-title-element">
-            <xsl:element name="{$footnote-title-element-name}">
-              <xsl:attribute name="class" select="'footnote-heading'"/>
-              <xsl:apply-templates select="(title/node(), $footnote-title)[1]" mode="#current"/>
-            </xsl:element>
-          </xsl:if>
+        <xsl:if test="not($xhtml-version eq '5.0') and $generate-footnote-title eq 'yes'">
+          <xsl:element name="{$footnote-title-element-name}">
+            <xsl:attribute name="class" select="'footnote-heading'"/>
+            <xsl:apply-templates select="(title/node(), $footnote-title)[1]" mode="#current"/>
+          </xsl:element>
         </xsl:if>
         <!--<xsl:comment select="'ancestor: ', name(../..), '/', name(..),'/', name(), @*, '          ', count($footnote-roots intersect current()/descendant::*), ' ;; ',
           count(.//fn[some $fnr in ($footnote-roots intersect current()/descendant::*) 
