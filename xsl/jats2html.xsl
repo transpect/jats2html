@@ -289,11 +289,6 @@
   </xsl:template>
   
    <xsl:template match="sec" mode="epub-alternatives">
-     <xsl:variable name="ordered-sec-meta-elements" select="label, 
-                                                            title, 
-                                                            subtitle, 
-                                                            alt-title, 
-                                                            sec-meta" as="element()*"/>
      <xsl:copy copy-namespaces="no">
        <xsl:variable name="sec-meta-elements" 
                      select="label, 
