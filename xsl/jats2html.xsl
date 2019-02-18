@@ -321,6 +321,7 @@
                          'back',
                          'body',
                          'book-app',
+                         'book-app-group',
                          'book-back',
                          'book-body',
                          'book-part',
