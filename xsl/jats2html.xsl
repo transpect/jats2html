@@ -369,11 +369,11 @@
     <xsl:choose>
       <xsl:when test="$divify-title-groups = 'yes'">
         <div class="{local-name()}">
-          <xsl:call-template name="css:content"/>
+          <!-- <label> is already processed in template which matches <title> -->
+          <xsl:apply-templates select="node() except label" mode="#current"/>
         </div>
       </xsl:when>
       <xsl:otherwise>
-        <!-- <label> is already processed in template which matches <title> -->
         <xsl:apply-templates select="node() except label" mode="#current"/>
       </xsl:otherwise>
     </xsl:choose>
