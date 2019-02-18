@@ -887,6 +887,10 @@
     <xsl:attribute name="epub:type" select="'glossdef'"/>
     <xsl:call-template name="css:content"/>
   </xsl:template>
+  
+  <xsl:template match="def-item/def|def-item/term" mode="jats2html" priority="-0.75">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
 
   <xsl:template match="*:dd/*:label" mode="clean-up"/>
   
