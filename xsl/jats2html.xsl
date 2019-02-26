@@ -405,7 +405,10 @@
         <xsl:if test="not($xhtml-version eq '5.0') and $generate-footnote-title eq 'yes'">
           <xsl:element name="{$footnote-title-element-name}">
             <xsl:attribute name="class" select="'footnote-heading'"/>
-            <xsl:apply-templates select="(title/node(), $footnote-title)[1]" mode="#current"/>
+            <xsl:variable name="prelim" as="item()*">
+              <xsl:apply-templates select="title" mode="#current"/>
+            </xsl:variable>
+            <xsl:value-of select="(string-join($prelim, ''), $footnote-title)[1]"/>
           </xsl:element>
         </xsl:if>
         <!--<xsl:comment select="'ancestor: ', name(../..), '/', name(..),'/', name(), @*, '          ', count($footnote-roots intersect current()/descendant::*), ' ;; ',
@@ -1362,7 +1365,7 @@
     <xsl:element name="{if ($level) then concat('h', $level) else 'p'}">
       <xsl:copy-of select="(../@id, parent::title-group/../../@id)[1][not($divify-sections = 'yes')]"/>
       <xsl:call-template name="css:other-atts"/>
-      <xsl:variable name="label" as="element(label)?" 
+      <xsl:variable name="_label" as="element(label)?" 
                     select="(../label[not(named-content[@content-type = 'post-identifier'])], 
                              parent::caption/../label[not(named-content[@content-type = 'post-identifier'])]
                              )[1]"/>
@@ -1371,8 +1374,8 @@
                              parent::caption/../label[named-content[@content-type = 'post-identifier']]
                              )[1]"/>
       <xsl:attribute name="title">
-        <xsl:apply-templates select="$label" mode="strip-indexterms-etc"/>
-        <xsl:apply-templates select="$label" mode="label-sep"/>
+        <xsl:apply-templates select="$_label" mode="strip-indexterms-etc"/>
+        <xsl:apply-templates select="$_label" mode="label-sep"/>
         <xsl:variable name="stripped" as="text()">
           <xsl:value-of>
             <xsl:apply-templates mode="strip-indexterms-etc"/>
@@ -1390,7 +1393,7 @@
           <xsl:apply-templates select="$post-label" mode="strip-indexterms-etc"/>
         </xsl:if>
       </xsl:attribute>
-      <xsl:apply-templates select="$label" mode="#current">
+      <xsl:apply-templates select="$_label" mode="#current">
         <xsl:with-param name="actually-process-it" select="true()" as="xs:boolean"/>
       </xsl:apply-templates>
       <xsl:if test="not($in-toc)">
@@ -2436,7 +2439,7 @@
   
   <!-- if you want to omit metadata in your output, set the param $render-metadata to 'no' -->
   
-  <xsl:template match="front" mode="jats2html" priority="5">
+  <xsl:template match="front" mode="jats2html" priority="4.5">
     <h1>
       <xsl:value-of select="article-meta/article-id" separator=" "/>
     </h1>
