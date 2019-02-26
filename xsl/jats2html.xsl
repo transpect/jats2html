@@ -473,6 +473,7 @@
                       |corresp
                       |country
                       |date
+                      |def
                       |disp-formula
                       |disp-formula-group
                       |edition
@@ -516,6 +517,7 @@
                       |sup
                       |surname
                       |table
+                      |term
                       |toc-entry
                       |trans-source
                       |trans-subtitle
@@ -878,14 +880,14 @@
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="glossary/def-list/def-item/term" mode="jats2html" priority="-0.5">
+  <xsl:template match="glossary/def-list/def-item/term" mode="jats2html" priority="-0.2">
     <xsl:attribute name="epub:type" select="'glossterm'"/>
-    <xsl:call-template name="css:content"/>
+    <xsl:next-match/><!-- should be css:content -->
   </xsl:template>
   
-  <xsl:template match="glossary/def-list/def-item/def" mode="jats2html" priority="-0.5">
+  <xsl:template match="glossary/def-list/def-item/def" mode="jats2html" priority="-0.2">
     <xsl:attribute name="epub:type" select="'glossdef'"/>
-    <xsl:call-template name="css:content"/>
+    <xsl:next-match/><!-- should be css:content -->
   </xsl:template>
   
   <xsl:template match="def-item/def|def-item/term" mode="jats2html" priority="-0.75">
@@ -2831,4 +2833,5 @@
     <xsl:param name="token" as="xs:string"/>
     <xsl:sequence select="tokenize($string, '\s+') = $token"/>
   </xsl:function>
+
 </xsl:stylesheet>
