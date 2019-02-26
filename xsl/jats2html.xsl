@@ -1406,12 +1406,12 @@
   <xsl:template match="index-term | fn | target" mode="strip-indexterms-etc"/>
   
   <xsl:template match="html:a[@href]
-                             [html:span[@class = 'indexterm']]" mode="clean-up">
+                             [html:span[@class = ('indexterm', 'indexterm-anchor')]]" mode="clean-up">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:sequence select="node() except html:span[@class = 'indexterm']"/>
+      <xsl:sequence select="node() except html:span[@class = ('indexterm', 'indexterm-anchor')]"/>
     </xsl:copy>
-    <xsl:sequence select="html:span[@class = 'indexterm']"/>
+    <xsl:sequence select="html:span[@class = ('indexterm', 'indexterm-anchor')]"/>
   </xsl:template>
   
   <!-- Discard certain css markup on titles that would otherwise survive on paras: -->
