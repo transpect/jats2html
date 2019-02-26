@@ -1805,7 +1805,7 @@
                                  [empty(see)]" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
     <xsl:if test="not($in-toc)">
-      <span class="indexterm" id="it_{descendant-or-self::index-term[last()]/@id}">
+      <span class="indexterm-anchor" id="it_{descendant-or-self::index-term[last()]/@id}">
         <xsl:attribute name="title">
           <xsl:apply-templates mode="#current"/>
         </xsl:attribute>
