@@ -1427,7 +1427,17 @@
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:sequence select="node() except html:span[@class = ('indexterm', 'indexterm-anchor')]"/>
     </xsl:copy>
-    <xsl:sequence select="html:span[@class = ('indexterm', 'indexterm-anchor')]"/>
+    <xsl:copy-of copy-namespaces="no" 
+                 select="html:span[@class = ('indexterm', 'indexterm-anchor')]"/>
+  </xsl:template>
+  
+  <xsl:template match="html:a[html:a[@class eq 'target']]" mode="clean-up">
+    <xsl:copy-of copy-namespaces="no"
+                 select="html:a[@class eq 'target']"/>
+    <xsl:copy copy-namespaces="no">
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:sequence select="node() except html:a[@class eq 'target']"/>
+    </xsl:copy>
   </xsl:template>
   
   <!-- Discard certain css markup on titles that would otherwise survive on paras: -->
