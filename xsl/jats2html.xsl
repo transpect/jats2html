@@ -462,6 +462,7 @@
   <xsl:template match="abbrev
                       |addr-line
                       |address
+                      |answer
                       |array
                       |article-title
                       |bold
@@ -483,6 +484,7 @@
                       |edition
                       |element-citation
                       |etal
+                      |explanation
                       |fpage
                       |given-names
                       |hr
@@ -496,6 +498,7 @@
                       |monospace
                       |named-content
                       |nav-pointer
+                      |overline
                       |p
                       |person-group
                       |prefix
@@ -503,13 +506,17 @@
                       |pub-id
                       |publisher-loc
                       |publisher-name
-                      |overline
+                      |question
+                      |question-wrap
                       |related-object
                       |role
                       |sc
+                      |sig
+                      |sig-block
                       |series
                       |source
                       |speech
+                      |statement
                       |strike
                       |string-date
                       |string-name
@@ -555,10 +562,16 @@
     <xsl:apply-templates select="@content-type | @style-type" mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="corresp|statement|question-wrap|question|answer|explanation|sig-block|sig" mode="jats2html">
+  <xsl:template match="corresp|statement|question-wrap|question|answer|explanation|sig-block" mode="jats2html">
     <div class="{local-name()}">
-      <xsl:call-template name="css:content"/>
+      <xsl:next-match/>
     </div>
+  </xsl:template>
+  
+  <xsl:template match="sig" mode="jats2html">
+    <p class="{local-name()}">
+      <xsl:next-match/>
+    </p>
   </xsl:template>
 
   <xsl:template match="mixed-citation|element-citation|verse-line|fig" mode="class-att" priority="2">
