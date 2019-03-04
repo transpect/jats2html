@@ -1664,7 +1664,7 @@
       <xsl:attribute name="class" select="string-join(('index', $index-type), ' ')"/>
       <xsl:attribute name="epub:type" select="'index'"/>
       <xsl:if test="$context">
-        <xsl:apply-templates select="$context/@*, index-title-group" mode="#current"/>  
+        <xsl:apply-templates select="$context/@*" mode="#current"/>  
       </xsl:if>
       <!-- if a rendered index exists, we don't generate a new one from index-terms -->
       <xsl:choose>
@@ -1703,7 +1703,9 @@
   </xsl:template>
   
   <xsl:template name="group-index-entries">
-    <xsl:for-each-group select="index-entry|index-div/index-entry|index-title-group" group-adjacent="local-name()">
+    <xsl:for-each-group select="index-entry
+                               |index-div/index-entry
+                               |index-title-group" group-adjacent="local-name()">
       <xsl:choose>
         <xsl:when test="current-grouping-key() eq 'index-entry'">
           <ul class="index-entry-list" epub:type="index-entry-list">
