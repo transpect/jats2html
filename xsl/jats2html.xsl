@@ -555,7 +555,7 @@
     <xsl:apply-templates select="@content-type | @style-type" mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="corresp|statement|question-wrap|question|answer|explanation" mode="jats2html">
+  <xsl:template match="corresp|statement|question-wrap|question|answer|explanation|sig-block|sig" mode="jats2html">
     <div class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </div>
