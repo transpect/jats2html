@@ -1284,6 +1284,7 @@
          class="toc-link toc-{(parent::title-group/parent::book-part-meta/parent::book-part/@book-part-type,
                                parent::title-group/parent::book-part-meta/parent::*/local-name(),
                                parent::book-part-meta/parent::*/local-name(),
+                               parent::index-title-group/parent::index/local-name(),
                                parent::title-group/parent::book-part-meta/parent::*/local-name(),
                                self::sec/local-name(),
                                parent::title-group/parent::*/local-name(),
