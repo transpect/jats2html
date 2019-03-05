@@ -1666,6 +1666,9 @@
       <xsl:if test="$context">
         <xsl:apply-templates select="$context/@*" mode="#current"/>  
       </xsl:if>
+      <xsl:if test="not(.//index-entry) and index-title-group">
+        <xsl:apply-templates select="index-title-group" mode="#current"/>  
+      </xsl:if>
       <!-- if a rendered index exists, we don't generate a new one from index-terms -->
       <xsl:choose>
         <xsl:when test="$context//index-entry">
