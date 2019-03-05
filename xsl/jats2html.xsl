@@ -1280,7 +1280,15 @@
                       |title-group[not(title)]/label" mode="toc">
     <xsl:element name="{if($xhtml-version eq '5.0') then 'li' else 'p'}">
       <xsl:attribute name="class" select="concat('toc', jats2html:heading-level(.))"/>
-      <a href="#{(@id, generate-id())[1]}" class="toc-link">
+      <a href="#{(@id, generate-id())[1]}" 
+         class="toc-link toc-{(parent::title-group/parent::book-part-meta/parent::book-part/@book-part-type,
+                               parent::title-group/parent::book-part-meta/parent::*/local-name(),
+                               parent::book-part-meta/parent::*/local-name(),
+                               parent::title-group/parent::book-part-meta/parent::*/local-name(),
+                               self::sec/local-name(),
+                               parent::title-group/parent::*/local-name(),
+                               parent::*/local-name()
+                               )[1]}">
         <xsl:if test="ancestor::book-part-meta/contrib-group/contrib">
           <span class="toc-authors">
             <xsl:value-of select="string-join(for $i in ancestor::book-part-meta/contrib-group/contrib 
