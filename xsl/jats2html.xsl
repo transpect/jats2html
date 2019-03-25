@@ -795,7 +795,7 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="target[starts-with(@id, 'id_endnote-')][. is ../node()[1]]" mode="jats2html" priority="5">
+  <xsl:template match="target[starts-with(@id, 'id_endnote-')][. is ../node()[1]]" mode="jats2html" priority="5.25">
     <!-- endnote paras (from InDesign CC)-->
       <xsl:next-match/>
       <span class="endnote-anchor">
