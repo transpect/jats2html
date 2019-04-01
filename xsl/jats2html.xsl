@@ -1958,11 +1958,16 @@
   <!-- graphics -->
   
   <xsl:template match="graphic | inline-graphic" mode="jats2html">
-    <img alt="{(alt-text, @xlink:title)[1]}">
+    <img>
+      <xsl:call-template name="jats2html:img-alt"/>
       <xsl:apply-templates select="@srcpath, @xlink:href" mode="#current"/>
       <xsl:apply-templates select="." mode="class-att"/>
     </img>
     <xsl:apply-templates select="* except alt-text" mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template name="jats2html:img-alt">
+    <xsl:attribute name="alt" select="(alt-text, @xlink:title)[1]"/>
   </xsl:template>
   
   <xsl:template match="graphic[caption and not(parent::fig)][$xhtml-version eq '5.0']" mode="jats2html" priority="5">
