@@ -733,11 +733,11 @@
     <xsl:next-match/>
   </xsl:template>
 
-  <xsl:template match="fn" mode="footnotes">
+  <xsl:template match="fn[@id]" mode="footnotes">
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <xsl:param name="static-footnotes" tunnel="yes" as="xs:boolean?"/>
     <xsl:element name="{if($xhtml-version eq '5.0') then 'aside' else 'div'}">
-      <xsl:attribute name="id" select="(@id, concat('fn_', @id))[1]"/>
+      <xsl:attribute name="id" select="concat('fn_', @id)"/>
       <xsl:attribute name="class" select="'fn'"/>
       <xsl:attribute name="epub:type" select="'footnote'"/>
       <span class="note-mark">
@@ -761,13 +761,13 @@
     </a>
   </xsl:template>
 
-  <xsl:template match="fn" mode="jats2html">
+  <xsl:template match="fn[@id]" mode="jats2html">
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <xsl:param name="in-toc" tunnel="yes" as="xs:boolean?"/>
     <xsl:param name="recount-footnotes" tunnel="yes" as="xs:boolean?"/>
     <xsl:if test="not($in-toc)">
       <span class="note-anchor" id="fna_{@id}"><xsl:if test="$recount-footnotes"><xsl:processing-instruction name="recount" select="'yes'"/></xsl:if>
-        <a href="#{(@id, concat('fn_', @id))[1]}" class="fn-ref" epub:type="noteref">
+        <a href="#{concat('fn_', @id)}" class="fn-ref" epub:type="noteref">
           <sup>
             <xsl:value-of select="(@symbol, index-of($footnote-ids, @id))[1]"/>
           </sup>
