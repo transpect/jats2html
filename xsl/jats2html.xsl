@@ -1723,8 +1723,8 @@
           <ul class="index-entry-list" epub:type="index-entry-list">
             <xsl:for-each select="current-group()">
               <li class="index-entry" epub:type="index-entry">
-                <xsl:apply-templates select="* except (index-entry|nav-pointer)" mode="rendered-index-entry"/>
-                <xsl:for-each select="nav-pointer">
+                <xsl:apply-templates select="* except (index-entry|nav-pointer|nav-pointer-group)" mode="rendered-index-entry"/>
+                <xsl:for-each select="nav-pointer[@rid] union nav-pointer-group/nav-pointer[@rid]">
                   <xsl:apply-templates select="." mode="rendered-index-entry"/>
                   <xsl:if test="position() ne last()">
                     <xsl:text>,&#x20;</xsl:text>
