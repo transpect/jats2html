@@ -501,6 +501,7 @@
                       |overline
                       |p
                       |person-group
+                      |postal-code
                       |prefix
                       |private-char
                       |pub-id
@@ -1593,6 +1594,7 @@
                       |nested-kwd
                       |overline
                       |person-group
+                      |postal-code
                       |prefix
                       |private-char
                       |pub-id
