@@ -511,6 +511,7 @@
                       |question-wrap
                       |related-object
                       |role
+                      |sans-serif
                       |sc
                       |sig
                       |sig-block
@@ -1529,6 +1530,10 @@
     <xsl:attribute name="css:text-decoration" select="'overline'"/>
   </xsl:template>
   
+  <xsl:template match="sans-serif" mode="hub2htm:css-style-overrides">
+    <xsl:attribute name="css:font-family" select="'sans-serif'"/>
+  </xsl:template>
+  
   <xsl:template match="ref" mode="jats2html" priority="7">
     <p class="{name()}">
       <xsl:next-match/>
@@ -1601,6 +1606,7 @@
                       |publisher-loc
                       |publisher-name
                       |role
+                      |sans-serif
                       |sc
                       |series
                       |source
