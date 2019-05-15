@@ -511,6 +511,7 @@
                       |question-wrap
                       |related-object
                       |role
+                      |roman
                       |sans-serif
                       |sc
                       |sig
@@ -1534,6 +1535,10 @@
     <xsl:attribute name="css:font-family" select="'sans-serif'"/>
   </xsl:template>
   
+  <xsl:template match="roman" mode="hub2htm:css-style-overrides">
+    <xsl:attribute name="css:font-family" select="'serif'"/>
+  </xsl:template>
+  
   <xsl:template match="ref" mode="jats2html" priority="7">
     <p class="{name()}">
       <xsl:next-match/>
@@ -1606,6 +1611,7 @@
                       |publisher-loc
                       |publisher-name
                       |role
+                      |roman
                       |sans-serif
                       |sc
                       |series
