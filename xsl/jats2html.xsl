@@ -477,6 +477,7 @@
                       |corresp
                       |country
                       |date
+                      |day
                       |def
                       |disp-formula
                       |disp-formula-group
@@ -492,10 +493,12 @@
                       |institution
                       |issue
                       |italic
+                      |kwd
                       |label
                       |lpage
                       |mixed-citation
                       |monospace
+                      |month
                       |named-content
                       |nav-pointer
                       |overline
@@ -525,6 +528,7 @@
                       |string-name
                       |styled-content
                       |sub
+                      |subject
                       |subtitle
                       |suffix
                       |sup
@@ -1589,6 +1593,7 @@
                       |country
                       |country
                       |date
+                      |day
                       |edition
                       |etal
                       |fpage
@@ -1600,6 +1605,7 @@
                       |label
                       |lpage
                       |monospace
+                      |month
                       |named-content
                       |nested-kwd
                       |overline
@@ -1618,6 +1624,7 @@
                       |source
                       |strike
                       |string-date
+                      |subject
                       |suffix
                       |surname
                       |trans-source
