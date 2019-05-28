@@ -1926,7 +1926,8 @@
   </xsl:template>
   
   <xsl:variable name="block-element-names" as="xs:string+" 
-                select="'boxed-text',
+                select="'answer',
+                        'boxed-text',
                         'code',
                         'def-list',
                         'disp-formula',
@@ -1934,6 +1935,7 @@
                         'disp-quote',
                         'fig',
                         'list',
+                        'question',
                         'table-wrap'"/>
 
   <xsl:template match="p[*[local-name() = $block-element-names]]" mode="jats2html" priority="1.2">
