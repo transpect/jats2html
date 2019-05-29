@@ -1362,14 +1362,6 @@
       </span>
     </xsl:if>
   </xsl:template>
-
-  <xsl:template match="h7|h8" mode="clean-up" priority="3">
-    <xsl:element name="h6">
-      <xsl:apply-templates select="@* except @class" mode="#current"/>
-       <xsl:attribute name="class" select="concat(@class, ' ', local-name(current()))"/>
-      <xsl:apply-templates select="node()" mode="#current"/>
-    </xsl:element>
-  </xsl:template>
   
   <xsl:variable name="subtitle-separator-in-ncx" as="xs:string?" select="'&#x2002;'"/>
 
