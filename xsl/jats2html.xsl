@@ -1459,9 +1459,9 @@
   </xsl:template>
   
   <xsl:template match="contrib-group/contrib" mode="jats2html">
-    <p class="contrib">
+    <div class="contrib">
       <xsl:next-match/>
-    </p>
+    </div>
   </xsl:template>
 
   <xsl:template match="string-name" mode="jats2html">
