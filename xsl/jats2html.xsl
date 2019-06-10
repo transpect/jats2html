@@ -1930,7 +1930,8 @@
                         'list',
                         'question',
                         'table-wrap',
-                        'statement'"/>
+                        'statement',
+                        'verse-group'"/>
 
   <xsl:template match="p[*[local-name() = $block-element-names]]" mode="jats2html" priority="1.2">
     <xsl:for-each-group select="node()" 
