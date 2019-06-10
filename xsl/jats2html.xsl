@@ -1925,10 +1925,12 @@
                         'disp-formula',
                         'disp-formula-group',
                         'disp-quote',
+                        'explanation',
                         'fig',
                         'list',
                         'question',
-                        'table-wrap'"/>
+                        'table-wrap',
+                        'statement'"/>
 
   <xsl:template match="p[*[local-name() = $block-element-names]]" mode="jats2html" priority="1.2">
     <xsl:for-each-group select="node()" 
