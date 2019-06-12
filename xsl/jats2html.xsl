@@ -522,6 +522,7 @@
                       |series
                       |source
                       |speech
+                      |state
                       |statement
                       |strike
                       |string-date
@@ -1582,7 +1583,6 @@
                       |collab
                       |comment
                       |country
-                      |country
                       |date
                       |day
                       |edition
@@ -1613,6 +1613,7 @@
                       |sc
                       |series
                       |source
+                      |state
                       |strike
                       |string-date
                       |subject
