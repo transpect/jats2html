@@ -1897,6 +1897,22 @@
       <xsl:text>)</xsl:text>
     </xsl:copy>
   </xsl:template>
+  
+  <!-- ADE EPUB reader doesn't display background colors for 
+       rows. So we copy them from row to cell unless the cell 
+       contains any other background styles. -->
+  
+  <xsl:template match="*[local-name() = ('th', 'td')]
+                        [not(key('rule-by-name', @content-type)/@css:background-color or @css:background-color)]
+                        [parent::tr[@css:background-color]]" mode="epub-alternatives">
+    <xsl:copy>
+      <xsl:apply-templates select="@* except @css:background-color" mode="#current"/>
+      <xsl:attribute name="css:background-color" select="parent::tr/@css:background-color"/>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="tr/@css:background-color" mode="epub-alternatives"/>
 
   <xsl:template match="index-term/term" mode="jats2html">
     <xsl:apply-templates mode="#current"/>
