@@ -546,7 +546,8 @@
                       |verse-line
                       |volume
                       |volume-series
-                      |year" mode="jats2html" priority="-0.25">
+                      |year
+                      |x" mode="jats2html" priority="-0.25">
     <xsl:call-template name="css:content"/>
   </xsl:template>
   
@@ -1626,7 +1627,8 @@
                       |uri[not(@xlink:href)]
                       |volume
                       |volume-series
-                      |year" mode="jats2html"> 
+                      |year
+                      |x" mode="jats2html"> 
     <span class="{local-name()}">
       <xsl:next-match/>
     </span> 
