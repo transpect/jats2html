@@ -1163,28 +1163,29 @@
     <!-- Overwrite this regex in your adaptions to exclude titles containing this string in its content-type from being listed in the html toc -->
   </xsl:variable>
   
+  <xsl:variable name="jats2html:toc-headlines" as="element()*"
+                select="//*[self::title or self::label[parent::sec[not(title)] or title-group[not(title)]]]
+                           [parent::sec[not(ancestor::boxed-text)]
+                           |parent::title-group
+                           |parent::app
+                           |parent::ack
+                           |parent::index-title-group
+                           |parent::app-group
+                           |parent::ref-list
+                           |parent::glossary]
+                           [not(   ancestor::boxed-text 
+                                or ancestor::toc 
+                                or ancestor::collection-meta
+                                or ancestor::book-meta)]
+                           [jats2html:heading-level(.) le number((current()/@depth, 100)[1]) + 1]
+                           [not(matches(@content-type, $jats2html:notoc-regex))]"/>
+  
   <!-- if no toc element is given, you can also invoke this with <xsl:call-template name="toc"/> -->
   
   <xsl:template match="toc" name="toc" mode="jats2html">
     <xsl:param name="toc-max-level" as="xs:integer?"/>
-    <xsl:variable name="headlines" as="element()*"
-                  select="//*[self::title or self::label[parent::sec[not(title)] or title-group[not(title)]]]
-                                 [parent::sec[not(ancestor::boxed-text)]
-                                 |parent::title-group
-                                 |parent::app
-                                 |parent::ack
-                                 |parent::index-title-group
-                                 |parent::app-group
-                                 |parent::ref-list
-                                 |parent::glossary]
-                                 [not(   ancestor::boxed-text 
-                                      or ancestor::toc 
-                                      or ancestor::collection-meta
-                                      or ancestor::book-meta)]
-                                 [jats2html:heading-level(.) le number((current()/@depth, 100)[1]) + 1]
-                                 [not(matches(@content-type, $jats2html:notoc-regex))]"/>
     <xsl:variable name="headlines-by-level" as="element()*">
-      <xsl:apply-templates select="$headlines" mode="toc"/>
+      <xsl:apply-templates select="$jats2html:toc-headlines" mode="toc"/>
     </xsl:variable>
     <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
       <xsl:if test="not(self::toc)"><!-- assign id just to generated toc -->
@@ -1203,7 +1204,10 @@
           <xsl:apply-templates select="title-group" mode="jats2html"/>
           <xsl:choose>
             <xsl:when test="$xhtml-version eq '5.0'">
-              <xsl:variable name="max-level" select="($toc-max-level, max(for $i in $headlines return jats2html:heading-level($i)))[1]"/>
+              <xsl:variable name="max-level" 
+                            select="($toc-max-level, 
+                                     max(for $i in $jats2html:toc-headlines 
+                                         return jats2html:heading-level($i)))[1]"/>
               <xsl:variable name="toc-as-tree">
                 <xsl:sequence select="jats2html:flat-toc-to-tree($headlines-by-level, 0, $max-level)"/>
               </xsl:variable>
