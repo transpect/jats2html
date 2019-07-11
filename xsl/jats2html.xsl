@@ -1776,6 +1776,12 @@
     </a>
   </xsl:template>
   
+  <xsl:template match="see-entry|see-also-entry|x" mode="rendered-index-entry">
+    <span class="{local-name()}">
+      <xsl:apply-templates mode="jats2html"/>
+    </span>
+  </xsl:template>
+  
   <xsl:template name="group-index-terms">
     <xsl:param name="level" as="xs:integer"/>
     <xsl:param name="index-terms" as="element(index-term)*"/>
@@ -1826,7 +1832,9 @@
         <xsl:text xml:space="preserve">;</xsl:text>
       </xsl:if>
       <xsl:for-each-group select="current-group()//see-also" group-by="string(.)">
-        <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe auch ' else ' see also'" xml:space="preserve"/>
+        <xsl:value-of select="if($root/*/@xml:lang = 'de') 
+                              then ' siehe auch ' 
+                              else ' see also '" xml:space="preserve"/>
         <xsl:call-template name="potentiallly-link-to-see-target"/>
         <xsl:if test="not(position() = last())">
           <xsl:text>;</xsl:text>
