@@ -1776,10 +1776,15 @@
     </a>
   </xsl:template>
   
-  <xsl:template match="see-entry|see-also-entry|x" mode="rendered-index-entry">
+  <xsl:template match="see-entry|see-also-entry" mode="rendered-index-entry">
     <span class="{local-name()}">
       <xsl:apply-templates mode="jats2html"/>
     </span>
+  </xsl:template>
+  
+  <xsl:template match="x" mode="rendered-index-entry">
+    <xsl:apply-templates mode="jats2html"/>
+    <xsl:text>&#x20;</xsl:text>
   </xsl:template>
   
   <xsl:template name="group-index-terms">
