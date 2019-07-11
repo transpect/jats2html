@@ -1951,6 +1951,7 @@
                         'explanation',
                         'fig',
                         'list',
+                        'preformat',
                         'question',
                         'table-wrap',
                         'statement',
