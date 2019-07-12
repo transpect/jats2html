@@ -920,10 +920,15 @@
 
   <xsl:template match="*:dd/*:label" mode="clean-up"/>
   
+  <xsl:template match="list[title]" mode="jats2html" priority="5">
+    <xsl:apply-templates select="title" mode="#current"/>
+    <xsl:next-match/>
+  </xsl:template>
+  
   <xsl:template match="list[matches(@list-type, '^(simple|ndash|bullet)$')]" 
                 mode="jats2html">
     <ul>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:apply-templates select="@*, node() except title" mode="#current"/>
     </ul>
   </xsl:template>
   
