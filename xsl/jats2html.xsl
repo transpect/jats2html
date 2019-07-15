@@ -15,7 +15,7 @@
   xmlns:c="http://www.w3.org/ns/xproc-step"
   xmlns:cx="http://xmlcalabash.com/ns/extensions"
   xmlns="http://www.w3.org/1999/xhtml"
-  exclude-result-prefixes="html tr xlink xs css saxon jats2html hub2htm l10n cx"
+  exclude-result-prefixes="c css cx html hub2htm jats jats2html l10n saxon tr xlink xs"
   version="2.0">
 
   <!-- If you see a message that an attribute cannot be created after a child of the containing
@@ -398,7 +398,8 @@
                                     )]" as="element(fn)*"/>
     <xsl:if test="exists($footnotes)">
       <xsl:element name="{$default-container-name}">
-        <xsl:attribute name="class" select="'footnotes'"/>        
+        <xsl:attribute name="class" select="'endnotes'"/>
+        <xsl:attribute name="epub:type" select="'endnotes'"/>        
         <xsl:if test="$recount-footnotes">
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
@@ -745,17 +746,20 @@
   <xsl:template match="fn[@id]" mode="footnotes">
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <xsl:param name="static-footnotes" tunnel="yes" as="xs:boolean?"/>
+    <xsl:variable name="index" select="index-of($footnote-ids, @id)" as="xs:integer"/>
     <xsl:element name="{if($xhtml-version eq '5.0') then 'aside' else 'div'}">
-      <xsl:attribute name="id" select="concat('fn_', @id)"/>
+      <xsl:attribute name="id" select="concat('fn_', $index)"/>
       <xsl:attribute name="class" select="'fn'"/>
-      <xsl:attribute name="epub:type" select="'footnote'"/>
+      <xsl:attribute name="epub:type" select="'endnote'"/>
       <span class="note-mark">
         <xsl:choose>
           <xsl:when test="$static-footnotes">
-            <xsl:value-of select="(@symbol, index-of($footnote-ids, @id))[1]"/>
+            <xsl:value-of select="(@symbol, $index)[1]"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:call-template name="footnote-link"/>
+            <xsl:call-template name="footnote-link">
+              <xsl:with-param name="index" select="$index" as="xs:integer"/>
+            </xsl:call-template>
           </xsl:otherwise>
         </xsl:choose>
       </span>
@@ -765,8 +769,9 @@
 
   <xsl:template name="footnote-link">
     <xsl:param name="footnote-ids" as="xs:string*" tunnel="yes"/>
-    <a href="#fna_{@id}" class="fn-link" epub:type="noteref">
-      <xsl:value-of select="(@symbol, index-of($footnote-ids, @id))[1]"/>
+    <xsl:param name="index" as="xs:integer"/>
+    <a href="#fna_{$index}" class="fn-link" epub:type="noteref">
+      <xsl:value-of select="(@symbol, $index)[1]"/>
     </a>
   </xsl:template>
 
@@ -774,11 +779,15 @@
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <xsl:param name="in-toc" tunnel="yes" as="xs:boolean?"/>
     <xsl:param name="recount-footnotes" tunnel="yes" as="xs:boolean?"/>
+    <xsl:variable name="index" select="index-of($footnote-ids, @id)" as="xs:integer"/>
     <xsl:if test="not($in-toc)">
-      <span class="note-anchor" id="fna_{@id}"><xsl:if test="$recount-footnotes"><xsl:processing-instruction name="recount" select="'yes'"/></xsl:if>
-        <a href="#{concat('fn_', @id)}" class="fn-ref" epub:type="noteref">
+      <span class="note-anchor" id="fna_{$index}">
+        <xsl:if test="$recount-footnotes">
+        <xsl:processing-instruction name="recount" select="'yes'"/>
+      </xsl:if>
+        <a href="#{concat('fn_', $index)}" class="fn-ref" epub:type="noteref">
           <sup>
-            <xsl:value-of select="(@symbol, index-of($footnote-ids, @id))[1]"/>
+            <xsl:value-of select="(@symbol, $index)[1]"/>
           </sup>
         </a>
       </span>    
