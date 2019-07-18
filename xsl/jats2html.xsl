@@ -1770,7 +1770,7 @@
           </ul>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:apply-templates select="current-group()" mode="#current"/>
+          <xsl:apply-templates mode="#current"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each-group>
