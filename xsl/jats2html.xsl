@@ -2122,7 +2122,8 @@
   
   <xsl:template match="mml:*" mode="jats2html">
     <xsl:element name="{local-name()}" namespace="http://www.w3.org/1998/Math/MathML">
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
   
