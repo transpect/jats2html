@@ -1967,6 +1967,7 @@
   
   <xsl:variable name="block-element-names" as="xs:string+" 
                 select="'answer',
+                        'array',
                         'boxed-text',
                         'code',
                         'def-list',
