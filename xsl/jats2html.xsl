@@ -1917,6 +1917,7 @@
         </xsl:if>
       </span>
     </xsl:if>
+    <xsl:apply-templates select="term/index-term" mode="#current"/>
   </xsl:template>
 
   <!-- <index-term-range-end> is a marker to specify the range of an index-term.
