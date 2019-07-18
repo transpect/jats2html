@@ -1813,7 +1813,7 @@
       <ul class="index-entry-list" epub:type="index-entry-list">
         <xsl:for-each-group select="$index-terms" 
                             group-by="(@sort-key, 
-                                       normalize-space(string-join(term[1]//text()[count(ancestor::term) eq 1], '')))[1]"
+                                       normalize-space(string-join(term//text()[count(ancestor::term) eq $level], '')))[1]"
                             collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=identical">
           <xsl:sort select="current-grouping-key()" collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary"/>
           <xsl:sort select="current-grouping-key()" collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=identical"/>
