@@ -1711,7 +1711,9 @@
       <!-- if a rendered index exists, we don't generate a new one from index-terms -->
       <xsl:choose>
         <xsl:when test="$context//index-entry">
-          <xsl:call-template name="group-index-entries"/>
+          <xsl:call-template name="group-index-entries">
+            <xsl:with-param name="level" select="1"/>
+          </xsl:call-template>
         </xsl:when>
         <xsl:otherwise>
           <xsl:apply-templates select="index-title-group" mode="#current"/>  
@@ -1746,6 +1748,7 @@
   </xsl:template>
   
   <xsl:template name="group-index-entries">
+    <xsl:param name="level" as="xs:integer"/>
     <xsl:for-each-group select="index-entry
                                |index-div/index-entry
                                |index-title-group
@@ -1754,7 +1757,7 @@
         <xsl:when test="current-grouping-key() eq 'index-entry'">
           <ul class="index-entry-list" epub:type="index-entry-list">
             <xsl:for-each select="current-group()">
-              <li class="index-entry" epub:type="index-entry">
+              <li class="ie ie{}" epub:type="index-entry">
                 <xsl:apply-templates select="* except (index-entry|nav-pointer|nav-pointer-group)" mode="rendered-index-entry"/>
                 <xsl:for-each select="nav-pointer[@rid] union nav-pointer-group/nav-pointer[@rid]">
                   <xsl:apply-templates select="." mode="rendered-index-entry"/>
@@ -1764,7 +1767,9 @@
                 </xsl:for-each>
                 <xsl:if test="index-entry">
                   <!-- recurse into sub index entries -->
-                  <xsl:call-template name="group-index-entries"/>
+                  <xsl:call-template name="group-index-entries">
+                    <xsl:with-param name="level" select="$level + 1" as="xs:integer"/>
+                  </xsl:call-template>
                 </xsl:if>
               </li>
             </xsl:for-each>
