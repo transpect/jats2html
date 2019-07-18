@@ -1715,7 +1715,7 @@
         </xsl:when>
         <xsl:otherwise>
           <xsl:apply-templates select="index-title-group" mode="#current"/>  
-          <xsl:for-each-group select="$root//index-term[not(parent::index-term)]
+          <xsl:for-each-group select="$root//index-term[not(ancestor::index-term)]
                                                        [if(@index-type) then @index-type eq $index-type else true()]"
                               group-by="if (matches(substring(jats2html:strip-combining((@sort-key, term)[1]), 1, 1), 
                                                     '[A-z\p{IsLatin-1Supplement}]')) 
@@ -1806,7 +1806,9 @@
     <!-- §§§ We need to know a book’s main language! -->
     <xsl:if test="count($index-terms) gt 0">
       <ul class="index-entry-list" epub:type="index-entry-list">
-        <xsl:for-each-group select="$index-terms" group-by="(@sort-key, term)[1]"
+        <xsl:for-each-group select="$index-terms" 
+                            group-by="(@sort-key, 
+                                       normalize-space(string-join(term[1]//text()[count(ancestor::term) eq 1], '')))[1]"
                             collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=identical">
           <xsl:sort select="current-grouping-key()" collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary"/>
           <xsl:sort select="current-grouping-key()" collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=identical"/>
@@ -1821,9 +1823,7 @@
   <xsl:template name="index-entry">
     <xsl:param name="level" as="xs:integer"/>
     <li class="ie ie{$level}" epub:type="index-entry">
-      <span class="index-term" epub:type="index-term">
-        <xsl:value-of select="current-group()[1]/term"/>
-      </span>
+      <xsl:apply-templates select="current-group()[1]/term" mode="index-term"/>
       <xsl:text>&#x2002;</xsl:text>
       <xsl:for-each select="current-group()[exists(index-term | see)
                                             or
@@ -1863,6 +1863,12 @@
         <xsl:with-param name="level" select="$level + 1"/>
       </xsl:call-template>
     </li>
+  </xsl:template>
+  
+  <xsl:template match="term" mode="index-term">
+    <span class="index-term" epub:type="index-term">
+      <xsl:apply-templates mode="jats2html"/>
+    </span>
   </xsl:template>
 
   <xsl:key name="jats2html:by-indext-term" match="index-term" 
