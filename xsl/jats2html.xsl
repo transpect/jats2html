@@ -1708,12 +1708,9 @@
       <xsl:if test="$context">
         <xsl:apply-templates select="$context/@*" mode="#current"/>  
       </xsl:if>
-      <xsl:if test="not(.//index-entry) and index-title-group">
-        <xsl:apply-templates select="index-title-group" mode="#current"/>  
-      </xsl:if>
       <!-- if a rendered index exists, we don't generate a new one from index-terms -->
       <xsl:choose>
-        <xsl:when test="$context//index-entry">
+        <xsl:when test="$context/*">
           <xsl:call-template name="group-index-entries"/>
         </xsl:when>
         <xsl:otherwise>
@@ -1750,7 +1747,8 @@
   <xsl:template name="group-index-entries">
     <xsl:for-each-group select="index-entry
                                |index-div/index-entry
-                               |index-title-group" group-adjacent="local-name()">
+                               |index-title-group
+                               |*[not(starts-with(local-name(), 'index'))]" group-adjacent="local-name()">
       <xsl:choose>
         <xsl:when test="current-grouping-key() eq 'index-entry'">
           <ul class="index-entry-list" epub:type="index-entry-list">
@@ -1771,9 +1769,9 @@
             </xsl:for-each>
           </ul>
         </xsl:when>
-        <xsl:when test="current-grouping-key() eq 'index-title-group'">
+        <xsl:otherwise>
           <xsl:apply-templates select="current-group()" mode="#current"/>
-        </xsl:when>
+        </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each-group>
   </xsl:template>
