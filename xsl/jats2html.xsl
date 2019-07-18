@@ -1859,7 +1859,7 @@
         </xsl:if>
       </xsl:for-each-group>
       <xsl:call-template name="group-index-terms">
-        <xsl:with-param name="index-terms" select="current-group()/index-term"/>
+        <xsl:with-param name="index-terms" select="current-group()/term/index-term"/>
         <xsl:with-param name="level" select="$level + 1"/>
       </xsl:call-template>
     </li>
