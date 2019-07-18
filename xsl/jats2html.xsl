@@ -1710,10 +1710,11 @@
       </xsl:if>
       <!-- if a rendered index exists, we don't generate a new one from index-terms -->
       <xsl:choose>
-        <xsl:when test="$context/*">
+        <xsl:when test="$context//index-entry">
           <xsl:call-template name="group-index-entries"/>
         </xsl:when>
         <xsl:otherwise>
+          <xsl:apply-templates select="index-title-group" mode="#current"/>  
           <xsl:for-each-group select="$root//index-term[not(parent::index-term)]
                                                        [if(@index-type) then @index-type eq $index-type else true()]"
                               group-by="if (matches(substring(jats2html:strip-combining((@sort-key, term)[1]), 1, 1), 
