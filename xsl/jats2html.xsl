@@ -1987,6 +1987,7 @@
                         'preformat',
                         'question',
                         'table-wrap',
+                        'speech',
                         'statement',
                         'verse-group'"/>
 
