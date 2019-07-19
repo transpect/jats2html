@@ -859,9 +859,18 @@
       <xsl:with-param name="former-list-type" as="xs:string" select="@specific-use"/>
     </xsl:apply-templates>
   </xsl:template>
-    
+  
+  <xsl:template match="def-list/title" mode="jats2html"/>
+  
+  <xsl:template match="def-list/title" mode="move-def-list-title">
+    <xsl:element name="{concat('h', jats2html:heading-level(.))}">
+      <xsl:apply-templates select="@*, node()" mode="jats2html"/>  
+    </xsl:element>
+  </xsl:template>
+  
   <xsl:template match="def-list" mode="jats2html">
     <xsl:param name="former-list-type" as="xs:string?"/>
+    <xsl:apply-templates select="title" mode="move-def-list-title"/>
     <xsl:choose>
       <xsl:when test="($former-list-type = 'itemizedlist') 
                        and (every $term in def-item/term satisfies $term = def-item[1]/term)">
@@ -2506,6 +2515,7 @@
         <xsl:sequence select="count($elt/ancestor::*[ancestor::boxed-text]) + 3"/>
       </xsl:when>
       <xsl:when test="$elt/parent::abstract
+                   or $elt/parent::def-list
                    or $elt/parent::trans-abstract
                    or $elt/parent::ack
                    or $elt/parent::app
