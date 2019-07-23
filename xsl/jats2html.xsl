@@ -1753,16 +1753,20 @@
   
   <xsl:template match="index-title-group" name="create-index-title-group" mode="jats2html">
     <xsl:param name="context" select="." as="element(index-title-group)"/>
-    <xsl:apply-templates select="$context/node()" mode="jats2html"/>
+    <xsl:apply-templates select="$context/node()" mode="#current"/>
   </xsl:template>
   
   <xsl:template name="group-index-entries">
     <xsl:param name="level" as="xs:integer"/>
     <xsl:for-each-group select="index-entry
                                |index-div/index-entry
+                               |index-div
                                |index-title-group
                                |*[not(starts-with(local-name(), 'index'))]" group-adjacent="local-name()">
       <xsl:choose>
+        <xsl:when test="current-grouping-key() eq 'index-div'">
+          <xsl:apply-templates select="current-group()/index-title-group" mode="#current"/>  
+        </xsl:when>
         <xsl:when test="current-grouping-key() eq 'index-entry'">
           <ul class="index-entry-list" epub:type="index-entry-list">
             <xsl:for-each select="current-group()">
