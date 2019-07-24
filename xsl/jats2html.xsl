@@ -398,8 +398,8 @@
                                     )]" as="element(fn)*"/>
     <xsl:if test="exists($footnotes)">
       <xsl:element name="{$default-container-name}">
-        <xsl:attribute name="class" select="'endnotes'"/>
-        <xsl:attribute name="epub:type" select="'endnotes'"/>        
+        <xsl:attribute name="class" select="'footnotes'"/>
+        <xsl:attribute name="epub:type" select="'footnotes'"/>        
         <xsl:if test="$recount-footnotes">
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
@@ -752,7 +752,7 @@
     <xsl:element name="{if($xhtml-version eq '5.0') then 'aside' else 'div'}">
       <xsl:attribute name="id" select="concat('fn_', $index)"/>
       <xsl:attribute name="class" select="'fn'"/>
-      <xsl:attribute name="epub:type" select="'endnote'"/>
+      <xsl:attribute name="epub:type" select="'footnote'"/>
       <span class="note-mark">
         <xsl:choose>
           <xsl:when test="$static-footnotes">
