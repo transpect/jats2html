@@ -573,7 +573,7 @@
   </xsl:template>
   
   <xsl:template match="corresp|statement|question-wrap|question|answer|explanation|sig-block" mode="jats2html">
-    <div class="{local-name()}">
+    <div>
       <xsl:next-match/>
     </div>
   </xsl:template>
@@ -608,7 +608,9 @@
 
   <xsl:template match="@content-type[not(../@style-type)] | @style-type" mode="class-att">
     <xsl:if test="not(matches(., $jats2html:ignore-style-name-regex-x, 'x'))">
-      <xsl:attribute name="class" select="replace(., ':', '_')"/>  
+      <xsl:attribute name="class" select="string-join((parent::*/local-name(),
+                                                       replace(., ':', '_')), 
+                                                      ' ')"/>  
     </xsl:if>
   </xsl:template>
   
