@@ -403,13 +403,17 @@
         <xsl:if test="$recount-footnotes">
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
-        <xsl:if test="not($xhtml-version eq '5.0') and $generate-footnote-title eq 'yes'">
+        <xsl:if test="$generate-footnote-title eq 'yes'">
           <xsl:element name="{$footnote-title-element-name}">
             <xsl:attribute name="class" select="'footnote-heading'"/>
-            <xsl:variable name="prelim" as="item()*">
-              <xsl:apply-templates select="title" mode="#current"/>
-            </xsl:variable>
-            <xsl:value-of select="(string-join($prelim, ''), $footnote-title)[1]"/>
+            <xsl:choose>
+              <xsl:when test="title">
+                <xsl:apply-templates select="title" mode="#current"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="$footnote-title"/>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:element>
         </xsl:if>
         <!--<xsl:comment select="'ancestor: ', name(../..), '/', name(..),'/', name(), @*, '          ', count($footnote-roots intersect current()/descendant::*), ' ;; ',
