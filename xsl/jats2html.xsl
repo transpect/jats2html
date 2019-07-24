@@ -1771,9 +1771,9 @@
           <ul class="index-entry-list" epub:type="index-entry-list">
             <xsl:for-each select="current-group()">
               <li class="ie ie{}" epub:type="index-entry">
-                <xsl:apply-templates select="* except (index-entry|nav-pointer|nav-pointer-group)" mode="rendered-index-entry"/>
+                <xsl:apply-templates select="* except (index-entry|nav-pointer|nav-pointer-group)" mode="index-term"/>
                 <xsl:for-each select="nav-pointer[@rid] union nav-pointer-group/nav-pointer[@rid]">
-                  <xsl:apply-templates select="." mode="rendered-index-entry"/>
+                  <xsl:apply-templates select="." mode="index-term"/>
                   <xsl:if test="position() ne last()">
                     <xsl:text>,&#x20;</xsl:text>
                   </xsl:if>
@@ -1795,25 +1795,25 @@
     </xsl:for-each-group>
   </xsl:template>
   
-  <xsl:template match="term" mode="rendered-index-entry">
+  <xsl:template match="term" mode="index-term">
     <span class="indexterm" epub:type="index-term">
-      <xsl:apply-templates mode="jats2html"/>
+      <xsl:apply-templates select="node() except index-term" mode="jats2html"/>
     </span>
   </xsl:template>
   
-  <xsl:template match="nav-pointer[@rid]" mode="rendered-index-entry">
+  <xsl:template match="nav-pointer[@rid]" mode="index-term">
     <a class="{local-name()}" href="#{@rid}">
       <xsl:apply-templates mode="jats2html"/>
     </a>
   </xsl:template>
   
-  <xsl:template match="see-entry|see-also-entry" mode="rendered-index-entry">
+  <xsl:template match="see-entry|see-also-entry" mode="index-term">
     <span class="{local-name()}">
       <xsl:apply-templates mode="jats2html"/>
     </span>
   </xsl:template>
   
-  <xsl:template match="x" mode="rendered-index-entry">
+  <xsl:template match="x" mode="index-term">
     <xsl:apply-templates mode="jats2html"/>
     <xsl:text>&#x20;</xsl:text>
   </xsl:template>
@@ -1882,15 +1882,9 @@
       </xsl:call-template>
     </li>
   </xsl:template>
-  
-  <xsl:template match="term" mode="index-term">
-    <span class="index-term" epub:type="index-term">
-      <xsl:apply-templates mode="jats2html"/>
-    </span>
-  </xsl:template>
 
-  <xsl:key name="jats2html:by-indext-term" match="index-term" 
-    use="term, string-join((parent::index-term/term, term), ', ')"/>
+  <xsl:key name="jats2html:by-indext-term" 
+           match="index-term" use="term, string-join((parent::index-term/term, term), ', ')"/>
   
   <xsl:template name="potentiallly-link-to-see-target">
     <xsl:param name="root" as="document-node()" tunnel="yes"/>
