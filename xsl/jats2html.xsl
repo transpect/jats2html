@@ -115,6 +115,16 @@
        are typically rendered as popup-windows in the content.
   -->
   <xsl:param name="generate-footnote-title" select="'yes'" as="xs:string"/>
+  <xsl:param name="footnote-title" as="xs:string" 
+    select="     if($lang eq 'de') then 'Anmerkungen'
+            else if($lang eq 'fr') then 'Notes'
+            else if($lang eq 'es') then 'Notas'
+            else if($lang eq 'pl') then 'Przypisy'
+            else if($lang eq 'cz') then 'Vysvětlivky'
+            else                        'Notes'"/>
+  <xsl:param name="footnote-title-element-name" select="'h1'" as="xs:string"/>
+  
+  
   
   <xsl:output method="xhtml" indent="no" 
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
@@ -127,16 +137,6 @@
   
   <xsl:variable name="l10n" select="document(concat('../l10n/l10n.', ($lang, 'en')[1], '.xml'))"
     as="document-node(element(l10n:l10n))"/>
-  
-  <xsl:variable name="footnote-title" as="xs:string" 
-                select="     if($lang eq 'de') then 'Anmerkungen'
-                        else if($lang eq 'fr') then 'Notes'
-                        else if($lang eq 'es') then 'Notas'
-                        else if($lang eq 'pl') then 'Przypisy'
-                        else if($lang eq 'cz') then 'Vysvětlivky'
-                        else                        'Notes'"/>
-  
-  <xsl:variable name="footnote-title-element-name" select="'h1'" as="xs:string"/>
   
   <xsl:key name="l10n-string" match="l10n:string" use="@id"/>
   
