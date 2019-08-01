@@ -1854,7 +1854,7 @@
                                             jats2html:contains-token(@content-type, 'hub:not-placed-on-page')]">
         <a id="ie_{@id}"/>
       </xsl:for-each>
-      <xsl:for-each select="current-group()[empty(index-term | see)]
+      <xsl:for-each select="current-group()[empty(index-term)]
                                            [not(jats2html:contains-token(@content-type, 'hub:not-placed-on-page'))]">
         <a href="#it_{@id}" id="ie_{@id}" class="index-link" epub:type="index-locator">
           <xsl:value-of select="position()"/>
