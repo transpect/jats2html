@@ -1831,8 +1831,7 @@
     <xsl:if test="count($index-terms) gt 0">
       <ul class="index-entry-list" epub:type="index-entry-list">
         <xsl:for-each-group select="$index-terms" 
-                            group-by="(@sort-key, 
-                                       normalize-space(string-join(term//text()[count(ancestor::term) eq $level], '')))[1]"
+                            group-by="(@sort-key, term)[1]"
                             collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=identical">
           <xsl:sort select="current-grouping-key()" collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=primary"/>
           <xsl:sort select="current-grouping-key()" collation="http://saxon.sf.net/collation?lang={(/*/@xml:lang, 'de')[1]};strength=identical"/>
@@ -1859,15 +1858,17 @@
         <a href="#it_{@id}" id="ie_{@id}" class="index-link" epub:type="index-locator">
           <xsl:value-of select="position()"/>
         </a>
-        <xsl:if test="position() ne last()">
+        <xsl:if test="position() ne last() or (current-group()[see] and position() = last())">
           <xsl:text xml:space="preserve">, </xsl:text>
         </xsl:if>
       </xsl:for-each>
       <xsl:for-each-group select="current-group()//see" group-by="string(.)">
-        <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe ' else ' see '" xml:space="preserve"/>
+        <xsl:if test="position() = 1">
+          <xsl:value-of select="if ($root/*/@xml:lang = 'de') then if (not(ancestor::index-term)) then 'siehe' else ' siehe ' else ' see '" xml:space="preserve"/>
+        </xsl:if>
         <xsl:call-template name="potentiallly-link-to-see-target"/>
         <xsl:if test="not(position() = last())">
-          <xsl:text>;</xsl:text>
+          <xsl:text>; </xsl:text>
         </xsl:if>
       </xsl:for-each-group>
       <xsl:if test="current-group()//see and current-group()//see-also">
@@ -1883,12 +1884,12 @@
         </xsl:if>
       </xsl:for-each-group>
       <xsl:call-template name="group-index-terms">
-        <xsl:with-param name="index-terms" select="current-group()/term/index-term"/>
+        <xsl:with-param name="index-terms" select="current-group()/index-term"/>
         <xsl:with-param name="level" select="$level + 1"/>
       </xsl:call-template>
     </li>
   </xsl:template>
-
+  
   <xsl:key name="jats2html:by-indext-term" 
            match="index-term" use="term, string-join((parent::index-term/term, term), ', ')"/>
   
