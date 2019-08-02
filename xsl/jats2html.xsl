@@ -1848,7 +1848,7 @@
     <li class="ie ie{$level}" epub:type="index-entry">
       <xsl:apply-templates select="current-group()[1]/term" mode="index-term"/>
       <xsl:text>&#x2002;</xsl:text>
-      <xsl:for-each select="current-group()[exists(index-term | see)
+      <xsl:for-each select="current-group()[exists(index-term)
                                             or
                                             jats2html:contains-token(@content-type, 'hub:not-placed-on-page')]">
         <a id="ie_{@id}"/>
