@@ -1731,7 +1731,7 @@
           </xsl:call-template>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:apply-templates select="index-title-group" mode="#current"/>  
+          <xsl:apply-templates select="$context/index-title-group" mode="#current"/>  
           <xsl:for-each-group select="$root//index-term[not(ancestor::index-term)]
                                                        [if(@index-type) then @index-type eq $index-type else true()]"
                               group-by="if (matches(substring(jats2html:strip-combining((@sort-key, term)[1]), 1, 1), 
