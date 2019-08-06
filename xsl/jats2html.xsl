@@ -1335,7 +1335,9 @@
         <xsl:if test="ancestor::book-part-meta/contrib-group/contrib">
           <span class="toc-authors">
             <xsl:value-of select="string-join(for $i in ancestor::book-part-meta/contrib-group/contrib 
-                                              return concat($i/name/given-names, ' ', $i/name/surname),
+                                              return concat($i//(name[@xml:lang eq $lang], name[1])[1]/given-names, 
+                                                            ' ', 
+                                                            $i//(name[@xml:lang eq $lang], name[1])[1]/surname),
                                               ', ')"/>
           </span>
           <xsl:text>&#x20;</xsl:text>
