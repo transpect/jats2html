@@ -504,6 +504,7 @@
                       |mixed-citation
                       |monospace
                       |month
+                      |name-alternatives
                       |named-content
                       |nav-pointer
                       |overline
@@ -1631,6 +1632,7 @@
                       |lpage
                       |monospace
                       |month
+                      |name-alternatives
                       |named-content
                       |nested-kwd
                       |overline
@@ -2870,6 +2872,10 @@
       <xsl:text>&#xa;</xsl:text>
       <xsl:apply-templates select="surname" mode="#current"/>
     </span>
+  </xsl:template>
+  
+  <xsl:template match="name-alternatives" mode="jats2html">
+    <xsl:apply-templates select="(name[@xml:lang eq $lang], name[1])[1]" mode="#current"/>
   </xsl:template>
   
   <xsl:template match="email" mode="jats2html">
