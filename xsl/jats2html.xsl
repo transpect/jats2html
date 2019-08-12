@@ -484,6 +484,7 @@
                       |date
                       |day
                       |def
+                      |degrees
                       |disp-formula
                       |disp-formula-group
                       |edition
@@ -1622,6 +1623,7 @@
                       |country
                       |date
                       |day
+                      |degrees
                       |edition
                       |etal
                       |fpage
