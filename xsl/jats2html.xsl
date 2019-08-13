@@ -1922,8 +1922,8 @@
   <xsl:template match="index-term" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
     <xsl:if test="not($in-toc)">
-      <span class="indexterm-anchor" id="it_{(@id, generate-id())[1]}">
-        <xsl:attribute name="title">
+      <span class="indexterm-anchor" id="it_{(descendant-or-self::index-term[last()]/@id, generate-id())[1]}">
+        <xsl:attribute name="title">  
           <xsl:apply-templates mode="#current"/>
         </xsl:attribute>
         <xsl:if test="$index-backlink-type = ('text-and-number', 'number')">
