@@ -1776,20 +1776,27 @@
   
   <xsl:template name="group-index-entries">
     <xsl:param name="level" as="xs:integer"/>
-    <xsl:for-each-group select="index-entry
-                               |index-div/index-entry
-                               |index-div
-                               |index-title-group
-                               |*[not(starts-with(local-name(), 'index'))]" group-adjacent="local-name()">
+    <xsl:for-each-group select="*" group-adjacent="local-name()">
       <xsl:choose>
+        <xsl:when test="current-grouping-key() eq 'index-title-group'">
+          <xsl:apply-templates select="current-group()" mode="#current"/>
+        </xsl:when>
         <xsl:when test="current-grouping-key() eq 'index-div'">
-          <xsl:apply-templates select="current-group()/index-title-group" mode="#current"/>  
+          <xsl:for-each select="current-group()">
+            <ul class="index-entry-list" epub:type="index-entry-list">
+              <li>
+                <xsl:call-template name="group-index-entries">
+                  <xsl:with-param name="level" select="$level"/>
+                </xsl:call-template>
+              </li>
+            </ul>
+          </xsl:for-each>
         </xsl:when>
         <xsl:when test="current-grouping-key() eq 'index-entry'">
           <ul class="index-entry-list" epub:type="index-entry-list">
             <xsl:for-each select="current-group()">
               <li class="ie ie{}" epub:type="index-entry">
-                <xsl:apply-templates select="* except (index-entry|nav-pointer|nav-pointer-group)" mode="index-term"/>
+                <xsl:apply-templates select="* except (index-entry|nav-pointer|nav-pointer-group)" mode="index-term"/>                
                 <xsl:for-each select="nav-pointer[@rid] union nav-pointer-group/nav-pointer[@rid]">
                   <xsl:apply-templates select="." mode="index-term"/>
                   <xsl:if test="position() ne last()">
@@ -1807,7 +1814,7 @@
           </ul>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:apply-templates mode="#current"/>
+          <xsl:apply-templates select=".[not(self::term)]" mode="jats2html"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each-group>
@@ -2352,7 +2359,8 @@
               <span class="cit">
                 <xsl:apply-templates select="@srcpath" mode="#current"/>
                 <xsl:text>[</xsl:text>
-                <xsl:number format="a" value="index-of(for $xr in key('by-rid', @rid, $root) return $xr/@id, @id)"/>
+                <xsl:number format="a" value="index-of( for $xr in key('by-rid', @rid, $root) 
+                                                        return $xr/@id, @id )"/>
                 <xsl:text>]</xsl:text>
               </span>
             </xsl:if>
