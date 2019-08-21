@@ -1081,10 +1081,6 @@
       <xsl:call-template name="css:content"/>
     </div>
   </xsl:template>
-  
-  <xsl:template match="fig/alternatives" mode="jats2html">
-    <xsl:apply-templates select="(media, graphic, inline-graphic)[1]" mode="#current"/>
-  </xsl:template>
 
   <xsl:template match="table-wrap|table-wrap-foot" mode="jats2html">
     <xsl:variable name="table-caption" as="element()">
@@ -2134,10 +2130,9 @@
     </span>
   </xsl:template>
   
-  <xsl:template match="disp-formula/alternatives
-                      |inline-formula/alternatives" mode="jats2html">
+  <xsl:template match="alternatives" mode="jats2html">
     <span class="{local-name()}">
-      <xsl:apply-templates select="@*, (mml:math, tex-math, media, (graphic|inline-graphic))[1]" mode="#current"/>  
+      <xsl:apply-templates select="@*, (mml:math, tex-math, media, (graphic|inline-graphic), *)[1]" mode="#current"/>  
     </span>
   </xsl:template>
   
