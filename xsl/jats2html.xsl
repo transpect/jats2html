@@ -880,14 +880,17 @@
     <xsl:param name="former-list-type" as="xs:string?"/>
     <xsl:apply-templates select="title" mode="move-def-list-title"/>
     <xsl:choose>
-      <xsl:when test="($former-list-type = 'itemizedlist') 
-                       and (every $term in def-item/term satisfies $term = def-item[1]/term)">
+      <xsl:when test="(($former-list-type = 'itemizedlist') 
+                       and (every $term in def-item/term satisfies $term = def-item[1]/term))
+                       or not(.//def) or not(.//term)">
         <ul>
           <xsl:call-template name="css:content">
             <xsl:with-param name="discard-term" as="xs:boolean" 
                             select="if (normalize-space($former-list-type)) 
                                     then true() 
                                     else false()" tunnel="yes"/>
+            <xsl:with-param name="discard-def" as="xs:boolean" 
+                            select="not(.//def)" tunnel="yes"/>
           </xsl:call-template>
         </ul>
       </xsl:when>
@@ -915,12 +918,21 @@
 
   <xsl:template match="def-item/term" mode="jats2html">
     <xsl:param name="discard-term" as="xs:boolean?" tunnel="yes"/>
-    <xsl:if test="not($discard-term)">
-      <dt>
-        <xsl:copy-of select="../@id"/>
-        <xsl:next-match/>
-      </dt>
-    </xsl:if>
+    <xsl:param name="discard-def" as="xs:boolean?" tunnel="yes"/>
+    <xsl:choose>
+      <xsl:when test="not($discard-term) and not($discard-def)">
+        <dt>
+          <xsl:copy-of select="../@id"/>
+          <xsl:next-match/>
+        </dt>
+      </xsl:when>
+      <xsl:when test="$discard-def">
+        <li>
+          <xsl:copy-of select="../@id"/>
+          <xsl:next-match/>
+        </li>
+      </xsl:when>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template match="def-item/def" mode="jats2html">
