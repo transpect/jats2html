@@ -1821,6 +1821,9 @@
             </xsl:for-each>
           </ul>
         </xsl:when>
+        <xsl:when test="self::nav-pointer-group">
+          <xsl:apply-templates select="." mode="index-term"/>
+        </xsl:when>
         <xsl:otherwise>
           <xsl:apply-templates select=".[not(self::term)]" mode="jats2html"/>
         </xsl:otherwise>
@@ -1838,6 +1841,12 @@
     <a class="{local-name()}" href="#{@rid}">
       <xsl:apply-templates mode="jats2html"/>
     </a>
+  </xsl:template>
+  
+  <xsl:template match="nav-pointer-group" mode="index-term">
+    <span class="{local-name()}">
+      <xsl:apply-templates mode="#current"/>
+    </span>
   </xsl:template>
   
   <xsl:template match="see-entry|see-also-entry" mode="index-term">
