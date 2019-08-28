@@ -1230,7 +1230,7 @@
   <xsl:template match="toc" name="toc" mode="jats2html">
     <xsl:param name="toc-max-level" as="xs:integer?"/>
     <xsl:variable name="headlines-by-level" as="element()*">
-      <xsl:apply-templates select="$jats2html:toc-headlines" mode="toc"/>
+      <xsl:apply-templates select="$jats2html:toc-headlines[normalize-space()]" mode="toc"/>
     </xsl:variable>
     <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
       <xsl:if test="not(self::toc)"><!-- assign id just to generated toc -->
