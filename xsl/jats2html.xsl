@@ -2549,7 +2549,8 @@
       <xsl:when test="$elt/parent::title-group
                    or $elt/parent::index
                    or $elt/parent::index-title-group
-                   or $elt/parent::fn-group">
+                   or $elt/parent::fn-group
+                   or $elt/parent::back">
         <xsl:sequence select="2"/>
       </xsl:when>
       <xsl:when test="$elt/parent::sec[ancestor::boxed-text]">
