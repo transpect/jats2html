@@ -1779,7 +1779,7 @@
   
   <xsl:template match="index-title-group" name="create-index-title-group" mode="jats2html">
     <xsl:param name="context" select="." as="element(index-title-group)"/>
-    <xsl:apply-templates select="$context/node()" mode="#current"/>
+    <xsl:apply-templates select="$context/title" mode="#current"/>
   </xsl:template>
   
   <xsl:template name="group-index-entries">
