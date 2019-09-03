@@ -1825,7 +1825,10 @@
           <xsl:apply-templates select="." mode="index-term"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:apply-templates select=".[not(self::term)]" mode="jats2html"/>
+          <xsl:apply-templates select=".[not(self::term
+                                            |self::see-also
+                                            |self::see-also-entry
+                                            |self::x)]" mode="jats2html"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each-group>
@@ -1843,15 +1846,9 @@
     </a>
   </xsl:template>
   
-  <xsl:template match="nav-pointer-group" mode="index-term">
+  <xsl:template match="nav-pointer-group|see-entry|see-also-entry" mode="index-term">
     <span class="{local-name()}">
       <xsl:apply-templates mode="#current"/>
-    </span>
-  </xsl:template>
-  
-  <xsl:template match="see-entry|see-also-entry" mode="index-term">
-    <span class="{local-name()}">
-      <xsl:apply-templates mode="jats2html"/>
     </span>
   </xsl:template>
   
