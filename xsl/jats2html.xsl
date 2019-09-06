@@ -1895,7 +1895,7 @@
           <xsl:text xml:space="preserve">, </xsl:text>
         </xsl:if>
       </xsl:for-each>
-      <xsl:for-each-group select="current-group()//see" group-by="string(.)">
+      <xsl:for-each-group select="current-group()/see" group-by="string(.)">
         <xsl:if test="position() = 1">
           <xsl:value-of select="if ($root/*/@xml:lang = 'de') then if (not(ancestor::index-term)) then 'siehe' else ' siehe ' else ' see '" xml:space="preserve"/>
         </xsl:if>
@@ -1930,7 +1930,7 @@
     <xsl:param name="root" as="document-node()" tunnel="yes"/>
     <!-- Context: see or see-also -->
     <xsl:variable name="target" as="element(index-term)?"
-      select="(key('by-id', @id, $root)/self::index-term,
+      select="(key('by-id', @rid, $root)/self::index-term,
                key('jats2html:by-indext-term', concat(., ' (', ../term, ')'), $root),
                key('jats2html:by-indext-term', ., $root))[1]"/>
     <xsl:choose>
