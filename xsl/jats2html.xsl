@@ -2996,7 +2996,7 @@
                       |pub-date
                       |notes
                       |kwd-group
-                      |funding-source/award-group" mode="jats2html-create-title"/>
+                      |funding-group/award-group" mode="jats2html-create-title"/>
   
   <!-- drop all attributes which are not matched by other templates -->
   
