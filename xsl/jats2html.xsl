@@ -1803,7 +1803,7 @@
         <xsl:when test="current-grouping-key() eq 'index-entry'">
           <ul class="index-entry-list" epub:type="index-entry-list">
             <xsl:for-each select="current-group()">
-              <li class="ie ie{}" epub:type="index-entry">
+              <li class="ie index-entry" epub:type="index-entry">
                 <xsl:apply-templates select="* except (index-entry|nav-pointer|nav-pointer-group)" mode="index-term"/>                
                 <xsl:for-each select="nav-pointer[@rid] union nav-pointer-group/nav-pointer[@rid]">
                   <xsl:apply-templates select="." mode="index-term"/>
