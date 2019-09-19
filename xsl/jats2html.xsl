@@ -404,17 +404,17 @@
           <xsl:processing-instruction name="recount" select="'yes'"/>
         </xsl:if>
         <xsl:if test="$generate-footnote-title eq 'yes'">
-          <xsl:element name="{$footnote-title-element-name}">
-            <xsl:attribute name="class" select="'footnote-heading'"/>
             <xsl:choose>
               <xsl:when test="title">
                 <xsl:apply-templates select="title" mode="#current"/>
               </xsl:when>
               <xsl:otherwise>
-                <xsl:value-of select="$footnote-title"/>
+                <xsl:element name="{$footnote-title-element-name}">
+                  <xsl:attribute name="class" select="'footnote-heading'"/>
+                  <xsl:value-of select="$footnote-title"/>
+                </xsl:element>
               </xsl:otherwise>
             </xsl:choose>
-          </xsl:element>
         </xsl:if>
         <!--<xsl:comment select="'ancestor: ', name(../..), '/', name(..),'/', name(), @*, '          ', count($footnote-roots intersect current()/descendant::*), ' ;; ',
           count(.//fn[some $fnr in ($footnote-roots intersect current()/descendant::*) 
