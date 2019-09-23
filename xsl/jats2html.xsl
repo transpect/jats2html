@@ -1891,13 +1891,18 @@
         <a href="#it_{@id}" id="ie_{@id}" class="index-link" epub:type="index-locator">
           <xsl:value-of select="position()"/>
         </a>
-        <xsl:if test="position() ne last() or (current-group()[see] and position() = last())">
+        <xsl:if test="position() ne last()(: or (current-group()[see] and position() = last()):)">
           <xsl:text xml:space="preserve">, </xsl:text>
         </xsl:if>
       </xsl:for-each>
       <xsl:for-each-group select="current-group()/see" group-by="string(.)">
         <xsl:if test="position() = 1">
-          <xsl:value-of select="if ($root/*/@xml:lang = 'de') then if (not(ancestor::index-term)) then 'siehe' else ' siehe ' else ' see '" xml:space="preserve"/>
+          <xsl:value-of select="if ($root/*/@xml:lang = 'de') 
+                                then 
+                                  if (count(current-group()/ancestor::index-term) gt 1)
+                                  then ' siehe ' 
+                                  else 'siehe ' 
+                                else ' see '" xml:space="preserve"/>
         </xsl:if>
         <xsl:call-template name="potentiallly-link-to-see-target"/>
         <xsl:if test="not(position() = last())">
@@ -1909,7 +1914,10 @@
       </xsl:if>
       <xsl:for-each-group select="current-group()//see-also" group-by="string(.)">
         <xsl:value-of select="if($root/*/@xml:lang = 'de') 
-                              then ' siehe auch ' 
+                              then 
+                                 if (count(current-group()/ancestor::index-term) gt 1)
+                                 then ' siehe auch ' 
+                                 else 'siehe auch ' 
                               else ' see also '" xml:space="preserve"/>
         <xsl:call-template name="potentiallly-link-to-see-target"/>
         <xsl:if test="not(position() = last())">
