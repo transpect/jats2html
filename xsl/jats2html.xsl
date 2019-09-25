@@ -1914,10 +1914,7 @@
       </xsl:if>
       <xsl:for-each-group select="current-group()//see-also" group-by="string(.)">
         <xsl:value-of select="if($root/*/@xml:lang = 'de') 
-                              then 
-                                 if (count(current-group()/ancestor::index-term) gt 1)
-                                 then ' siehe auch ' 
-                                 else 'siehe auch ' 
+                              then ' siehe auch ' 
                               else ' see also '" xml:space="preserve"/>
         <xsl:call-template name="potentiallly-link-to-see-target"/>
         <xsl:if test="not(position() = last())">
