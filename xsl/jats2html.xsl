@@ -1912,7 +1912,7 @@
       <xsl:if test="current-group()//see and current-group()//see-also">
         <xsl:text xml:space="preserve">;</xsl:text>
       </xsl:if>
-      <xsl:for-each-group select="current-group()//see-also" group-by="string(.)">
+      <xsl:for-each-group select="current-group()/see-also" group-by="string(.)">
         <xsl:value-of select="if($root/*/@xml:lang = 'de') 
                               then ' siehe auch ' 
                               else ' see also '" xml:space="preserve"/>
