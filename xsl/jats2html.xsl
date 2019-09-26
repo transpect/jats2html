@@ -74,6 +74,7 @@
   <xsl:variable name="series-path" as="xs:string?" select="$paths[position() = index-of($roles, 'production-line')]"/>
   
   <xsl:param name="subtitles-in-titles" select="'yes'"/>
+  <xsl:param name="authors-in-titles" select="'no'"/>
   <!-- with $xhtml-version eq '5.0' <section> will be created instead of <div> -->
   <xsl:param name="divify-sections" select="'no'"/>
   <xsl:param name="divify-title-groups" select="'no'"/>
@@ -1417,7 +1418,8 @@
   </xsl:template>
   
   <xsl:variable name="subtitle-separator-in-ncx" as="xs:string?" select="'&#x2002;'"/>
-
+  <xsl:variable name="author-separator-in-ncx" as="xs:string?" select="': '"/>
+  
   <!-- sections where the label is the title, think of capitalized roman numbers in novels -->
 
   <xsl:template match="sec[not(title)]/label
@@ -1447,6 +1449,9 @@
                              parent::caption/../label[named-content[@content-type = 'post-identifier']]
                              )[1]"/>
       <xsl:attribute name="title">
+        <xsl:if test="$authors-in-titles = 'yes'">
+          <xsl:sequence select="jats2html:authors-in-ncx(., root())"/>
+        </xsl:if>
         <xsl:apply-templates select="$_label" mode="strip-indexterms-etc"/>
         <xsl:apply-templates select="$_label" mode="label-sep"/>
         <xsl:variable name="stripped" as="text()">
@@ -1478,6 +1483,15 @@
       </xsl:apply-templates>
     </xsl:element>
   </xsl:template>
+  
+  <xsl:function name="jats2html:authors-in-ncx" as="xs:string*">
+    <xsl:param name="title" as="element()?"/>
+    <xsl:param name="root" as="document-node()"/>
+    <xsl:if test="$title[../following-sibling::*[1][self::contrib-group]]">
+      <xsl:apply-templates select="$title/../following-sibling::*[1]" mode="strip-indexterms-etc"/>
+      <xsl:value-of select="$author-separator-in-ncx"/>
+     </xsl:if>
+  </xsl:function>
   
   <xsl:template match="index-term | fn | target" mode="strip-indexterms-etc"/>
   
