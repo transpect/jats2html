@@ -2017,6 +2017,10 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="@style" mode="jats2html">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+  
   <xsl:template match="tr/@css:background-color" mode="epub-alternatives"/>
 
   <xsl:template match="index-term/term" mode="jats2html">
