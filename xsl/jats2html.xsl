@@ -1892,6 +1892,7 @@
   
   <xsl:template name="index-entry">
     <xsl:param name="level" as="xs:integer"/>
+    <xsl:variable name="cg" select="current-group()"/>
     <li class="ie ie{$level}" epub:type="index-entry">
       <xsl:apply-templates select="current-group()[1]/term" mode="index-term"/>
       <xsl:text>&#x2002;</xsl:text>
@@ -1913,9 +1914,9 @@
         <xsl:if test="position() = 1">
           <xsl:value-of select="if ($root/*/@xml:lang = 'de') 
                                 then 
-                                  if (count(current-group()/ancestor::index-term) gt 1)
-                                  then ' siehe ' 
-                                  else 'siehe ' 
+                                  if ($cg[jats2html:contains-token(@content-type, 'hub:not-placed-on-page')])
+                                  then 'siehe ' 
+                                  else ' siehe ' 
                                 else ' see '" xml:space="preserve"/>
         </xsl:if>
         <xsl:call-template name="potentiallly-link-to-see-target"/>
@@ -1928,8 +1929,11 @@
       </xsl:if>
       <xsl:for-each-group select="current-group()/see-also" group-by="string(.)">
         <xsl:value-of select="if($root/*/@xml:lang = 'de') 
-                              then ' siehe auch ' 
-                              else ' see also '" xml:space="preserve"/>
+                              then 
+                                  if ($cg[jats2html:contains-token(@content-type, 'hub:not-placed-on-page')])
+                                  then 'siehe auch ' 
+                                  else ' siehe auch ' 
+                                else ' see also '" xml:space="preserve"/>
         <xsl:call-template name="potentiallly-link-to-see-target"/>
         <xsl:if test="not(position() = last())">
           <xsl:text>;</xsl:text>
