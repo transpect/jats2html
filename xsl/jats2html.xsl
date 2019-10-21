@@ -1178,6 +1178,9 @@
       <xsl:when test="$context[self::ref]">
         <xsl:attribute name="epub:type" select="'biblioentry'"/>
       </xsl:when>
+      <xsl:when test="$context[self::*[local-name() = ('preface')]][matches(*:book-part-meta/*:title-group/*:title, '(Introduction|Einleitung|Einführung)')]">
+        <xsl:attribute name="epub:type" select="'introduction'"/>
+      </xsl:when>
       <xsl:when test="$context[self::*[local-name() = ('preface', 'foreword', 'dedication', 'glossary', 'index', 'index-term', 'toc')]]">
         <xsl:attribute name="epub:type" select="$context/local-name()"/>
       </xsl:when>
@@ -1440,6 +1443,7 @@
     <xsl:element name="{if ($level) then concat('h', $level) else 'p'}">
       <xsl:copy-of select="(../@id, parent::title-group/../../@id)[1][not($divify-sections = 'yes')]"/>
       <xsl:call-template name="css:other-atts"/>
+      <xsl:sequence select="tr:create-epub-type-attribute(if (self::*:title) then ../../.. else ..)"/>
       <xsl:variable name="_label" as="element(label)?" 
                     select="(../label[not(named-content[@content-type = 'post-identifier'])], 
                              parent::caption/../label[not(named-content[@content-type = 'post-identifier'])]
