@@ -936,10 +936,16 @@
     </xsl:choose>
   </xsl:template>
   
+  <xsl:template match="def-list/def-list" mode="jats2html"/>
+  
   <xsl:template match="def-item/def" mode="jats2html">
     <xsl:param name="discard-term" as="xs:boolean?" tunnel="yes"/>
+    <xsl:variable name="following-nested-def-list" as="element(def-list)?">
+      <xsl:copy-of select="parent::def-item/following-sibling::*[1][self::def-list]"/>
+    </xsl:variable>
     <xsl:element name="{if ($discard-term) then 'li' else 'dd'}">
       <xsl:next-match/>
+      <xsl:apply-templates select="$following-nested-def-list" mode="#current"/>
     </xsl:element>
   </xsl:template>
   
