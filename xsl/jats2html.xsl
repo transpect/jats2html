@@ -1275,6 +1275,8 @@
   </xsl:template>
   
   <xsl:template name="page-list">
+    <!-- it is better to let epubtools create this list because it will make sure that it is in spine order.
+      You need to create <a epub:type="pagebreak" title="IV" id="page-IV"/> out of the target elements for it to work. --> 
     <xsl:if test="//target">
       <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
         <xsl:attribute name="id" select="'page-list'"/>
