@@ -1561,6 +1561,10 @@
     </span>
   </xsl:template>
   
+  <xsl:template match="styled-content[empty(@*)]" mode="jats2html">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
   <xsl:template match="sup|sub" mode="jats2html">
     <xsl:element name="{name()}">
       <xsl:next-match/>
