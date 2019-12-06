@@ -1561,7 +1561,7 @@
     </span>
   </xsl:template>
   
-  <xsl:template match="styled-content[empty(@*)]" mode="jats2html">
+  <xsl:template match="styled-content[empty(@* except @srcpath)]" mode="jats2html">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
