@@ -1382,6 +1382,10 @@
     </xsl:element>
   </xsl:template>
   
+  <xsl:template match="alt-title" mode="jats2html">
+    <span class="alt-title" title="{.}"/>
+  </xsl:template>
+  
   <xsl:template match="toc-entry" mode="jats2html">
     <div class="{local-name()}">
       <xsl:next-match/>
