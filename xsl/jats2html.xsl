@@ -595,7 +595,8 @@
     <xsl:variable name="att" as="attribute(class)?">
       <xsl:next-match/>
     </xsl:variable>
-    <xsl:attribute name="class" select="string-join((local-name(), @publication-type, $att), ' ')"/>
+    <!-- @specific-use could be 'PAGEBREAK', for ex. -->
+    <xsl:attribute name="class" select="string-join((local-name(), @publication-type, @specific-use, $att), ' ')"/>
   </xsl:template>
 
   <xsl:template match="mixed-citation|element-citation" mode="jats2html" priority="3"> 
