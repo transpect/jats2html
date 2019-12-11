@@ -1862,6 +1862,7 @@
         <xsl:otherwise>
           <xsl:apply-templates select=".[not(self::term
                                             |self::see-also
+                                            |self::see-entry
                                             |self::see-also-entry
                                             |self::x)]" mode="jats2html"/>
         </xsl:otherwise>
