@@ -488,7 +488,8 @@
                       |degrees
                       |disp-formula
                       |disp-formula-group
-                      |edition
+                      |funding-source
+                      |funding-statement
                       |edition
                       |element-citation
                       |etal
@@ -2985,7 +2986,7 @@
   
   <xsl:template match="funding-source
                       |funding-statement
-                      |publisher-name" mode="jats2html-create-title">
+                      |publisher-name" mode="jats2html jats2html-create-title">
     <p class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </p>
@@ -2997,10 +2998,9 @@
                       |award-group
                       |funding-group
                       |fn-group
-                      |funding-group
                       |publisher
                       |string-name
-                      |trans-title-group" mode="jats2html-create-title">
+                      |trans-title-group" mode="jats2html jats2html-create-title">
     <div class="{local-name()}">
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </div>
@@ -3014,7 +3014,7 @@
                       |given-names
                       |surname
                       |volume-title
-                      |volume-number" mode="jats2html-create-title">
+                      |volume-number" mode="jats2html jats2html-create-title">
     <span class="{local-name()}">
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </span>
