@@ -2983,6 +2983,12 @@
   </xsl:template>
   
   <!-- everything that goes into a <p> -->
+
+  <xsl:template match="funding-group" mode="jats2html">
+    <div class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </div>
+  </xsl:template/>
   
   <xsl:template match="funding-source
                       |funding-statement
@@ -3000,7 +3006,7 @@
                       |fn-group
                       |publisher
                       |string-name
-                      |trans-title-group" mode="jats2html jats2html-create-title">
+                      |trans-title-group" mode="jats2html-create-title">
     <div class="{local-name()}">
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </div>
@@ -3014,7 +3020,7 @@
                       |given-names
                       |surname
                       |volume-title
-                      |volume-number" mode="jats2html jats2html-create-title">
+                      |volume-number" mode="jats2html-create-title">
     <span class="{local-name()}">
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </span>
