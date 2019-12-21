@@ -2990,9 +2990,14 @@
     </div>
   </xsl:template>
   
+  <xsl:template match="publisher-name" mode="jats2html">
+    <p class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </p>
+  </xsl:template>
+  
   <xsl:template match="funding-source
-                      |funding-statement
-                      |publisher-name" mode="jats2html jats2html-create-title">
+                      |funding-statement" mode="jats2html jats2html-create-title">
     <p class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </p>
@@ -3018,6 +3023,7 @@
                       |book-title-group/label
                       |anonymous
                       |given-names
+                      |publisher-name
                       |surname
                       |volume-title
                       |volume-number" mode="jats2html-create-title">
