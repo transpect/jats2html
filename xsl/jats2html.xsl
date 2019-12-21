@@ -2988,7 +2988,7 @@
     <div class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </div>
-  </xsl:template/>
+  </xsl:template>
   
   <xsl:template match="funding-source
                       |funding-statement
