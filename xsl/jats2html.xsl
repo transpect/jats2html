@@ -2990,12 +2990,6 @@
     </div>
   </xsl:template>
   
-  <xsl:template match="publisher-name" mode="jats2html">
-    <p class="{local-name()}">
-      <xsl:call-template name="css:content"/>
-    </p>
-  </xsl:template>
-  
   <xsl:template match="funding-source
                       |funding-statement" mode="jats2html jats2html-create-title">
     <p class="{local-name()}">
