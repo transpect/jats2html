@@ -329,6 +329,7 @@
                          'contrib-group',
                          'dedication',
                          'fn-group',
+                         'fig-group',
                          'index-group',
                          'foreword',
                          'front',
