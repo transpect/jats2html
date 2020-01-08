@@ -890,7 +890,7 @@
         <ul>
           <xsl:call-template name="css:content">
             <xsl:with-param name="discard-term" as="xs:boolean" 
-                            select="if (normalize-space($former-list-type)) 
+                            select="if (normalize-space($former-list-type) or not(.//term)) 
                                     then true() 
                                     else false()" tunnel="yes"/>
             <xsl:with-param name="discard-def" as="xs:boolean" 
