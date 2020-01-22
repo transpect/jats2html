@@ -1524,12 +1524,12 @@
                  select="html:span[@class = ('indexterm', 'indexterm-anchor')]"/>
   </xsl:template>
   
-  <xsl:template match="html:a[html:a[@class eq 'target']]" mode="clean-up">
+  <xsl:template match="html:a[html:a[@class eq 'target' or @epub:type eq 'pagebreak']]" mode="clean-up">
     <xsl:copy-of copy-namespaces="no"
-                 select="html:a[@class eq 'target']"/>
+                 select="html:a[@class eq 'target' or @epub:type eq 'pagebreak']"/>
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:sequence select="node() except html:a[@class eq 'target']"/>
+      <xsl:sequence select="node() except html:a[@class eq 'target' or @epub:type eq 'pagebreak']"/>
     </xsl:copy>
   </xsl:template>
   
