@@ -1525,11 +1525,12 @@
   </xsl:template>
   
   <xsl:template match="html:a[html:a[@class eq 'target' or @epub:type eq 'pagebreak']]" mode="clean-up">
+    <xsl:variable name="pagebreak" select="html:a[@class eq 'target' or @epub:type eq 'pagebreak']" as="element(html:a)"/>
     <xsl:copy-of copy-namespaces="no"
-                 select="html:a[@class eq 'target' or @epub:type eq 'pagebreak']"/>
+                 select="$pagebreak"/>
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:sequence select="node() except html:a[@class eq 'target' or @epub:type eq 'pagebreak']"/>
+      <xsl:sequence select="node() except $pagebreak"/>
     </xsl:copy>
   </xsl:template>
   
