@@ -1563,10 +1563,21 @@
     </p>
   </xsl:template>
   
+  <xsl:template match="p[styled-content[not(    preceding-sibling::node()[normalize-space(.)] 
+                                            and following-sibling::node()[normalize-space(.)])]]" 
+                mode="jats2html">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
   <xsl:template match="styled-content" mode="jats2html">
-    <span class="{string-join((local-name(), @style, @style-type, @specific-use), ' ')}">
+    <xsl:element name="{if(not(    preceding-sibling::node()[normalize-space(.)] 
+                               and following-sibling::node()[normalize-space(.)])) 
+                        then if(*/local-name() = $block-element-names) then 'div' else 'p'
+                        else 'span'}">
+      <xsl:attribute name="class" 
+                     select="string-join((local-name(), @style, @style-type, @specific-use), ' ')"/>
       <xsl:next-match/>
-    </span>
+    </xsl:element>
   </xsl:template>
   
   <xsl:template match="styled-content[empty(@* except @srcpath)]" mode="jats2html">
