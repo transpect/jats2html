@@ -208,7 +208,7 @@
   </xsl:template>
   List all matching patterns of templates that invoke jats2html:footnotes.
   jats2html:footnotes will make sure that no footnote div will be generated if all footnotes of the context element 
-  are contained in a footnote root that it nested within the context element.
+  are contained in a footnote root that is nested within the context element.
   -->
   
   <xsl:template match="/" mode="jats2html"> 
@@ -258,7 +258,7 @@
     </html>
   </xsl:template>
   
-  <xsl:template match="book" mode="jats2html">
+  <xsl:template match="book | book-part-wrapper" mode="jats2html">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
