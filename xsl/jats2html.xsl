@@ -522,6 +522,7 @@
                       |publisher-name
                       |question
                       |question-wrap
+                      |related-article
                       |related-object
                       |role
                       |roman
@@ -834,6 +835,12 @@
           </sup>
         </a>
       </span>
+  </xsl:template>
+
+  <xsl:template match="related-article[@xlink:href]" mode="jats2html">
+    <a class="{local-name()}" href="{if(starts-with(@xlink:href , 'http')) then @xlink:href else concat('#', @xlink:href)}">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </a>
   </xsl:template>
 
   <xsl:template match="*[html:p[html:span[@class = 'endnote-anchor']]]" mode="clean-up" priority="5">
@@ -2778,6 +2785,7 @@
                       |history
                       |kwd-group
                       |notes
+                      |related-article
                       |related-object
                       |supplementary-material
                       |x" mode="jats2html-create-meta-tags"/>
