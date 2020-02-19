@@ -1562,31 +1562,13 @@
       <xsl:next-match/>
     </p>
   </xsl:template>
-  
-  <xsl:template match="p[styled-content[not(    preceding-sibling::node()[normalize-space(.)] 
-                                            and following-sibling::node()[normalize-space(.)])]]" 
-                mode="jats2html">
-    <xsl:apply-templates mode="#current"/>
-  </xsl:template>
-  
-  <xsl:template match="styled-content[not(    preceding-sibling::node()[normalize-space(.)] 
-                                          and following-sibling::node()[normalize-space(.)])]
-                                     [not(ancestor::*/local-name() = $block-element-names)]" mode="jats2html">
-    <xsl:element name="{if(*/local-name() = $block-element-names) 
-                        then 'div' 
-                        else 'p'}">
-      <xsl:attribute name="class" 
-                     select="string-join((local-name(), @style, @style-type, @specific-use), ' ')"/>
-      <xsl:apply-templates mode="#current"/>
-    </xsl:element>
-  </xsl:template>
-  
+
   <xsl:template match="styled-content" mode="jats2html">
     <span class="{string-join((local-name(), @style, @style-type, @specific-use), ' ')}">
       <xsl:next-match/>
     </span>
   </xsl:template>
-  
+
   <xsl:template match="styled-content[empty(@* except @srcpath)]" mode="jats2html">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
