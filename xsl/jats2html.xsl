@@ -2081,6 +2081,7 @@
   <xsl:variable name="block-element-names" as="xs:string+" 
                 select="'answer',
                         'array',
+                        'book-title',
                         'boxed-text',
                         'code',
                         'def-list',
