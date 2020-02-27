@@ -578,9 +578,9 @@
   
   <xsl:template match="*" mode="class-att"/>
 
-  <xsl:template match="*[@content-type | @style-type | @list-content | @specific-use]" mode="class-att">
+  <xsl:template match="*[@content-type | @style-type | @list-type | @list-content | @specific-use]" mode="class-att">
     <xsl:variable name="tokens" as="xs:string*">
-      <xsl:apply-templates select="@content-type | @style-type | @list-content | @specific-use" mode="#current"/>  
+      <xsl:apply-templates select="@content-type | @style-type | @list-type | @list-content | @specific-use" mode="#current"/>  
     </xsl:variable>
     <xsl:if test="exists($tokens)">
       <xsl:attribute name="class" select="$tokens" separator=" "/>
