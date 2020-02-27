@@ -578,8 +578,13 @@
   
   <xsl:template match="*" mode="class-att"/>
 
-  <xsl:template match="*[@content-type | @style-type]" mode="class-att">
-    <xsl:apply-templates select="@content-type | @style-type" mode="#current"/>
+  <xsl:template match="*[@content-type | @style-type | @list-content | @specific-use]" mode="class-att">
+    <xsl:variable name="tokens" as="xs:string*">
+      <xsl:apply-templates select="@content-type | @style-type | @list-content | @specific-use" mode="#current"/>  
+    </xsl:variable>
+    <xsl:if test="exists($tokens)">
+      <xsl:attribute name="class" select="$tokens" separator=" "/>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="corresp|statement|question-wrap|question|answer|explanation|sig-block" mode="jats2html">
@@ -672,7 +677,7 @@
   </xsl:template>
   
   <!-- will be handled by class-att mode -->
-  <xsl:template match="@content-type | @style-type | @specific-use" mode="jats2html"/>
+  <xsl:template match="@content-type | @style-type | @list-content | @specific-use" mode="jats2html"/>
 
   <xsl:template match="contrib-id" mode="jats2html">
     <span class="{local-name()}">
@@ -983,7 +988,9 @@
   <xsl:template match="list[matches(@list-type, '^(simple|ndash|bullet)$')]" 
                 mode="jats2html">
     <ul>
-      <xsl:apply-templates select="@*, node() except title" mode="#current"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:apply-templates select="." mode="class-att"/>
+      <xsl:apply-templates select="node() except title" mode="#current"/>
     </ul>
   </xsl:template>
   
