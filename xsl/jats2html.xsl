@@ -589,10 +589,20 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="@content-type | @style-type | @list-type | @list-content | @specific-use | 
+  <xsl:template match="@content-type | @style-type | @list-content | @specific-use | 
                        @sec-type | @book-part-type" mode="class-att" as="attribute(class)">
     <xsl:attribute name="class" select="."/>
   </xsl:template>
+  
+  <xsl:template match="@list-type" mode="class-att">
+    <xsl:if test="not(. = 'order')">
+      <xsl:attribute name="class" 
+                     select="if(matches(., '^(alpha|roman)-')) 
+                             then string-join(reverse(tokenize(., '-')), '-')
+                             else (parent::*/@css:list-style-type, .)[1]"/>  
+    </xsl:if>
+  </xsl:template>
+
 
   <xsl:template match="corresp|statement|question-wrap|question|answer|explanation|sig-block" mode="jats2html">
     <div>
@@ -759,6 +769,8 @@
         <xsl:apply-templates select="@*, title | info | node()" mode="#current"/> 
     </xsl:copy>
   </xsl:template>
+  
+  <xsl:template match="@specific-use[. eq 'EOnly']" mode="class-att"/>
 
   <xsl:template match="*[@specific-use eq 'PrintOnly']" mode="epub-alternatives" priority="2"/>
   
