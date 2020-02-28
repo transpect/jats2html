@@ -562,7 +562,7 @@
     <xsl:call-template name="css:content"/>
   </xsl:template>
   
-  <xsl:template name="css:other-atts">
+  <xsl:template name="css:other-atts" as="attribute(*)*">
     <!-- In the context of an element with CSSa attributes -->
     <xsl:apply-templates select="." mode="class-att"/>
     <xsl:call-template name="css:remaining-atts">
@@ -578,15 +578,22 @@
   
   <xsl:template match="*" mode="class-att"/>
 
-  <xsl:template match="*[@content-type | @style-type | @list-type | @list-content | @specific-use]" mode="class-att">
+  <xsl:template match="*[@content-type | @style-type | @list-type | @list-content | @specific-use | 
+                         @sec-type | @book-part-type]" mode="class-att" as="attribute(class)?">
     <xsl:variable name="tokens" as="xs:string*">
-      <xsl:apply-templates select="@content-type | @style-type | @list-type | @list-content | @specific-use" mode="#current"/>  
+      <xsl:apply-templates select="@content-type | @style-type | @list-type | @list-content | @specific-use | 
+                                   @sec-type | @book-part-type" mode="#current"/>  
     </xsl:variable>
     <xsl:if test="exists($tokens)">
       <xsl:attribute name="class" select="$tokens" separator=" "/>
     </xsl:if>
   </xsl:template>
-  
+
+  <xsl:template match="@content-type | @style-type | @list-type | @list-content | @specific-use | 
+                       @sec-type | @book-part-type" mode="class-att" as="attribute(class)">
+    <xsl:attribute name="class" select="."/>
+  </xsl:template>
+
   <xsl:template match="corresp|statement|question-wrap|question|answer|explanation|sig-block" mode="jats2html">
     <div>
       <xsl:next-match/>
@@ -599,7 +606,8 @@
     </p>
   </xsl:template>
 
-  <xsl:template match="mixed-citation|element-citation|verse-line|fig" mode="class-att" priority="2">
+  <xsl:template match="mixed-citation|element-citation|verse-line|fig" mode="class-att" priority="2"
+     as="attribute(class)">
     <xsl:variable name="att" as="attribute(class)?">
       <xsl:next-match/>
     </xsl:variable>
@@ -622,7 +630,7 @@
     select="'^(NormalParagraphStyle|Hyperlink)$'"
     as="xs:string"/>
 
-  <xsl:template match="@content-type[not(../@style-type)] | @style-type" mode="class-att">
+  <xsl:template match="@content-type[not(../@style-type)] | @style-type" mode="class-att" as="attribute(class)?">
     <xsl:if test="not(matches(., $jats2html:ignore-style-name-regex-x, 'x'))">
       <xsl:attribute name="class" select="string-join((parent::*/local-name(),
                                                        replace(., ':', '_')), 
@@ -630,14 +638,14 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="title[not($divify-sections = 'yes')]" mode="class-att" priority="2">
+  <xsl:template match="title[not($divify-sections = 'yes')]" mode="class-att" priority="2" as="attribute(class)">
     <xsl:attribute name="class" select="(parent::title-group[not(ends-with(../name(), 'meta'))],
                                          ancestor::*[ends-with(name(), 'meta')], 
                                          .)[1]/../
                                                  (name(), @book-part-type)[last()]"/>
   </xsl:template>
     
-  <xsl:template match="label | speech | speaker" mode="class-att">
+  <xsl:template match="label | speech | speaker" mode="class-att" as="attribute(class)?">
     <xsl:attribute name="class" select="name()"/>
   </xsl:template>
   
