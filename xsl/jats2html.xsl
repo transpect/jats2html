@@ -1016,7 +1016,7 @@
   <xsl:template match="list[matches(@list-type, '^(order|alpha|roman|alpha-lower|alpha-upper|roman-lower|roman-upper)$')]" 
                 mode="jats2html">
     <ol>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:call-template name="css:content"/>
     </ol>
   </xsl:template>
   
