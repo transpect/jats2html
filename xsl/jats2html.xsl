@@ -359,7 +359,7 @@
       <xsl:if test="tr:create-epub-type-attribute(.)">
         <xsl:attribute name="epub:type" select="tr:create-epub-type-attribute(.)"/>
       </xsl:if>
-      <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
+      <xsl:apply-templates select="." mode="class-att"/>
       <xsl:next-match/>
     </xsl:element>
   </xsl:template>
@@ -787,7 +787,9 @@
     <xsl:element name="{if($xhtml-version eq '5.0') then 'aside' else 'div'}">
       <xsl:attribute name="id" select="concat('fn_', $index)"/>
       <xsl:attribute name="class" select="'fn'"/>
-      <xsl:attribute name="epub:type" select="'footnote'"/>
+      <xsl:if test="tr:create-epub-type-attribute(.)">
+        <xsl:attribute name="epub:type" select="'footnote'"/>    
+      </xsl:if>
       <span class="note-mark">
         <xsl:choose>
           <xsl:when test="$static-footnotes">
@@ -803,7 +805,7 @@
       <xsl:apply-templates mode="jats2html"/>
     </xsl:element>
   </xsl:template>
-
+  
   <xsl:template name="footnote-link">
     <xsl:param name="footnote-ids" as="xs:string*" tunnel="yes"/>
     <xsl:param name="index" as="xs:integer"/>
