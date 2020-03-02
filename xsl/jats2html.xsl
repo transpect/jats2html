@@ -787,9 +787,7 @@
     <xsl:element name="{if($xhtml-version eq '5.0') then 'aside' else 'div'}">
       <xsl:attribute name="id" select="concat('fn_', $index)"/>
       <xsl:attribute name="class" select="'fn'"/>
-      <xsl:if test="tr:create-epub-type-attribute(.)">
-        <xsl:attribute name="epub:type" select="'footnote'"/>    
-      </xsl:if>
+      <xsl:apply-templates select="." mode="epub-type"/>
       <span class="note-mark">
         <xsl:choose>
           <xsl:when test="$static-footnotes">
@@ -1173,74 +1171,73 @@
                          'series', 
                          'additional-info')"/>
   
+  <xsl:template match="pb" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'pagebreak'"/>
+  </xsl:template>
+  
+  <xsl:template match="ack" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'acknowledgments'"/>
+  </xsl:template>
+  
+  <xsl:template match="bio" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'tr:bio'"/>
+  </xsl:template>
+  
+  <xsl:template match="ref-list" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'bibliography'"/>
+  </xsl:template>
+  
+  <xsl:template match="ref" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'biblioentry'"/>
+  </xsl:template>
+  
+  <xsl:template match="*[local-name() = ('preface')]
+                        [matches(*:book-part-meta/*:title-group/*:title, '(Introduction|Einleitung|Einführung)')]" 
+                mode="epub-type" priority="1">
+    <xsl:attribute name="epub:type" select="'introduction'"/>
+  </xsl:template>
+  
+  <xsl:template match="*[local-name() = ('preface', 'foreword', 'dedication', 'glossary', 'index', 'index-term', 'toc')]" mode="epub-type">
+    <xsl:attribute name="epub:type" select="local-name()"/>
+  </xsl:template>
+  
+  <xsl:template match="book-part[@book-part-type]" mode="epub-type">
+    <xsl:attribute name="epub:type" select="@book-part-type"/>
+  </xsl:template>
+  
+  <xsl:template match="book-back[@book-part-type]" mode="epub-type">
+    <xsl:attribute name="epub:type" select="@book-part-type"/>
+  </xsl:template>
+  
+  <xsl:template match="app | book-app" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'appendix'"/>
+  </xsl:template>
+  
+  <xsl:template match="notes | fn-group" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'footnotes'"/>
+  </xsl:template>
+  
+  <xsl:template match="fn" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'footnote'"/>
+  </xsl:template>
+  
+  <xsl:template match="front-matter" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'frontmatter'"/>
+  </xsl:template>
+  
+  <xsl:template match="book-body" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'bodymatter'"/>
+  </xsl:template>
+  
+  <xsl:template match="book-back" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'backmatter'"/>
+  </xsl:template>
+  
+  <xsl:template match="*" mode="epub-type"/>
+
   <xsl:function name="tr:create-epub-type-attribute" as="attribute()?">
     <xsl:param name="context" as="element(*)"/>
-    <xsl:choose>
-      <xsl:when test="$context[self::*:pb]">
-        <xsl:attribute name="epub:type" select="'pagebreak'"/>
-      </xsl:when>
-      <xsl:when test="$context[self::*:front-matter-part[@book-part-type]
-                              [some $class in $frontmatter-parts 
-                               satisfies matches($class, @book-part-type)]]">
-        <xsl:choose>
-          <xsl:when test="matches($context/@content-type, 'title-page')">
-            <xsl:attribute name="epub:type" select="'fulltitle'"/>
-          </xsl:when>
-          <xsl:when test="matches($context/@content-type, 'copyright-page')">
-            <xsl:attribute name="epub:type" select="'copyright-page'"/>
-          </xsl:when>
-          <!-- additional Info in title -->
-          <xsl:when test="matches($context/@content-type, 'additional-info')">
-            <xsl:attribute name="epub:type" select="'tr:additional-info'"/>
-          </xsl:when>
-          <xsl:when test="matches($context/@content-type, 'series')">
-            <xsl:attribute name="epub:type" select="'tr:additional-info'"/>
-          </xsl:when>
-          <xsl:when test="matches($context/@content-type, 'about-book')">
-            <xsl:attribute name="epub:type" select="'tr:about-the-book'"/>
-          </xsl:when>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:when test="$context[self::*:ack]">
-        <xsl:attribute name="epub:type" select="'acknowledgments'"/>
-      </xsl:when>
-      <xsl:when test="$context[self::*:bio]">
-        <xsl:attribute name="epub:type" select="'tr:bio'"/>
-      </xsl:when>
-      <xsl:when test="$context[self::*:ref-list]">
-        <xsl:attribute name="epub:type" select="'bibliography'"/>
-      </xsl:when>
-      <xsl:when test="$context[self::ref]">
-        <xsl:attribute name="epub:type" select="'biblioentry'"/>
-      </xsl:when>
-      <xsl:when test="$context[self::*[local-name() = ('preface')]][matches(*:book-part-meta/*:title-group/*:title, '(Introduction|Einleitung|Einführung)')]">
-        <xsl:attribute name="epub:type" select="'introduction'"/>
-      </xsl:when>
-      <xsl:when test="$context[self::*[local-name() = ('preface', 'foreword', 'dedication', 'glossary', 'index', 'index-term', 'toc')]]">
-        <xsl:attribute name="epub:type" select="$context/local-name()"/>
-      </xsl:when>
-      <xsl:when test="$context[self::*:book-part[@book-part-type]]">
-        <xsl:attribute name="epub:type" select="$context/@book-part-type"/>
-      </xsl:when>
-      <xsl:when test="$context[self::*:book-back[@book-part-type]]">
-        <xsl:attribute name="epub:type" select="$context/@book-part-type"/>
-      </xsl:when>
-      <xsl:when test="$context[self::*:book-app]">
-        <xsl:attribute name="epub:type" select="'appendix'"/>
-      </xsl:when>
-      <xsl:when test="$context[self::*:notes]">
-        <xsl:attribute name="epub:type" select="'footnotes'"/>
-      </xsl:when>
-      <xsl:when test="$context[self::*:front-matter]">
-        <xsl:attribute name="epub:type" select="'frontmatter'"/>
-      </xsl:when>
-      <xsl:when test="$context[self::*:book-body]">
-        <xsl:attribute name="epub:type" select="'bodymatter'"/>
-      </xsl:when>
-      <xsl:when test="$context[self::*:book-back]">
-        <xsl:attribute name="epub:type" select="'backmatter'"/>
-      </xsl:when>
-    </xsl:choose>
+    <xsl:apply-templates select="$context" mode="epub-type"/>
    </xsl:function>
   
   <xsl:variable name="jats2html:notoc-regex" as="xs:string" select="'_-_NOTOC'">
@@ -1539,6 +1536,9 @@
   </xsl:function>
   
   <xsl:template match="index-term | fn | target" mode="strip-indexterms-etc"/>
+  
+  <xsl:template match="@epub:type[matches(name(..), '^h\d$')]
+                                 [../ancestor::*[@epub:type = current()]]" mode="clean-up"/>
   
   <xsl:template match="html:a[@href]
                              [html:span[@class = ('indexterm', 'indexterm-anchor')]]" mode="clean-up">
