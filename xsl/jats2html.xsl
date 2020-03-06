@@ -850,7 +850,7 @@
   </xsl:template>
 
   <xsl:template match="target[starts-with(@id, 'id_endnote-')][. is ../node()[1]]" mode="jats2html" priority="5.25">
-    <!-- endnote paras (from InDesign CC)-->
+    <!-- endnote paras (from InDesign CC), as produced by idml2xml before 2020-03-06 -->
       <xsl:next-match/>
       <span class="endnote-anchor">
         <a href="#id_endnoteAnchor-{replace(@id, '^id_endnote-', '')}">
