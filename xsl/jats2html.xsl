@@ -839,7 +839,7 @@
     </xsl:call-template>
   </xsl:template>
  
-  <xsl:template match="xref[starts-with(@rid, 'id_endnote')]" mode="jats2html" priority="5.1">
+  <xsl:template match="xref[matches(@rid, '^(id_endnote|id_en-)')]" mode="jats2html" priority="5.1">
     <!-- endnote markers (from InDesign CC)-->
     <xsl:param name="in-toc" tunnel="yes" as="xs:boolean?"/>
     <xsl:if test="not($in-toc)">
