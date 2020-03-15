@@ -848,6 +848,22 @@
       </sup>
     </xsl:if>
   </xsl:template>
+  
+  <xsl:template match="xref[@specific-use=('EndnoteMarker', 'EndnoteRange')][@rid]" 
+    mode="jats2html" priority="6">
+    <!-- InDesign CC endnotes from 2020-03 on -->
+    <xsl:param name="in-toc" tunnel="yes" as="xs:boolean?"/>
+    <xsl:if test="not($in-toc)">
+      <sup>
+        <a href="#{@rid}">
+          <!-- avoid prefixing the id with 'xref_' since a link to this id was not adjusted accordingly.
+          Therefore overriding this xref handling template. -->
+          <xsl:copy-of select="@id"/>
+          <xsl:apply-templates mode="#current"/>
+        </a>
+      </sup>
+    </xsl:if>
+  </xsl:template>
 
   <xsl:template match="target[starts-with(@id, 'id_endnote-')][. is ../node()[1]]" mode="jats2html" priority="5.25">
     <!-- endnote paras (from InDesign CC), as produced by idml2xml before 2020-03-06 -->
