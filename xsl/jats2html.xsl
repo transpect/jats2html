@@ -3105,7 +3105,7 @@
 
   <xsl:function name="jats2html:contains-token" as="xs:boolean">
     <xsl:param name="string" as="xs:string?"/>
-    <xsl:param name="token" as="xs:string"/>
+    <xsl:param name="token" as="xs:string+"/>
     <xsl:sequence select="tokenize($string, '\s+') = $token"/>
   </xsl:function>
 
