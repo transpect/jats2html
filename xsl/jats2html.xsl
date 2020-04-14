@@ -169,7 +169,8 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="html:span[not(@*)]|html:a[not(@*)]" mode="clean-up">
+  <xsl:template match="html:span[not(@*)]
+                      |html:a[not(@*)]" mode="clean-up">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
@@ -993,6 +994,9 @@
     <xsl:variable name="following-nested-def-list" as="element(def-list)?">
       <xsl:copy-of select="parent::def-item/following-sibling::*[1][self::def-list]"/>
     </xsl:variable>
+    <xsl:if test="not(($discard-term)) and not(parent::def-item/term)">
+      <dt/>
+    </xsl:if>
     <xsl:element name="{if ($discard-term) then 'li' else 'dd'}">
       <xsl:next-match/>
       <xsl:apply-templates select="$following-nested-def-list" mode="#current"/>
