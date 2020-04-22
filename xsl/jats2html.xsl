@@ -1418,7 +1418,7 @@
         <xsl:if test="not(self::label) and ../label">
           <span class="toc-label">
             <xsl:apply-templates select="../label/node()" mode="strip-indexterms-etc"/>
-            <xsl:text>&#x2002;</xsl:text>
+            <xsl:value-of select="$subtitle-separator-in-ncx"/>
           </span>
         </xsl:if>
         <xsl:apply-templates mode="jats2html">
@@ -1584,11 +1584,11 @@
   <xsl:template match="title/@css:*[matches(local-name(), '^(margin-|text-align)')]" mode="jats2html"/>
   
   <xsl:template match="table-wrap/label" mode="label-sep">
-    <xsl:text>&#x2002;</xsl:text>
+    <xsl:value-of select="$subtitle-separator-in-ncx"/>
   </xsl:template>
   
   <xsl:template match="label" mode="label-sep">
-    <xsl:text>&#x2002;</xsl:text>
+    <xsl:value-of select="$subtitle-separator-in-ncx"/>
   </xsl:template>
   
   <xsl:template match="contrib-group/contrib" mode="jats2html">
@@ -1679,7 +1679,7 @@
 
   <xsl:template match="ref[@id]/*[last()][$bib-backlink-type = 'letter']" mode="jats2html" priority="2">
     <xsl:next-match/>
-    <xsl:text>&#x2002;</xsl:text>
+    <xsl:value-of select="$subtitle-separator-in-ncx"/>
     <xsl:for-each select="key('by-rid', parent::ref/@id)">
       <a href="#xref_{@id}" id="{generate-id()}" class="ref-link">
         <xsl:choose>
@@ -1966,7 +1966,7 @@
     <xsl:variable name="cg" select="current-group()"/>
     <li class="ie ie{$level}" epub:type="index-entry">
       <xsl:apply-templates select="current-group()[1]/term" mode="index-term"/>
-      <xsl:text>&#x2002;</xsl:text>
+      <xsl:value-of select="$subtitle-separator-in-ncx"/>
       <xsl:for-each select="current-group()[exists(index-term)
                                             or
                                             jats2html:contains-token(@content-type, 'hub:not-placed-on-page')]">
