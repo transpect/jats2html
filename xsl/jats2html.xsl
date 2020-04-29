@@ -787,10 +787,11 @@
   <xsl:template match="fn[@id]" mode="footnotes">
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <xsl:param name="static-footnotes" tunnel="yes" as="xs:boolean?"/>
-    <xsl:variable name="index" select="index-of($footnote-ids, @id)" as="xs:integer"/>
+    <xsl:variable name="index" select="index-of($footnote-ids, @id)[1]" as="xs:integer"/>
     <xsl:element name="{if($xhtml-version eq '5.0') then 'aside' else 'div'}">
       <xsl:attribute name="id" select="concat('fn_', $index)"/>
       <xsl:attribute name="class" select="'fn'"/>
+      <xsl:copy-of select="@srcpath"/>
       <xsl:apply-templates select="." mode="epub-type"/>
       <span class="note-mark">
         <xsl:choose>
