@@ -490,13 +490,15 @@
                       |degrees
                       |disp-formula
                       |disp-formula-group
-                      |funding-source
-                      |funding-statement
                       |edition
                       |element-citation
+                      |equation-count
                       |etal
                       |explanation
+                      |fig-count
                       |fpage
+                      |funding-source
+                      |funding-statement
                       |given-names
                       |hr
                       |inline-formula
@@ -547,6 +549,7 @@
                       |sup
                       |surname
                       |table
+                      |table-count
                       |term
                       |toc-entry
                       |trans-source
@@ -1723,7 +1726,9 @@
                       |day
                       |degrees
                       |edition
+                      |equation-count
                       |etal
+                      |fig-count
                       |fpage
                       |given-names
                       |hr
@@ -1757,6 +1762,7 @@
                       |subject
                       |suffix
                       |surname
+                      |table-count
                       |trans-source
                       |trans-subtitle
                       |trans-title
