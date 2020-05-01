@@ -1145,7 +1145,13 @@
                                             (
                                               name(), 
                                               @book-part-type, @sec-type, @content-type, 
-                                              if(normalize-space(title) = '') then 'empty-title' else ''
+                                              if(
+                                                normalize-space(title) = ''
+                                                and 
+                                                normalize-space(label) = ''
+                                              ) 
+                                              then 'empty-title' 
+                                              else ''
                                             )[. != ''],
                                             ' ')"/>
       <xsl:call-template name="css:content"/>
