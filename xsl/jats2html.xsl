@@ -2400,7 +2400,11 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="*[name() = ('table', 'array')][exists(col | colgroup)]/*/tr/*/@css:width" mode="table-widths"/>
+  <xsl:template match="*[name() = ('table', 'array')][exists(col | colgroup)]/*/tr[position() gt 1]/*/@css:width" 
+    mode="table-widths">
+    <!-- retain cell widths in the first rows because neither ADE nor Bluefire seem to honor widths in colgroup/col,
+         https://redmine.le-tex.de/issues/8516 -->
+  </xsl:template>
     
   <!-- will be discarded -->
   <xsl:variable name="jats2html:masterpageobjects-para-regex" select="'tr_(pagenumber|columntitle)'" as="xs:string"/>
