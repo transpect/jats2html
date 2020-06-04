@@ -4,7 +4,8 @@
   xmlns:tr="http://transpect.io"
   xmlns:jats="http://jats.nlm.nih.gov"
   version="1.0" 
-  name="jats2html-driver">
+  name="jats2html-driver"
+  type="tr:jats2html">
   
   <p:input port="source" primary="true"/>
   <p:input port="stylesheet" primary="false"/>
