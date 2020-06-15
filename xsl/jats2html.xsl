@@ -2383,7 +2383,11 @@
   </xsl:template>
 
   <xsl:template match="  *[name() = ('table', 'array')][not(col | colgroup)][@css:width]/*/tr/*/@css:width
-                       | *[name() = ('table', 'array')][exists(col | colgroup)][@css:width]//col/@width" mode="table-widths">
+                       | *[name() = ('table', 'array')][exists(col | colgroup)][@css:width]//col/@width
+                       | *[name() = ('table', 'array')][exists(col | colgroup)]/*/tr[position() = 1]/*/@css:width" 
+                mode="table-widths">
+    <!-- retain cell widths in the first rows because neither ADE nor Bluefire seem to honor widths in colgroup/col,
+         https://redmine.le-tex.de/issues/8516 -->
     <xsl:param name="table-twips" as="xs:double?" tunnel="yes"/>
     <xsl:param name="table-percentage" as="xs:integer?" tunnel="yes"/>
     <xsl:choose>
@@ -2400,12 +2404,12 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="*[name() = ('table', 'array')][exists(col | colgroup)]/*/tr[position() gt 1]/*/@css:width" 
+  <xsl:template match="*[name() = ('table', 'array')][exists(col | colgroup)]/*/tr[position() gt 1]/*/@css:width"
     mode="table-widths">
     <!-- retain cell widths in the first rows because neither ADE nor Bluefire seem to honor widths in colgroup/col,
          https://redmine.le-tex.de/issues/8516 -->
   </xsl:template>
-    
+
   <!-- will be discarded -->
   <xsl:variable name="jats2html:masterpageobjects-para-regex" select="'tr_(pagenumber|columntitle)'" as="xs:string"/>
   
