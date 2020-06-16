@@ -2684,8 +2684,12 @@
                    or $elt/parent::sec
                    or $elt/parent::ref-list
                    or $elt/parent::statement">
-        <xsl:variable name="ancestor-title" select="$elt/../../(title
-                                                               |(. | ../book-part-meta)/title-group/title)" as="element(title)?"/>
+        <xsl:variable name="ancestor-title" as="element(title)?" 
+          select="(
+                    $elt/../../( title
+                                | (. | ../book-part-meta)/title-group/title)
+                  )[last()]" />
+        <!-- last() because there were multiple ancestor-titles for /book-part/back[title]/app/title -->
         <xsl:variable name="heading-level" select="if(exists($ancestor-title))
                                                    then jats2html:heading-level($ancestor-title) + 1
                                                    else ()" as="xs:integer?"/>
