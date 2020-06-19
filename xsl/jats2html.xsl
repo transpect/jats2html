@@ -969,7 +969,14 @@
   </xsl:template>
     
   <xsl:template match="def-item" mode="jats2html">
+    <xsl:apply-templates select="@id" mode="#current"/>
     <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="def-item/@id" mode="jats2html">
+    <a>
+      <xsl:next-match/>
+    </a>
   </xsl:template>
 
   <xsl:template match="def-item/term" mode="jats2html">
