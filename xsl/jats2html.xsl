@@ -44,6 +44,12 @@
   <xsl:param name="default-container-name" select="if($xhtml-version eq '5.0') then 'section' else 'div'" as="xs:string"/>
   <xsl:param name="toc" select="'no'" as="xs:string"/>
   <xsl:param name="toc-max-level" as="xs:integer?"/>
+  <xsl:param name="copy-colwidths" as="xs:string" select="'yes'">
+    <!-- whether to repeat CSS widths in the first table rows in order to overcome bugs in ADE and others.
+      But there are other bugs that may show if repeating the widths (table cell contents cut off to the right).
+      See https://redmine.le-tex.de/issues/8516 for the problem that was addressed and https://redmine.le-tex.de/issues/8558
+      for the problem that this fix created. -->
+  </xsl:param>
 
   <xsl:param name="s9y1-path" as="xs:string?"/>
   <xsl:param name="s9y2-path" as="xs:string?"/>
@@ -2391,7 +2397,9 @@
 
   <xsl:template match="  *[name() = ('table', 'array')][not(col | colgroup)][@css:width]/*/tr/*/@css:width
                        | *[name() = ('table', 'array')][exists(col | colgroup)][@css:width]//col/@width
-                       | *[name() = ('table', 'array')][exists(col | colgroup)]/*/tr[position() = 1]/*/@css:width" 
+                       | *[name() = ('table', 'array')][exists(col | colgroup)]/*
+                            /tr[position() = 1]
+                               [$copy-colwidths = 'yes']/*/@css:width" 
                 mode="table-widths">
     <!-- retain cell widths in the first rows because neither ADE nor Bluefire seem to honor widths in colgroup/col,
          https://redmine.le-tex.de/issues/8516 -->
@@ -2411,7 +2419,9 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="*[name() = ('table', 'array')][exists(col | colgroup)]/*/tr[position() gt 1]/*/@css:width"
+  <xsl:template match="*[name() = ('table', 'array')]
+                        [exists(col | colgroup)]/*
+                          /tr[position() gt (if ($copy-colwidths = 'yes') then 1 else 0)]/*/@css:width"
     mode="table-widths">
     <!-- retain cell widths in the first rows because neither ADE nor Bluefire seem to honor widths in colgroup/col,
          https://redmine.le-tex.de/issues/8516 -->
