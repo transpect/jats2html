@@ -975,7 +975,6 @@
   </xsl:template>
     
   <xsl:template match="def-item" mode="jats2html">
-    <xsl:apply-templates select="@id" mode="#current"/>
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
@@ -991,14 +990,16 @@
     <xsl:choose>
       <xsl:when test="not($discard-term) and not($discard-def)">
         <dt>
-          <xsl:copy-of select="../@id"/>
-          <xsl:next-match/>
+          <xsl:apply-templates select=".." mode="class-att"/>
+          <xsl:next-match/><!-- typically css:content -->
+          <xsl:apply-templates select="../@id" mode="#current"/>
         </dt>
       </xsl:when>
       <xsl:when test="$discard-def">
         <li>
-          <xsl:copy-of select="../@id"/>
+          <xsl:apply-templates select=".." mode="class-att"/>
           <xsl:next-match/>
+          <xsl:apply-templates select="../@id" mode="#current"/>
         </li>
       </xsl:when>
     </xsl:choose>
@@ -1015,6 +1016,7 @@
       <dt/>
     </xsl:if>
     <xsl:element name="{if ($discard-term) then 'li' else 'dd'}">
+      <xsl:apply-templates select=".." mode="class-att"/>
       <xsl:next-match/>
       <xsl:apply-templates select="$following-nested-def-list" mode="#current"/>
     </xsl:element>
@@ -1022,11 +1024,13 @@
   
   <xsl:template match="glossary/def-list/def-item/term" mode="jats2html" priority="-0.2">
     <xsl:attribute name="epub:type" select="'glossterm'"/>
+    <xsl:apply-templates select=".." mode="class-att"/>
     <xsl:next-match/><!-- should be css:content -->
   </xsl:template>
   
   <xsl:template match="glossary/def-list/def-item/def" mode="jats2html" priority="-0.2">
     <xsl:attribute name="epub:type" select="'glossdef'"/>
+    <xsl:apply-templates select=".." mode="class-att"/>
     <xsl:next-match/><!-- should be css:content -->
   </xsl:template>
   
