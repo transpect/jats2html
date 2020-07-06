@@ -130,7 +130,8 @@
             else if($lang eq 'cz') then 'Vysvětlivky'
             else                        'Notes'"/>
   <xsl:param name="footnote-title-element-name" select="'h1'" as="xs:string"/>
-  
+  <xsl:param name="epub-version" as="xs:string" select="'EPUB3'"/>
+
   
   
   <xsl:output method="xhtml" indent="no" 
@@ -2361,7 +2362,11 @@
   
   <!-- There should always be @css:width. @width is only decorational (will be valuable just in case 
     all @css:* will be stripped -->
-  <xsl:template match="@width" mode="jats2html"/>
+  <xsl:template match="@width[not($epub-version = 'EPUB2')]" mode="jats2html"/>
+  
+  <xsl:template match="table//@width[$epub-version = 'EPUB2']" mode="jats2html">
+    <xsl:copy-of select="."/>
+  </xsl:template>
 
   <xsl:template match="*[name() = ('table', 'array')][@css:width]" mode="table-widths">
     <xsl:variable name="twips" select="tr:length-to-unitless-twip(@css:width)" as="xs:double?"/>
@@ -2394,7 +2399,14 @@
         <xsl:copy/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:attribute name="css:width" select="concat($table-percentage, '%')"/>    
+        <xsl:choose>
+          <xsl:when test="not($epub-version = 'EPUB2')">
+            <xsl:attribute name="css:width" select="concat($table-percentage, '%')"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:attribute name="width" select="concat($table-percentage, '%')"/>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -2409,16 +2421,26 @@
          https://redmine.le-tex.de/issues/8516 -->
     <xsl:param name="table-twips" as="xs:double?" tunnel="yes"/>
     <xsl:param name="table-percentage" as="xs:integer?" tunnel="yes"/>
+    <xsl:variable name="att" as="attribute(css:width)">
+      <xsl:choose>
+        <xsl:when test="not($table-twips) or not($table-percentage)">
+          <xsl:attribute name="css:width" select="."/>
+        </xsl:when>
+        <xsl:when test="$table-percentage eq 0">
+          <xsl:attribute name="css:width" select="."/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:attribute name="css:width" 
+            select="concat(string(xs:integer(1000 * (tr:length-to-unitless-twip(.) div $table-twips)) * 0.1), '%')"/>    
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     <xsl:choose>
-      <xsl:when test="not($table-twips) or not($table-percentage)">
-        <xsl:attribute name="css:width" select="."/>
-      </xsl:when>
-      <xsl:when test="$table-percentage eq 0">
-        <xsl:attribute name="css:width" select="."/>
+      <xsl:when test="not($epub-version = 'EPUB2')">
+        <xsl:sequence select="$att"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:attribute name="css:width" 
-          select="concat(string(xs:integer(1000 * (tr:length-to-unitless-twip(.) div $table-twips)) * 0.1), '%')"/>    
+        <xsl:attribute name="width" select="$att"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
