@@ -828,7 +828,10 @@
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <xsl:param name="in-toc" tunnel="yes" as="xs:boolean?"/>
     <xsl:param name="recount-footnotes" tunnel="yes" as="xs:boolean?"/>
-    <xsl:variable name="index" select="index-of($footnote-ids, @id)" as="xs:integer"/>
+    <xsl:variable name="index" select="index-of($footnote-ids, @id)" as="xs:integer?"/>
+    <xsl:if test="empty($index)">
+      <xsl:message select="'Could not find ', @id, ' in footnote IDs ', string-join($footnote-ids, ', ')" terminate="yes"/>
+    </xsl:if>
     <xsl:if test="not($in-toc)">
       <span class="note-anchor" id="fna_{$index}">
         <xsl:if test="$recount-footnotes">
