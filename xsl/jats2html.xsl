@@ -562,6 +562,7 @@
                       |trans-source
                       |trans-subtitle
                       |trans-title
+                      |trans-title-group
                       |underline
                       |uri[not(@xlink:href)]
                       |verse-group
@@ -1794,6 +1795,7 @@
                       |trans-source
                       |trans-subtitle
                       |trans-title
+                      |trans-title-group
                       |underline
                       |uri[not(@xlink:href)]
                       |volume
