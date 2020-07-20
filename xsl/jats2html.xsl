@@ -174,10 +174,10 @@
     <div class="{local-name()}">
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </div>
-  </xsl:template>
+  </xsl:template>  
 
-  <xsl:template match="html:span[not(@*)]
-                      |html:a[not(@*)]" mode="clean-up">
+  <xsl:template match="html:span[not(@* except @srcpath)]
+                      |html:a[not(@* except @srcpath)]" mode="clean-up">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
@@ -2335,6 +2335,39 @@
   </xsl:template>
   
   <!-- tables -->
+  
+  <!-- map xhtml 1.0/1.1 table model to xhtml 5.0 -->
+  
+  <xsl:template match="table[col[@* except @srcpath]][$xhtml-version eq '5.0']" mode="jats2html" priority="5">
+    <table>
+      <xsl:apply-templates select="@*, caption" mode="#current"/>
+      <colgroup>
+        <xsl:apply-templates select="col" mode="#current"/>
+      </colgroup>
+      <xsl:apply-templates select="* except col" mode="#current"/>
+    </table>
+  </xsl:template>
+  
+  <xsl:template match="colgroup[every $i in col satisfies $i/not(@* except @srcpath)][$xhtml-version eq '5.0']
+                      |col[every $i in parent::*/col satisfies $i/not(@* except @srcpath)][$xhtml-version eq '5.0']" 
+                mode="jats2html"/>
+  
+  <xsl:template match="col[@align
+                          |@bgcolor
+                          |@width
+                          |@valign][$xhtml-version eq '5.0']" mode="jats2html">
+    <col>
+      <xsl:apply-templates select="@span, @srcpath" mode="#current"/>
+      <xsl:attribute name="style"
+                     select="string-join((@style,
+                                          @align/concat('text-align:', .),
+                                          @bgcolor/concat('background-color:', .),
+                                          @width/concat('width:', .),
+                                          @valign/concat('vertical-align:', .)
+                                          ), 
+                                         '; ')"/>
+    </col>
+  </xsl:template>
   
   <xsl:template match="tr 
                       |tbody
