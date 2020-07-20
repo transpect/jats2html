@@ -2527,12 +2527,13 @@
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
           <xsl:when test="count($linked-items) eq 1">
-            <a href="#{$linked-items[1]/@id}" class="{local-name()}">
+            <a href="#{$linked-items[1]/@id}">
+              <xsl:apply-templates select="." mode="class-att"/>
               <xsl:if test="@id">
                 <!-- in some cases an xref does not have an @id, so we will not create duplicate @id="xref_" attributes -->
                 <xsl:attribute name="id" select="concat('xref_', @id)"/>  
               </xsl:if>
-              <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
+              <xsl:apply-templates select="@srcpath, @alt, node()" mode="#current"/>
             </a>
             <xsl:if test="    $linked-items[1]/@ref-type = 'ref' 
                           and $bib-backlink-type = 'letter'
@@ -2570,6 +2571,10 @@
         </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="@alt" mode="jats2html">
+    <xsl:attribute name="title" select="."/>
   </xsl:template>
   
   <xsl:template match="nav-pointer" mode="jats2html">
