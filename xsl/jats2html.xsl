@@ -2814,6 +2814,14 @@
     <xsl:attribute name="css:text-align" select="."/>
   </xsl:template>
   
+  <xsl:template match="@bgcolor" mode="hub2htm:css-style-overrides">
+    <xsl:attribute name="css:background-color" select="."/>
+  </xsl:template>
+  
+  <xsl:template match="@width" mode="hub2htm:css-style-overrides">
+    <xsl:attribute name="css:width" select="."/>
+  </xsl:template>
+  
   <!-- if you want to omit metadata in your output, set the param $render-metadata to 'no' -->
   
   <xsl:template match="front" mode="jats2html" priority="4.5">
