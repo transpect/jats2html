@@ -601,7 +601,7 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="@content-type | @style-type | @list-content | @specific-use | 
+  <xsl:template match="@content-type | @list-content | @specific-use | 
                        @sec-type | @book-part-type" mode="class-att" as="attribute(class)">
     <xsl:attribute name="class" select="."/>
   </xsl:template>
