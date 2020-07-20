@@ -2344,7 +2344,7 @@
       <colgroup>
         <xsl:apply-templates select="col" mode="#current"/>
       </colgroup>
-      <xsl:apply-templates select="* except col" mode="#current"/>
+      <xsl:apply-templates select="* except (caption|col)" mode="#current"/>
     </table>
   </xsl:template>
   
