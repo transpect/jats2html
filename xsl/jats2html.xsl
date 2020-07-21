@@ -2605,7 +2605,14 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
+  <xsl:template match="xref" mode="class-att">
+    <xsl:attribute name="class" separator=" ">
+      <xsl:next-match/>
+      <xsl:sequence select="local-name()"/>
+    </xsl:attribute>
+  </xsl:template>
+
   <xsl:template match="@alt" mode="jats2html">
     <xsl:attribute name="title" select="."/>
   </xsl:template>
