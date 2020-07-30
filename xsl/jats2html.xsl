@@ -1587,7 +1587,8 @@
      </xsl:if>
   </xsl:function>
   
-  <xsl:template match="index-term | fn | target" mode="strip-indexterms-etc"/>
+  <xsl:template match="index-term | fn | target | 
+                       xref[@specific-use=('EndnoteMarker', 'EndnoteRange')][@rid]" mode="strip-indexterms-etc"/>
   
   <xsl:template match="@epub:type[matches(name(..), '^h\d$')]
                                  [../ancestor::*[@epub:type = current()]]" mode="clean-up"/>
