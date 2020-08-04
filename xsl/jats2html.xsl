@@ -666,7 +666,7 @@
                                                  (name(), @book-part-type)[last()]"/>
   </xsl:template>
     
-  <xsl:template match="label | speech | speaker" mode="class-att" as="attribute(class)?">
+  <xsl:template match="label | speech | speaker | verse-group" mode="class-att" as="attribute(class)?">
     <xsl:attribute name="class" select="name()"/>
   </xsl:template>
   
