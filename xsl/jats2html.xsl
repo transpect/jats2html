@@ -15,7 +15,7 @@
   xmlns:c="http://www.w3.org/ns/xproc-step"
   xmlns:cx="http://xmlcalabash.com/ns/extensions"
   xmlns="http://www.w3.org/1999/xhtml"
-  exclude-result-prefixes="c css cx html hub2htm jats jats2html l10n saxon tr xlink xs"
+  exclude-result-prefixes="c css cx epub html hub2htm jats jats2html l10n mml saxon tr xlink xs"
   version="2.0">
 
   <!-- If you see a message that an attribute cannot be created after a child of the containing
