@@ -389,7 +389,7 @@
     </xsl:choose>
    </xsl:template>
   
-  <xsl:template match="*" mode="jats2html" priority="6">
+  <xsl:template match="*" mode="jats2html" priority="7">
     <xsl:param name="footnote-roots" as="element(*)*" tunnel="yes"/>
     <xsl:next-match/>
     <xsl:if test="exists(. intersect $footnote-roots)">
@@ -2010,7 +2010,7 @@
         <a id="ie_{@id}"/>
       </xsl:for-each>
       <xsl:for-each select="current-group()[empty(index-term)]
-                                           [not(jats2html:contains-token(@content-type, 'hub:not-placed-on-page'))]">
+                                           [not(some $a in ancestor-or-self::*[self::index-term]/@content-type satisfies jats2html:contains-token($a, 'hub:not-placed-on-page'))]">
         <a href="#it_{@id}" id="ie_{@id}" class="index-link" epub:type="index-locator">
           <xsl:value-of select="position()"/>
         </a>
@@ -2027,7 +2027,7 @@
                                   else ' siehe ' 
                                 else ' see '" xml:space="preserve"/>
         </xsl:if>
-        <xsl:call-template name="potentiallly-link-to-see-target"/>
+        <xsl:call-template name="potentially-link-to-see-target"/>
         <xsl:if test="not(position() = last())">
           <xsl:text>; </xsl:text>
         </xsl:if>
@@ -2042,7 +2042,7 @@
                                   then 'siehe auch ' 
                                   else ' siehe auch ' 
                                 else ' see also '" xml:space="preserve"/>
-        <xsl:call-template name="potentiallly-link-to-see-target"/>
+        <xsl:call-template name="potentially-link-to-see-target"/>
         <xsl:if test="not(position() = last())">
           <xsl:text>;</xsl:text>
         </xsl:if>
@@ -2057,7 +2057,7 @@
   <xsl:key name="jats2html:by-indext-term" 
            match="index-term" use="term, string-join((parent::index-term/term, term), ', ')"/>
   
-  <xsl:template name="potentiallly-link-to-see-target">
+  <xsl:template name="potentially-link-to-see-target">
     <xsl:param name="root" as="document-node()" tunnel="yes"/>
     <!-- Context: see or see-also -->
     <xsl:variable name="target" as="element(index-term)?"
