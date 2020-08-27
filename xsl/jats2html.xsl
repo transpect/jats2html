@@ -242,8 +242,8 @@
           <xsl:call-template name="create-meta-tags"/>  
         </xsl:if>
         <title>
-          <xsl:value-of select="book/book-meta/book-title-group/book-title
-                               |article/front/article-meta/title-group/article-title"/>
+          <xsl:apply-templates select="book/book-meta/book-title-group/book-title
+                               |article/front/article-meta/title-group/article-title" mode="strip-indexterms-etc"/>
         </title>
         <xsl:apply-templates select=".//custom-meta-group/css:rules" mode="hub2htm:css"/>
       </head>
