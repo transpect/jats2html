@@ -2417,7 +2417,7 @@
           </xsl:if>
           <xsl:apply-templates select="@*, node()" mode="#current">
             <xsl:with-param name="table-twips" select="$twips" tunnel="yes"/>
-            <xsl:with-param name="table-percentage" select="jats2html:table-width-grid($twips, $page-width-twips)" tunnel="yes"/>
+            <xsl:with-param name="table-percentage" select="jats2html:table-width-grid($page-width-twips, $twips)" tunnel="yes"/>
           </xsl:apply-templates>
         </table>
       </xsl:when>
