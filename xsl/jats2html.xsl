@@ -2391,12 +2391,26 @@
   </xsl:template>
 
   <xsl:template match="*[name() = ('table', 'array')][matches(@css:width, 'pt$')]" mode="jats2html">
-    <xsl:variable name="conditional-percent-widths" as="element(*)">
-      <xsl:apply-templates select="." mode="table-widths"/>
-    </xsl:variable>
-    <xsl:apply-templates select="$conditional-percent-widths" mode="#current">
-      <xsl:with-param name="root" select="root(.)" as="document-node()" tunnel="yes"/>
-    </xsl:apply-templates>
+    <xsl:param name="root" as="document-node()?" tunnel="yes"/>
+    <xsl:param name="table-widths-created" as="xs:boolean?" tunnel="yes" select="false()"/>
+    
+    <xsl:choose>
+      <xsl:when test="$table-widths-created">
+        <!-- if jats2html:table-width-grid() returns 0, widths were preserved and stylesheet could loop.-->
+         <xsl:element name="{name()}">
+           <xsl:apply-templates select="@*, node()" mode="#current"/>
+         </xsl:element>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:variable name="conditional-percent-widths" as="element(*)">
+          <xsl:apply-templates select="." mode="table-widths"/>
+        </xsl:variable>
+        <xsl:apply-templates select="$conditional-percent-widths" mode="#current">
+          <xsl:with-param name="root" select="($root, root(.))[1]" as="document-node()" tunnel="yes"/>
+          <xsl:with-param name="table-widths-created" select="true()" as="xs:boolean" tunnel="yes"/>
+        </xsl:apply-templates>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <!-- There should always be @css:width. @width is only decorational (will be valuable just in case 
@@ -2407,7 +2421,7 @@
     <xsl:copy-of select="."/>
   </xsl:template>
 
-  <xsl:template match="*[name() = ('table', 'array')][@css:width]" mode="table-widths">
+  <xsl:template match="*[name() = ('table', 'array')]" mode="table-widths">
     <xsl:variable name="twips" select="tr:length-to-unitless-twip(@css:width)" as="xs:double?"/>
     <xsl:choose>
       <xsl:when test="$twips">
