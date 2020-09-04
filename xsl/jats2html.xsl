@@ -2421,7 +2421,7 @@
     <xsl:copy-of select="."/>
   </xsl:template>
 
-  <xsl:template match="*[name() = ('table', 'array')]" mode="table-widths">
+  <xsl:template match="*[name() = ('table', 'array')][@css:width]" mode="table-widths">
     <xsl:variable name="twips" select="tr:length-to-unitless-twip(@css:width)" as="xs:double?"/>
     <xsl:choose>
       <xsl:when test="$twips">
