@@ -510,6 +510,7 @@
                       |hr
                       |inline-formula
                       |institution
+                      |institution-wrap
                       |issue
                       |italic
                       |kwd
@@ -1763,6 +1764,7 @@
                       |given-names
                       |hr
                       |institution
+                      |institution-wrap
                       |issue
                       |kwd
                       |label
