@@ -2168,6 +2168,7 @@
                         'disp-quote',
                         'explanation',
                         'fig',
+                        'fig-group',
                         'list',
                         'preformat',
                         'question',
