@@ -223,6 +223,8 @@
     <xsl:param name="footnote-roots" tunnel="yes" 
                select="*" as="element(*)*"/>
     <html>
+      <xsl:namespace name="mml">http://www.w3.org/1998/Math/MathML</xsl:namespace>
+      <xsl:namespace name="epub">http://www.idpf.org/2007/ops</xsl:namespace>
       <xsl:apply-templates select="*/@xml:*" mode="#current"/>
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
