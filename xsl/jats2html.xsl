@@ -2769,50 +2769,42 @@
   
   <xsl:function name="jats2html:heading-level" as="xs:integer?">
     <xsl:param name="elt" as="element(*)"/>
-    <xsl:choose>
-      <xsl:when test="$elt/ancestor::table-wrap"/>
-      <xsl:when test="$elt/ancestor::verse-group"/>
-      <xsl:when test="$elt/ancestor::fig"/>
-      <xsl:when test="$elt/parent::book-title-group">
-        <xsl:sequence select="1"/>
-      </xsl:when>
-      <xsl:when test="$elt/parent::title-group
-                   or $elt/parent::index
-                   or $elt/parent::index-title-group
-                   or $elt/parent::fn-group
-                   or $elt/parent::back">
-        <xsl:sequence select="2"/>
-      </xsl:when>
-      <xsl:when test="$elt/parent::sec[ancestor::boxed-text]">
-        <xsl:sequence select="count($elt/ancestor::*[ancestor::boxed-text]) + 3"/>
-      </xsl:when>
-      <xsl:when test="$elt/parent::abstract
-                   or $elt/parent::def-list
-                   or $elt/parent::trans-abstract
-                   or $elt/parent::ack
-                   or $elt/parent::app
-                   or $elt/parent::app-group 
-                   or $elt/parent::bio
-                   or $elt/parent::glossary
-                   or $elt/parent::sec
-                   or $elt/parent::ref-list
-                   or $elt/parent::statement">
-        <xsl:variable name="ancestor-title" as="element(title)?" 
-          select="(
-                    $elt/../../( title
-                                | (. | ../book-part-meta)/title-group/title)
-                  )[last()]" />
-        <!-- last() because there were multiple ancestor-titles for /book-part/back[title]/app/title -->
-        <xsl:variable name="heading-level" select="if(exists($ancestor-title))
-                                                   then jats2html:heading-level($ancestor-title) + 1
-                                                   else ()" as="xs:integer?"/>
-        <xsl:sequence select="((if($heading-level gt 6) then 6 else $heading-level), 2)[1]"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:message>No heading level for <xsl:copy-of select="$elt/.."/></xsl:message>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:apply-templates select="$elt" mode="jats:heading-level"/>
   </xsl:function>
+  
+  <xsl:template match="*" mode="jats:heading-level" as="xs:integer?">
+    <xsl:message>No heading level for <xsl:copy-of select=".."/></xsl:message>
+  </xsl:template>
+  
+  <xsl:template match="table-wrap/* | verse-group/* | fig/*" mode="jats:heading-level" as="xs:integer?"/>
+
+  <xsl:template match="book-title-group/*" mode="jats:heading-level" as="xs:integer?">
+    <xsl:sequence select="1"/>
+  </xsl:template>
+
+  <xsl:template match="title-group/* | index/* | index-title-group/* | fn-group/* | back/*" 
+    mode="jats:heading-level" as="xs:integer?">
+    <xsl:sequence select="2"/>
+  </xsl:template>
+
+  <xsl:template match="sec[ancestor::boxed-text]/*" mode="jats:heading-level" as="xs:integer?">
+    <xsl:sequence select="count(ancestor::*[ancestor::boxed-text]) + 3"/>
+  </xsl:template>
+
+  <xsl:template match="abstract/* | def-list/* | trans-abstract/* | ack/* | app/* | app-group/* | bio/* |
+                       glossary/* | sec/* | ref-list/* | statement/*" mode="jats:heading-level" as="xs:integer?">
+    <xsl:variable name="ancestor-title" as="element(title)?" 
+      select="(
+                ../../( title
+                        | (. | ../book-part-meta)/title-group/title)
+              )[last()]" />
+    <!-- last() because there were multiple ancestor-titles for /book-part/back[title]/app/title -->
+    <xsl:variable name="heading-level" select="if(exists($ancestor-title))
+                                               then jats2html:heading-level($ancestor-title) + 1
+                                               else ()" as="xs:integer?"/>
+    <xsl:sequence select="((if($heading-level gt 6) then 6 else $heading-level), 2)[1]"/>
+  </xsl:template>
+
 
   <xsl:function name="jats2html:table-width-grid" as="xs:integer">
     <!-- returns 0, 50, or 100. It should be interpreted and used as a width
