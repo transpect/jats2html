@@ -2522,7 +2522,9 @@
   
   <xsl:template match="ext-link|uri[@xlink:href]" mode="jats2html">
     <a class="{local-name()}">
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:apply-templates select="." mode="class-att"/>
+      <xsl:apply-templates mode="#current"/>
       <xsl:if test="not(node())">
         <xsl:value-of select="@xlink:href"/>
       </xsl:if>
