@@ -180,6 +180,12 @@
                       |html:a[not(@* except @srcpath)]" mode="clean-up">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
+  
+  <xsl:template match="html:p//html:div" mode="clean-up">
+    <span>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </span>
+  </xsl:template>
 
   <xsl:template match="*" mode="jats2html" priority="-1">
     <xsl:if test="$debug eq 'yes' and not(self::html:*)">
