@@ -957,7 +957,8 @@
     <xsl:apply-templates select="title" mode="move-def-list-title"/>
     <xsl:choose>
       <xsl:when test="(($former-list-type = 'itemizedlist') 
-                       and (every $term in def-item/term satisfies $term = def-item[1]/term))
+                       and (every $term in def-item/term 
+                            satisfies $term = def-item[1]/term))
                        or not(.//def) or not(.//term)">
         <ul>
           <xsl:call-template name="css:content">
@@ -1052,7 +1053,18 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
-  <xsl:template match="*:dd/*:label" mode="clean-up"/>
+  <xsl:template match="*:dd/*:label
+                      |html:ul/html:span" mode="clean-up"/>
+  
+  <xsl:template match="html:li[preceding-sibling::*[1][self::html:span]]" mode="clean-up">
+    <xsl:copy>
+      <span class="label">
+        <xsl:apply-templates select="preceding-sibling::*[1][self::html:span]/node()" mode="#current"/>
+        <xsl:text>&#x20;</xsl:text>
+      </span>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
   
   <xsl:template match="list[title]" mode="jats2html" priority="5">
     <xsl:apply-templates select="title" mode="#current"/>
@@ -2178,6 +2190,7 @@
                         'fig',
                         'fig-group',
                         'list',
+                        'p',
                         'preformat',
                         'question',
                         'table-wrap',
