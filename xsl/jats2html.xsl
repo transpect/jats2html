@@ -448,11 +448,18 @@
       <xsl:call-template name="css:content"/>
     </div>
   </xsl:template>
+
   
   <xsl:template match="subtitle|aff|attrib" mode="jats2html">
     <p class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </p>
+  </xsl:template>
+
+  <xsl:template match="attrib[parent::*[name() = ('styled-content', 'named-content')]]" mode="jats2html" priority="2">
+    <span class="{local-name()}">
+      <xsl:call-template name="css:content"/>
+    </span>
   </xsl:template>
   
   <xsl:template match="bio | permissions" mode="jats2html" >
@@ -488,6 +495,7 @@
                       |answer
                       |array
                       |article-title
+                      |attrib
                       |bold
                       |boxed-text
                       |chapter-title
