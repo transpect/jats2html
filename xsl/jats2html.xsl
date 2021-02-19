@@ -1177,7 +1177,7 @@
   </xsl:template>
     
   <xsl:template match="fig/caption[$xhtml-version eq '5.0']
-                      |graphic/caption[$xhtml-version eq '5.0']" mode="jats2html" priority="7">
+                      |graphic/caption[$xhtml-version eq '5.0']" mode="jats2html" priority="8">
     <figcaption>
       <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>
       <xsl:apply-templates select="@*" mode="#current"/>
@@ -1736,7 +1736,7 @@
     <xsl:attribute name="css:font-family" select="'serif'"/>
   </xsl:template>
   
-  <xsl:template match="ref" mode="jats2html" priority="7">
+  <xsl:template match="ref" mode="jats2html" priority="8">
     <p class="{name()}">
       <xsl:next-match/>
     </p>
