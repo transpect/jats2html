@@ -608,13 +608,16 @@
   <xsl:template match="*" mode="class-att"/>
 
   <xsl:template match="*[@content-type | @style-type | @list-type | @list-content | @specific-use | 
-                         @sec-type | @book-part-type]" mode="class-att" as="attribute(class)?">
+                         @sec-type | @book-part-type]" mode="class-att" as="attribute(class)?" priority="15">
     <xsl:variable name="tokens" as="xs:string*">
       <xsl:apply-templates select="@content-type | @style-type | @list-type | @list-content | @specific-use | 
                                    @sec-type | @book-part-type" mode="#current"/>  
     </xsl:variable>
+    <xsl:variable name="template-tokens" as="attribute()*">
+      <xsl:next-match/>
+    </xsl:variable>
     <xsl:if test="exists($tokens)">
-      <xsl:attribute name="class" select="$tokens" separator=" "/>
+      <xsl:attribute name="class" select="$template-tokens, $tokens" separator=" "/>
     </xsl:if>
   </xsl:template>
 
