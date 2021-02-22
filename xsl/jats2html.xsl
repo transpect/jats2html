@@ -1428,6 +1428,13 @@
       <xsl:when test="count(*) eq 1 and html:ol">
         <xsl:apply-templates mode="#current"/>
       </xsl:when>
+      <xsl:when test="parent::html:ol and exists(ancestor::*[2])">
+        <li>
+          <xsl:copy>
+            <xsl:apply-templates select="@*, node()" mode="#current"/>
+          </xsl:copy>
+        </li>
+      </xsl:when>
       <xsl:when test="not(preceding-sibling::*[1][self::html:li])">
         <xsl:copy>
           <xsl:apply-templates select="@*, node()" mode="#current"/>
