@@ -1636,7 +1636,7 @@
   </xsl:template>
   
   <xsl:template match="html:a[html:a[@class eq 'target' or @epub:type eq 'pagebreak']]" mode="clean-up">
-    <xsl:variable name="pagebreak" select="html:a[@class eq 'target' or @epub:type eq 'pagebreak']" as="element(html:a)"/>
+    <xsl:variable name="pagebreak" select="html:a[@class eq 'target' or @epub:type eq 'pagebreak']" as="element(html:a)+"/>
     <xsl:copy-of copy-namespaces="no"
                  select="$pagebreak"/>
     <xsl:copy copy-namespaces="no">
