@@ -1379,9 +1379,6 @@
               <xsl:variable name="patched-toc">
                 <xsl:apply-templates select="$toc-as-tree" mode="patch-toc-for-epub3"/>
               </xsl:variable>
-              <xsl:result-document href="file:/C:/cygwin64/home/kraetke/xe/trunk/out.xml">
-                <xsl:sequence select="$toc-as-tree"></xsl:sequence>
-              </xsl:result-document>
               <xsl:sequence select="$patched-toc"/>
             </xsl:when>
             <xsl:otherwise>
