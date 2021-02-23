@@ -1424,7 +1424,7 @@
           <xsl:apply-templates select="$next-ol/@*, $next-ol/html:*" mode="#current"/>
         </xsl:when>
         <xsl:when test="$next-ol">
-          <ol class="gen">
+          <ol>
             <xsl:apply-templates select="$next-ol/@*, $next-ol/html:*" mode="#current"/>
           </ol>  
         </xsl:when>
