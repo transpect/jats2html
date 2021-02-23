@@ -1379,6 +1379,9 @@
               <xsl:variable name="patched-toc">
                 <xsl:apply-templates select="$toc-as-tree" mode="patch-toc-for-epub3"/>
               </xsl:variable>
+              <xsl:result-document href="file:/C:/cygwin64/home/kraetke/xe/trunk/out.xml">
+                <xsl:sequence select="$toc-as-tree"></xsl:sequence>
+              </xsl:result-document>
               <xsl:sequence select="$patched-toc"/>
             </xsl:when>
             <xsl:otherwise>
@@ -1411,15 +1414,21 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="html:li[following-sibling::*[1][self::html:ol]]" mode="patch-toc-for-epub3">
-    <xsl:variable name="next-ol" select="following-sibling::*[1][self::html:ol]" as="element(html:ol)"/>
+  <xsl:template match="html:li[following-sibling::*[1][self::html:ol[not(count(*) eq 1 and html:ol)]]]" mode="patch-toc-for-epub3">
+    <xsl:variable name="next-ol" as="element(html:ol)"
+                  select="following-sibling::*[1]"/>
     <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
-      <xsl:if test="$next-ol">
-        <ol>
+      <xsl:choose>
+        <xsl:when test="$next-ol[count(*) eq 1 and html:ol]">
           <xsl:apply-templates select="$next-ol/@*, $next-ol/html:*" mode="#current"/>
-        </ol>  
-      </xsl:if>
+        </xsl:when>
+        <xsl:when test="$next-ol">
+          <ol class="gen">
+            <xsl:apply-templates select="$next-ol/@*, $next-ol/html:*" mode="#current"/>
+          </ol>  
+        </xsl:when>
+      </xsl:choose>
     </xsl:copy>
   </xsl:template>
   
@@ -1427,13 +1436,6 @@
     <xsl:choose>
       <xsl:when test="count(*) eq 1 and html:ol">
         <xsl:apply-templates mode="#current"/>
-      </xsl:when>
-      <xsl:when test="parent::html:ol and exists(ancestor::*[2])">
-        <li>
-          <xsl:copy>
-            <xsl:apply-templates select="@*, node()" mode="#current"/>
-          </xsl:copy>
-        </li>
       </xsl:when>
       <xsl:when test="not(preceding-sibling::*[1][self::html:li])">
         <xsl:copy>
