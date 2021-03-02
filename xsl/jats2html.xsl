@@ -1436,10 +1436,14 @@
       </xsl:when>
       <xsl:when test="not(preceding-sibling::*[1][self::html:li])">
         <xsl:copy>
-          <xsl:apply-templates select="@*, node()" mode="#current"/>
+         <xsl:apply-templates mode="#current"/>
         </xsl:copy>
       </xsl:when>
     </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="html:nav//html:ol/html:ol" mode="clean-up">
+    <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
   <xsl:template match="@*|*" mode="patch-toc-for-epub3">
