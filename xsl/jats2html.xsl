@@ -1202,7 +1202,7 @@
                                               if(
                                                 normalize-space(title) = ''
                                                 and 
-                                                normalize-space(label) = ''
+                                                normalize-space(../label) = ''
                                               ) 
                                               then 'empty-title' 
                                               else ''
