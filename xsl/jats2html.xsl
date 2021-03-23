@@ -499,6 +499,7 @@
                       |bold
                       |boxed-text
                       |chapter-title
+                      |citation-alternatives
                       |city
                       |collab
                       |comment
@@ -540,6 +541,7 @@
                       |nav-pointer
                       |overline
                       |p
+                      |page-range
                       |person-group
                       |postal-code
                       |prefix
@@ -656,7 +658,7 @@
     <xsl:attribute name="class" select="string-join((local-name(), @publication-type, @specific-use, $att), ' ')"/>
   </xsl:template>
 
-  <xsl:template match="mixed-citation|element-citation" mode="jats2html" priority="3"> 
+  <xsl:template match="mixed-citation|element-citation|citation-alternatives" mode="jats2html" priority="3"> 
     <span class="{local-name()}">
       <xsl:next-match/>
     </span>
@@ -666,7 +668,7 @@
     <xsl:next-match/>
     <xsl:apply-templates select="../element-citation//target" mode="#current"/>
   </xsl:template>
-
+  
   <xsl:variable name="jats2html:ignore-style-name-regex-x"
     select="'^(NormalParagraphStyle|Hyperlink)$'"
     as="xs:string"/>
@@ -1575,6 +1577,9 @@
     <xsl:element name="{if ($level) then concat('h', $level) else 'p'}">
       <xsl:copy-of select="(../@id, parent::title-group/../../@id)[1][not($divify-sections = 'yes')]"/>
       <xsl:call-template name="css:other-atts"/>
+      <xsl:if test="self::title and ../../.. is /">
+        <xsl:message select="'The assertion that this titled element has a grandparent is not correct: ', .."></xsl:message>
+      </xsl:if>
       <xsl:sequence select="tr:create-epub-type-attribute(if (self::*:title) then ../../.. else ..)"/>
       <xsl:variable name="_label" as="element(label)?" 
                     select="(../label[not(named-content[@content-type = 'post-identifier'])], 
@@ -1812,7 +1817,6 @@
                       |lpage
                       |monospace
                       |month
-                      |name-alternatives
                       |named-content
                       |nested-kwd
                       |overline
