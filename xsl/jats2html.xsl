@@ -664,6 +664,8 @@
     </span>
   </xsl:template>
   
+  <xsl:template match="citation-alternatives[mixed-citation/@specific-use = 'rendered']/element-citation" mode="jats2html" priority="3"/>
+
   <xsl:template match="mixed-citation" mode="jats2html" priority="4">
     <xsl:next-match/>
     <xsl:apply-templates select="../element-citation//target" mode="#current"/>
