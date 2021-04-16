@@ -2855,7 +2855,7 @@
   </xsl:template>
 
   <xsl:template match="abstract/* | def-list/* | trans-abstract/* | ack/* | app/* | app-group/* | bio/* |
-                       glossary/* | sec/* | ref-list/* | statement/*" mode="jats:heading-level" as="xs:integer?">
+                       glossary/* | sec/* | ref-list/* | statement/* | kwd-group/*" mode="jats:heading-level" as="xs:integer?">
     <xsl:variable name="ancestor-title" as="element(title)?" 
       select="(
                 ../../( title
@@ -3223,6 +3223,40 @@
     <div class="{local-name()}">
       <xsl:apply-templates select="@*, node()" mode="jats2html"/>      
     </div>
+  </xsl:template>
+
+  <xsl:template match="kwd-group[@kwd-group-type = ('author-created', 'author-generated')]" mode="jats2html-create-title jats2html">
+    <div class="{local-name()} {@kwd-group-type}">
+      <xsl:apply-templates select="@*, node()" mode="jats2html"/>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="kwd-group/kwd" mode="jats2html">
+    <xsl:if test="preceding-sibling::kwd">
+      <span class="kwd_sep">
+        <xsl:text xml:space="preserve">; </xsl:text>
+      </span>
+    </xsl:if>
+    <span class="kwd">
+      <xsl:apply-templates mode="#current"/>
+    </span>
+  </xsl:template>
+
+  <xsl:template match="article-meta/kwd-group[@kwd-group-type = 'abbreviations']" mode="jats2html-create-title jats2html">
+    <dl class="{local-name()} {@kwd-group-type}">
+      <xsl:apply-templates select="@* except @kwd-group-type, node()" mode="jats2html"/>
+    </dl>
+  </xsl:template>
+
+  <xsl:template match="compound-kwd" mode="jats2html-create-title jats2html">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+
+  <xsl:template match="compound-kwd-part" mode="jats2html-create-title jats2html">
+    <xsl:element name="{if(not(preceding-sibling::compound-kwd-part)) then 'dt' else 'dd'}">
+     <xsl:attribute name="class" select="concat(local-name(), ' pos', count(preceding-sibling::compound-kwd-part) + 1)"/>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:element>
   </xsl:template>
   
   <xsl:template match="volume-in-collection" mode="jats2html-create-title">
