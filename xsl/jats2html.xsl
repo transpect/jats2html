@@ -664,7 +664,22 @@
     </span>
   </xsl:template>
   
-  <xsl:template match="citation-alternatives[mixed-citation/@specific-use = 'rendered']/element-citation" mode="jats2html" priority="3"/>
+  <xsl:variable name="citation-alternatives-output" 
+    select="'rendered'" as="xs:string"/>
+
+  <xsl:template match="citation-alternatives
+                         [mixed-citation/@specific-use = 'rendered']
+                         [element-citation]
+                         /*[self::mixed-citation or self::element-citation]" 
+    mode="jats2html" priority="4">
+    <xsl:choose>
+      <xsl:when test="self::element-citation and $citation-alternatives-output = 'rendered'"/>
+      <xsl:when test="self::mixed-citation and $citation-alternatives-output = 'structured'"/>
+      <xsl:otherwise>
+        <xsl:next-match/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
 
   <xsl:template match="mixed-citation" mode="jats2html" priority="4">
     <xsl:next-match/>
