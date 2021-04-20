@@ -2629,6 +2629,9 @@
     </p>
   </xsl:template>
 
+  <xsl:variable name="xref-start-string" select="'['" as="xs:string?"/>
+  <xsl:variable name="xref-end-string" select="']'" as="xs:string?"/>
+
   <xsl:template match="xref" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="linked-items" as="element(linked-item)*">
@@ -2656,10 +2659,10 @@
                           and not(text())"><!-- bibliography entry, render only symbol when no content exists in the 1st place -->
               <span class="cit">
                 <xsl:apply-templates select="@srcpath" mode="#current"/>
-                <xsl:text>[</xsl:text>
+                <xsl:value-of select="$xref-start-string"/>
                 <xsl:number format="a" value="index-of( for $xr in key('by-rid', @rid, $root) 
                                                         return $xr/@id, @id )"/>
-                <xsl:text>]</xsl:text>
+                <xsl:value-of select="$xref-end-string"/>
               </span>
             </xsl:if>
           </xsl:when>
