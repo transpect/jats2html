@@ -1635,11 +1635,15 @@
       <xsl:if test="not($in-toc)">
         <a id="{generate-id()}" />  
       </xsl:if>
-      <xsl:apply-templates mode="#current"/>
+      <xsl:call-template name="title-or-alt-title-nodes"/>
       <xsl:apply-templates select="$post-label" mode="#current">
         <xsl:with-param name="actually-process-it" select="true()" as="xs:boolean"/>
       </xsl:apply-templates>
     </xsl:element>
+  </xsl:template>
+  
+  <xsl:template name="title-or-alt-title-nodes">
+    <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
   <xsl:function name="jats2html:authors-in-ncx" as="xs:string*">
