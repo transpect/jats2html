@@ -2362,7 +2362,7 @@
   
   <xsl:template match="mml:math" mode="jats2html">
     <xsl:variable name="altimg" as="attribute(xlink:href)?"
-                  select="parent::alternatives/*[local-name() = ('graphic', 'inline-graphic')]/@xlink:href"/>
+                  select="parent::alternatives/*[local-name() = ('graphic', 'inline-graphic')][1]/@xlink:href"/>
     <xsl:element name="{local-name()}" namespace="http://www.w3.org/1998/Math/MathML">
       <!-- Unlike HTML, EPUB 3.0 requires an alttext attribute. -->
       <xsl:attribute name="alttext">
