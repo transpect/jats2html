@@ -1535,7 +1535,7 @@
     <xsl:param name="in-toc" tunnel="yes" as="xs:boolean?"/>
     <xsl:choose>
       <xsl:when test="$in-toc">
-        <xsl:apply-templates/>
+        <xsl:apply-templates mode="#current"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:next-match/>
