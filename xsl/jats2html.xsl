@@ -3276,7 +3276,8 @@
   
   <!-- everything that goes into a <p> -->
 
-  <xsl:template match="funding-group" mode="jats2html">
+  <xsl:template match="funding-group
+                      |award-group" mode="jats2html">
     <div class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </div>
@@ -3286,6 +3287,14 @@
                       |funding-statement" mode="jats2html jats2html-create-title">
     <p class="{local-name()}">
       <xsl:call-template name="css:content"/>
+    </p>
+  </xsl:template>
+  
+  <xsl:template match="funding-source[@xlink:href]" mode="jats2html jats2html-create-title">
+    <p class="{local-name()}">
+      <a>
+        <xsl:call-template name="css:content"/>
+      </a>
     </p>
   </xsl:template>
   
