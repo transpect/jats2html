@@ -7,6 +7,13 @@
   name="jats2html-driver"
   type="tr:jats2html">
   
+  <p:documentation>
+    This is the fallback pipeline when no other 
+    pipeline could be found while evaluating the transpect
+    cascade configuration. The pipeline invokes three
+    XSLT modes to convert JATS or BITS to HTML.
+  </p:documentation>
+  
   <p:input port="source" primary="true"/>
   <p:input port="stylesheet" primary="false"/>
   <p:input port="parameters" kind="parameter" primary="true"/>

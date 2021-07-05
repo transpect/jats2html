@@ -7,6 +7,12 @@
   name="jats-jats2html"
   type="jats:html">
   
+  <p:documentation>
+    This step converts JATS or BITS to HTML. The step
+    expects a transpect paths document as secondary input
+    to dynamically load a matching XProc driver.
+  </p:documentation>
+  
   <p:option name="srcpaths" required="false" select="'no'"/>
   <p:option name="debug" required="false" select="'no'"/>
   <p:option name="debug-dir-uri" required="false" select="'debug'"/>
