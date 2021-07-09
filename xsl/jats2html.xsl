@@ -274,7 +274,7 @@
     </html>
   </xsl:template>
   
-  <xsl:template match="book | book-part-wrapper" mode="jats2html">
+  <xsl:template match="article | book | book-part-wrapper" mode="jats2html">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
