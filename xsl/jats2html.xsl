@@ -671,7 +671,7 @@
                          [mixed-citation/@specific-use = 'rendered']
                          [element-citation]
                          /*[self::mixed-citation or self::element-citation]" 
-    mode="jats2html" priority="4">
+    mode="jats2html" priority="5">
     <xsl:choose>
       <xsl:when test="self::element-citation and $citation-alternatives-output = 'rendered'"/>
       <xsl:when test="self::mixed-citation and $citation-alternatives-output = 'structured'"/>
