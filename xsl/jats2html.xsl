@@ -1242,7 +1242,7 @@
         <xsl:apply-templates select="if(label) then caption/*[position() ne 1] else caption" mode="#current"/>
       </div>
     </xsl:variable>
-    <div class="{local-name()} {distinct-values(table/@content-type)}">
+    <div class="{local-name()} {distinct-values(for $ct in (@content-type, table/@content-type) return tokenize($ct, '\s+'))}">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:if test="(label|caption) and $table-caption-side eq 'top'">
         <xsl:sequence select="$table-caption"/>
