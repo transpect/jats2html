@@ -309,7 +309,7 @@
     <xsl:apply-templates select="@*, node()" mode="jats2html-create-title"/>
   </xsl:template>
   
-   <xsl:template match="sec" mode="epub-alternatives">
+   <xsl:template match="abstract | ack | app | bio | boxed-text | notes | question | sec | trans-abstract" mode="epub-alternatives">
      <xsl:copy copy-namespaces="no">
        <xsl:variable name="sec-meta-elements" 
                      select="label, 
