@@ -859,7 +859,10 @@
   <xsl:template name="footnote-link">
     <xsl:param name="footnote-ids" as="xs:string*" tunnel="yes"/>
     <xsl:param name="index" as="xs:integer"/>
-    <a href="#fna_{$index}" class="fn-link" epub:type="noteref">
+    <a href="#fna_{$index}" class="fn-link">
+      <xsl:if test="tr:create-epub-type-attribute(.)">
+        <xsl:attribute name="epub:type" select="'noteref'"/>
+      </xsl:if>
       <xsl:value-of select="(@symbol, $index)[1]"/>
     </a>
   </xsl:template>
@@ -874,16 +877,27 @@
     </xsl:if>
     <xsl:if test="not($in-toc)">
       <span class="note-anchor" id="fna_{$index}">
+        <xsl:apply-templates select="." mode="title-att"/>
         <xsl:if test="$recount-footnotes">
-        <xsl:processing-instruction name="recount" select="'yes'"/>
-      </xsl:if>
-        <a href="#{concat('fn_', $index)}" class="fn-ref" epub:type="noteref">
+          <xsl:processing-instruction name="recount" select="'yes'"/>
+        </xsl:if>
+        <a href="#{concat('fn_', $index)}" class="fn-ref">
+          <xsl:if test="tr:create-epub-type-attribute(.)">
+            <xsl:attribute name="epub:type" select="'noteref'"/>
+          </xsl:if>
           <sup>
             <xsl:value-of select="(@symbol, $index)[1]"/>
           </sup>
         </a>
       </span>    
     </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="fn" mode="title-att">
+    <xsl:variable name="tmp" as="node()*">
+      <xsl:apply-templates mode="strip-indexterms-etc"/>
+    </xsl:variable>
+    <xsl:attribute name="title" select="normalize-space(string-join($tmp, ''))"/>
   </xsl:template>
 
   <xsl:template match="fn-group" mode="jats2html" priority="2.5">
@@ -1068,15 +1082,23 @@
   </xsl:template>
   
   <xsl:template match="glossary/def-list/def-item/term" mode="jats2html" priority="-0.2">
-    <xsl:attribute name="epub:type" select="'glossterm'"/>
+    <xsl:apply-templates select="." mode="epub-type"/>
     <xsl:apply-templates select=".." mode="class-att"/>
     <xsl:next-match/><!-- should be css:content -->
   </xsl:template>
   
+  <xsl:template match="glossary/def-list/def-item/term" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'glossterm'"/>
+  </xsl:template>
+  
   <xsl:template match="glossary/def-list/def-item/def" mode="jats2html" priority="-0.2">
-    <xsl:attribute name="epub:type" select="'glossdef'"/>
+    <xsl:apply-templates select="." mode="epub-type"/>
     <xsl:apply-templates select=".." mode="class-att"/>
     <xsl:next-match/><!-- should be css:content -->
+  </xsl:template>
+  
+  <xsl:template match="glossary/def-list/def-item/def" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'glossdef'"/>
   </xsl:template>
   
   <xsl:template match="def-item/def|def-item/term" mode="jats2html" priority="-0.75">
@@ -1606,29 +1628,10 @@
                     select="(../label[named-content[@content-type = 'post-identifier']], 
                              parent::caption/../label[named-content[@content-type = 'post-identifier']]
                              )[1]"/>
-      <xsl:attribute name="title">
-        <xsl:if test="$authors-in-titles = 'yes'">
-          <xsl:sequence select="jats2html:authors-in-ncx(., root())"/>
-        </xsl:if>
-        <xsl:apply-templates select="$_label" mode="strip-indexterms-etc"/>
-        <xsl:apply-templates select="$_label" mode="label-sep"/>
-        <xsl:variable name="stripped" as="text()">
-          <xsl:value-of>
-            <xsl:apply-templates mode="strip-indexterms-etc"/>
-            <xsl:if test="$subtitles-in-titles = 'yes'">
-              <xsl:if test="../subtitle[matches(., '\S')]">
-                <xsl:value-of select="$subtitle-separator-in-ncx"/>
-              </xsl:if>
-              <xsl:apply-templates select="../subtitle/node()" mode="strip-indexterms-etc"/>
-            </xsl:if>
-          </xsl:value-of>
-        </xsl:variable>
-        <xsl:sequence select="replace($stripped, '^[\p{Zs}\s]*(.+?)[\p{Zs}\s]*$', '$1')"/>
-        <xsl:if test="$post-label">
-          <xsl:apply-templates select="$post-label" mode="label-sep"/>
-          <xsl:apply-templates select="$post-label" mode="strip-indexterms-etc"/>
-        </xsl:if>
-      </xsl:attribute>
+      <xsl:call-template name="title-att">
+        <xsl:with-param name="_label" select="$_label"/>
+        <xsl:with-param name="post-label" select="$post-label"/>
+      </xsl:call-template>
       <xsl:apply-templates select="$_label" mode="#current">
         <xsl:with-param name="actually-process-it" select="true()" as="xs:boolean"/>
       </xsl:apply-templates>
@@ -1640,6 +1643,34 @@
         <xsl:with-param name="actually-process-it" select="true()" as="xs:boolean"/>
       </xsl:apply-templates>
     </xsl:element>
+  </xsl:template>
+  
+  <xsl:template name="title-att">
+    <xsl:param name="_label" as="element(label)?"/>
+    <xsl:param name="post-label" as="element(label)?"/>
+    <xsl:attribute name="title">
+      <xsl:if test="$authors-in-titles = 'yes'">
+        <xsl:sequence select="jats2html:authors-in-ncx(., root())"/>
+      </xsl:if>
+      <xsl:apply-templates select="$_label" mode="strip-indexterms-etc"/>
+      <xsl:apply-templates select="$_label" mode="label-sep"/>
+      <xsl:variable name="stripped" as="text()">
+        <xsl:value-of>
+          <xsl:apply-templates mode="strip-indexterms-etc"/>
+          <xsl:if test="$subtitles-in-titles = 'yes'">
+            <xsl:if test="../subtitle[matches(., '\S')]">
+              <xsl:value-of select="$subtitle-separator-in-ncx"/>
+            </xsl:if>
+            <xsl:apply-templates select="../subtitle/node()" mode="strip-indexterms-etc"/>
+          </xsl:if>
+        </xsl:value-of>
+      </xsl:variable>
+      <xsl:sequence select="replace($stripped, '^[\p{Zs}\s]*(.+?)[\p{Zs}\s]*$', '$1')"/>
+      <xsl:if test="$post-label">
+        <xsl:apply-templates select="$post-label" mode="label-sep"/>
+        <xsl:apply-templates select="$post-label" mode="strip-indexterms-etc"/>
+      </xsl:if>
+    </xsl:attribute>
   </xsl:template>
   
   <xsl:template name="title-or-alt-title-nodes">
