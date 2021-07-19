@@ -516,6 +516,7 @@
                       |disp-formula-group
                       |edition
                       |element-citation
+                      |elocation-id
                       |equation-count
                       |etal
                       |explanation
@@ -524,11 +525,15 @@
                       |funding-source
                       |funding-statement
                       |given-names
+                      |gov
                       |hr
                       |inline-formula
                       |institution
                       |institution-wrap
                       |issue
+                      |issue-id
+                      |issue-part
+                      |issue-title
                       |italic
                       |kwd
                       |label
@@ -542,6 +547,8 @@
                       |overline
                       |p
                       |page-range
+                      |part-title
+                      |patent
                       |person-group
                       |postal-code
                       |prefix
@@ -556,14 +563,17 @@
                       |role
                       |roman
                       |sans-serif
+                      |season
                       |sc
                       |sig
                       |sig-block
+                      |size
                       |series
                       |source
                       |speech
                       |state
                       |statement
+                      |std
                       |strike
                       |string-date
                       |string-name
@@ -573,6 +583,7 @@
                       |subtitle
                       |suffix
                       |sup
+                      |supplement
                       |surname
                       |table
                       |table-count
@@ -587,6 +598,7 @@
                       |verse-group
                       |verse-line
                       |volume
+                      |volume-id
                       |volume-series
                       |year
                       |x" mode="jats2html" priority="-0.25">
@@ -1847,11 +1859,14 @@
                       |address
                       |article-title
                       |chapter-title
+                      |conf-loc
+                      |conf-name
                       |city
                       |collab
                       |comment
                       |country
                       |date
+                      |date-in-citation
                       |day
                       |degrees
                       |edition
@@ -1872,6 +1887,7 @@
                       |named-content
                       |nested-kwd
                       |overline
+                      |page-range
                       |person-group
                       |postal-code
                       |prefix
