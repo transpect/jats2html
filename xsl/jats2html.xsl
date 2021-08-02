@@ -2502,10 +2502,24 @@
   </xsl:template>
   
   <xsl:template match="array" mode="jats2html">
-    <table class="{local-name()}">
-      <xsl:call-template name="css:content"/>
-    </table>
+    <xsl:variable name="caption" as="element()">
+      <xsl:if test="label">
+        <div class="array-caption caption">
+          <p>
+            <xsl:apply-templates select="label/node()" mode="#current"/>
+          </p>
+        </div>
+      </xsl:if>
+    </xsl:variable>
+    <div class="{local-name()}">
+      <xsl:sequence select="$caption"/>
+      <table class="{local-name()}">
+        <xsl:call-template name="css:content"/>
+      </table>  
+    </div>
   </xsl:template>
+  
+  <xsl:template match="array/label" mode="jats2html"/>
 
   <xsl:template match="*[name() = ('table', 'array')][matches(@css:width, 'pt$')]" mode="jats2html">
     <xsl:param name="root" as="document-node()?" tunnel="yes"/>
