@@ -1844,7 +1844,9 @@
   <xsl:variable name="ref-index" select="ref-list/ref" as="element(ref)*"/>
   
   <xsl:template match="ref" mode="jats2html" priority="1.5">
-    <xsl:attribute name="epub:type" select="tr:create-epub-type-attribute(.)"/>
+    <xsl:if test="tr:create-epub-type-attribute(.)">
+      <xsl:attribute name="epub:type" select="tr:create-epub-type-attribute(.)"/>
+    </xsl:if>
     <xsl:apply-templates select="@*" mode="#current"/>
     <xsl:if test="not(label) and $number-bibliography eq 'yes'">
       <xsl:variable name="id" select="@id" as="attribute(id)?"/>
