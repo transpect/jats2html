@@ -2504,7 +2504,7 @@
   </xsl:template>
   
   <xsl:template match="array" mode="jats2html">
-    <xsl:variable name="caption" as="element()">
+    <xsl:variable name="caption" as="element()?">
       <xsl:if test="label">
         <div class="array-caption caption">
           <p>
