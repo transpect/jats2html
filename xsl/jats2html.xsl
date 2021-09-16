@@ -14,8 +14,9 @@
   xmlns:epub="http://www.idpf.org/2007/ops"
   xmlns:c="http://www.w3.org/ns/xproc-step"
   xmlns:cx="http://xmlcalabash.com/ns/extensions"
+  xmlns:ali="http://www.niso.org/schemas/ali/1.0/"
   xmlns="http://www.w3.org/1999/xhtml"
-  exclude-result-prefixes="c css cx epub html hub2htm jats jats2html l10n mml saxon tr xlink xs"
+  exclude-result-prefixes="ali c css cx epub html hub2htm jats jats2html l10n mml saxon tr xlink xs"
   version="2.0">
 
   <!-- If you see a message that an attribute cannot be created after a child of the containing
@@ -475,7 +476,13 @@
       <xsl:call-template name="css:content"/>
     </span>
   </xsl:template>
-  
+
+  <xsl:template match="ali:free_to_read" mode="jats2html">
+    <span class="ali">
+      <xsl:value-of select="name()"/>
+    </span>
+  </xsl:template>
+
   <xsl:template match="contrib/string-name" mode="jats2html">
     <p class="author">
       <xsl:call-template name="css:content"/>
@@ -1908,6 +1915,7 @@
                       |string-date
                       |subject
                       |suffix
+                      |supplement
                       |surname
                       |table-count
                       |trans-source
