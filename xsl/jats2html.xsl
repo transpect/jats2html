@@ -493,6 +493,12 @@
     invoked by an xsl:next-match for the same matching elements. Don't forget 
     to include the names of the elements that you want to handle here. Otherwise
     they'll be reported as unhandled.
+    Most of these matching elements need to be synced with the default template 
+    approx. 1400 lines down that creates
+    <span class="{local-name()}">
+      <xsl:next-match/>
+    </span> 
+    by default.
     And don’t ever change the priority unless you’ve made sure that no other template
     relies on this value to be 0.25.
     -->
@@ -1864,6 +1870,8 @@
     <xsl:apply-templates select="label, (mixed-citation, element-citation, citation-alternatives)[1], note, x" mode="#current"/>
   </xsl:template>
 
+  <!-- Most of these matching elements need to be synced with the next-match css:content template
+    approx. 1400 lines above. -->
   <xsl:template match="addr-line
                       |address
                       |article-title
@@ -1879,15 +1887,20 @@
                       |day
                       |degrees
                       |edition
+                      |elocation-id
                       |equation-count
                       |etal
                       |fig-count
                       |fpage
                       |given-names
+                      |gov
                       |hr
                       |institution
                       |institution-wrap
                       |issue
+                      |issue-id
+                      |issue-part
+                      |issue-title
                       |kwd
                       |label
                       |lpage
@@ -1908,9 +1921,12 @@
                       |roman
                       |sans-serif
                       |sc
+                      |season
                       |series
+                      |size
                       |source
                       |state
+                      |std
                       |strike
                       |string-date
                       |subject
@@ -1925,6 +1941,7 @@
                       |underline
                       |uri[not(@xlink:href)]
                       |volume
+                      |volume-id
                       |volume-series
                       |year
                       |x" mode="jats2html"> 
