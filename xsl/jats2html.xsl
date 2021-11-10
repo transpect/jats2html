@@ -267,7 +267,7 @@
           </xsl:call-template>
         </xsl:if>
         <xsl:apply-templates mode="#current">
-          <xsl:with-param name="footnote-ids" select="//fn/@id" as="xs:string*" tunnel="yes"/>
+          <xsl:with-param name="footnote-ids" select="//fn[jats2html:include-footnote(.)]/@id" as="xs:string*" tunnel="yes"/>
           <xsl:with-param name="root" select="root(*)" as="document-node()" tunnel="yes"/>
           <xsl:with-param name="footnote-roots" as="element(*)*" tunnel="yes" select="$footnote-roots"/>
         </xsl:apply-templates>
@@ -412,7 +412,7 @@
     <xsl:param name="footnote-roots" as="element(*)*" tunnel="yes"/>
     <xsl:variable name="context" as="element(*)" select="."/>
     <xsl:variable name="footnotes" 
-                  select=".//fn[not(some $fnroot in ($footnote-roots intersect current()/descendant::*) 
+                  select=".//fn[jats2html:include-footnote(.)][not(some $fnroot in ($footnote-roots intersect current()/descendant::*) 
                                     satisfies (exists($fnroot/descendant::* intersect .))
                                     )]" as="element(fn)*"/>
     <xsl:if test="exists($footnotes)">
@@ -856,7 +856,7 @@
     <xsl:next-match/>
   </xsl:template>
 
-  <xsl:template match="fn[@id]" mode="footnotes">
+  <xsl:template match="fn[jats2html:include-footnote(.)][@id]" mode="footnotes">
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <xsl:param name="static-footnotes" tunnel="yes" as="xs:boolean?"/>
     <xsl:variable name="index" select="index-of($footnote-ids, @id)[1]" as="xs:integer"/>
@@ -892,7 +892,7 @@
     </a>
   </xsl:template>
 
-  <xsl:template match="fn[@id]" mode="jats2html">
+  <xsl:template match="fn[jats2html:include-footnote(.)][@id]" mode="jats2html">
     <xsl:param name="footnote-ids" tunnel="yes" as="xs:string*"/>
     <xsl:param name="in-toc" tunnel="yes" as="xs:boolean?"/>
     <xsl:param name="recount-footnotes" tunnel="yes" as="xs:boolean?"/>
@@ -928,10 +928,20 @@
   <xsl:template match="fn-group" mode="jats2html" priority="2.5">
     <xsl:call-template name="jats2html:footnotes">
       <xsl:with-param name="recount-footnotes" select="true()" as="xs:boolean?" tunnel="yes"/>
-      <xsl:with-param name="footnote-ids" select=".//fn/@id" as="xs:string*" tunnel="yes"/>
+      <xsl:with-param name="footnote-ids" select=".//fn[jats2html:include-footnote(.)]/@id" as="xs:string*" tunnel="yes"/>
       <xsl:with-param name="static-footnotes" select="true()" as="xs:boolean?" tunnel="yes"/>
     </xsl:call-template>
   </xsl:template>
+
+  <!-- var fn-type-exclusion-values to handle specific non-in-text footnotes, separately
+       examples: coi-statement, financial-disclosure -->
+  <xsl:variable name="fn-type-exclusion-values" as="xs:string*"
+    select="('_unset_')"/>
+
+  <xsl:function name="jats2html:include-footnote" as="xs:boolean">
+    <xsl:param name="fn" as="element(fn)"/>
+    <xsl:sequence select="if($fn/@fn-type = $fn-type-exclusion-values) then false() else true()"/>
+  </xsl:function>
  
   <xsl:template match="xref[matches(@rid, '^(id_endnote|id_en-)')]" mode="jats2html" priority="5.1">
     <!-- endnote markers (from InDesign CC)-->
@@ -1711,7 +1721,7 @@
      </xsl:if>
   </xsl:function>
   
-  <xsl:template match="index-term | fn | target | 
+  <xsl:template match="index-term | fn | fn/label | target | 
                        xref[@specific-use=('EndnoteMarker', 'EndnoteRange')][@rid]" mode="strip-indexterms-etc"/>
   
   <xsl:template match="@epub:type[matches(name(..), '^h\d$')]
