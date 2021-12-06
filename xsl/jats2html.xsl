@@ -1360,6 +1360,14 @@
   <xsl:template match="*[local-name() = ('preface', 'foreword', 'dedication', 'glossary', 'index', 'index-term', 'toc')]" mode="epub-type">
     <xsl:attribute name="epub:type" select="local-name()"/>
   </xsl:template>
+ 
+  <xsl:template match="front-matter-part[@book-part-type = 'copyright-page']" mode="epub-type">
+    <xsl:attribute name="epub:type" select="@book-part-type"/>
+  </xsl:template>
+  
+  <xsl:template match="front-matter-part[@book-part-type = 'title-page']" mode="epub-type">
+    <xsl:attribute name="epub:type" select="translate(@book-part-type, '-', '')"/>
+  </xsl:template>
   
   <xsl:template match="book-part[@book-part-type]" mode="epub-type">
     <xsl:attribute name="epub:type" select="@book-part-type"/>
@@ -2190,7 +2198,9 @@
       <xsl:for-each-group select="current-group()/see-also" group-by="string(.)">
         <xsl:value-of select="if($root/*/@xml:lang = 'de') 
                               then 
-                                  if ($cg[jats2html:contains-token(@content-type, 'hub:not-placed-on-page')])
+                                  if ($cg[jats2html:contains-token(@content-type, 'hub:not-placed-on-page')]
+                                      and 
+                                      not(preceding-sibling::*[1][self::see-also | self::see]))
                                   then 'siehe auch ' 
                                   else ' siehe auch ' 
                                 else ' see also '" xml:space="preserve"/>
