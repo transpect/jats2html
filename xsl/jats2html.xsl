@@ -1361,14 +1361,6 @@
     <xsl:attribute name="epub:type" select="local-name()"/>
   </xsl:template>
  
-  <xsl:template match="front-matter-part[@book-part-type = 'copyright-page']" mode="epub-type">
-    <xsl:attribute name="epub:type" select="@book-part-type"/>
-  </xsl:template>
-  
-  <xsl:template match="front-matter-part[@book-part-type = 'title-page']" mode="epub-type">
-    <xsl:attribute name="epub:type" select="translate(@book-part-type, '-', '')"/>
-  </xsl:template>
-  
   <xsl:template match="book-part[@book-part-type]" mode="epub-type">
     <xsl:attribute name="epub:type" select="@book-part-type"/>
   </xsl:template>
