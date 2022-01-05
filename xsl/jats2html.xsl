@@ -1896,6 +1896,7 @@
                       |date-in-citation
                       |day
                       |degrees
+                      |def
                       |edition
                       |elocation-id
                       |equation-count
