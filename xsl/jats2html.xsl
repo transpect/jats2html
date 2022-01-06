@@ -1810,6 +1810,12 @@
     </abbr>
   </xsl:template>
   
+  <xsl:template match="abbrev/def" mode="jats2html">
+    <span class="def">
+      <xsl:apply-templates select="p/node()" mode="#current"/>
+    </span>
+  </xsl:template>
+  
   <xsl:template match="underline" mode="hub2htm:css-style-overrides">
     <xsl:attribute name="css:text-decoration" select="'underline'"/>
   </xsl:template>
@@ -1896,7 +1902,6 @@
                       |date-in-citation
                       |day
                       |degrees
-                      |def
                       |edition
                       |elocation-id
                       |equation-count
