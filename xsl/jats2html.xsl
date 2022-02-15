@@ -1361,6 +1361,14 @@
     <xsl:attribute name="epub:type" select="local-name()"/>
   </xsl:template>
  
+  <xsl:template match="front-matter-part[@book-part-type = 'copyright-page']" mode="epub-type">
+    <xsl:attribute name="epub:type" select="@book-part-type"/>
+  </xsl:template>
+  
+  <xsl:template match="front-matter-part[@book-part-type = 'title-page']" mode="epub-type">
+    <xsl:attribute name="epub:type" select="translate(@book-part-type, '-', '')"/>
+  </xsl:template>
+  
   <xsl:template match="book-part[@book-part-type]" mode="epub-type">
     <xsl:attribute name="epub:type" select="@book-part-type"/>
   </xsl:template>
@@ -2785,6 +2793,8 @@
           </xsl:when>
           <xsl:otherwise>
             <xsl:message>Cannot link: multiple resolutions for xref with an explicit link text. <xsl:copy-of select="."/></xsl:message>
+            <!-- content should not be lost though.-->
+            <xsl:apply-templates mode="#current"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
