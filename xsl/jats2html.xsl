@@ -154,6 +154,9 @@
       <xsl:apply-templates select="@* | node()" mode="#current" />  
     </xsl:copy>
   </xsl:template>
+  <xsl:template match="processing-instruction('break')" mode="epub-alternatives">
+    <xsl:copy/>
+  </xsl:template>
   
   <!-- collateral. Otherwise the generated IDs might differ due to temporary trees / variables 
     when transforming the content -->  
@@ -778,7 +781,8 @@
     </span>
   </xsl:template>
 
-  <xsl:template match="break" mode="jats2html">
+  <!-- break-PI: hub2bits workaround -->
+  <xsl:template match="break | processing-instruction('break')" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?"/>
     <xsl:if test="not($in-toc)">
       <br/>
