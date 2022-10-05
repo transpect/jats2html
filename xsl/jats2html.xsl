@@ -1666,7 +1666,7 @@
       <xsl:if test="self::title and ../../.. is /">
         <xsl:message select="'The assertion that this titled element has a grandparent is not correct: ', .."></xsl:message>
       </xsl:if>
-      <xsl:sequence select="tr:create-epub-type-attribute(if (self::*:title) then ../../.. else ..)"/>
+      <xsl:sequence select="tr:create-epub-type-attribute(if (self::*:title and ..[self::*:title-group]) then ../../.. else ..)"/>
       <xsl:variable name="_label" as="element(label)?" 
                     select="(../label[not(named-content[@content-type = 'post-identifier'])], 
                              parent::caption/../label[not(named-content[@content-type = 'post-identifier'])]
