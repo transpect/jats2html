@@ -1344,7 +1344,7 @@
   </xsl:template>
   
   <xsl:template match="bio" mode="epub-type">
-    <xsl:attribute name="epub:type" select="'tr:bio'"/>
+    <xsl:attribute name="epub:type" select="'contributors'"/>
   </xsl:template>
   
   <xsl:template match="ref-list" mode="epub-type">
