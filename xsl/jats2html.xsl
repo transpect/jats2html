@@ -1180,7 +1180,7 @@
   
   <xsl:template match="list[@list-type eq 'custom'][list-item[label]]" mode="jats2html">
     <dl>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:apply-templates select="@*, node() except title" mode="#current"/>
     </dl>
   </xsl:template>
   
