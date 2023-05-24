@@ -90,7 +90,7 @@
        empty string or unset param if no resolution required: -->
   <xsl:param name="rr" select="'doc/'"/>
   <!-- convention: if empty string, then concat($common-path, '/css/stylesheet.css') -->
-  <xsl:param name="css-location" select="''"/>
+  <xsl:param name="css-location" select="''" as="xs:string?"/>
   <!-- for calculating whether a table covers the whole width or only part of it: -->
   <xsl:param name="page-width" 
              select="if (/book/book-meta/custom-meta-group/custom-meta[meta-name[. = 'type-area-width']]
@@ -241,12 +241,16 @@
         <xsl:if test="*/@source-dir-uri">
           <meta name="source-dir-uri" content="{*/@source-dir-uri}"/>
         </xsl:if>
-        <xsl:if test="$css-location ne ''">
-          <link rel="stylesheet" type="text/css" href="{$css-location}"/>  
-        </xsl:if>
-        <xsl:if test="$css-location eq ''">
+        <xsl:choose>
+          <xsl:when test="$css-location eq ''">
           <link rel="stylesheet" type="text/css" href="{concat($common-path, 'css/stylesheet.css')}"/>  
-        </xsl:if>
+          </xsl:when>
+          <xsl:otherwise>
+            <link rel="stylesheet" type="text/css" href="{if (contains($css-location, '/')) 
+                                                          then $css-location 
+                                                          else concat($common-path,'css/', $css-location)}"/>    
+          </xsl:otherwise>
+        </xsl:choose>
         <xsl:for-each select="reverse($paths[not(position() = index-of($roles, 'common'))])">
           <link rel="stylesheet" type="text/css" href="{concat(., 'css/overrides.css')}"/>
         </xsl:for-each>
@@ -363,18 +367,19 @@
   
   <xsl:template match="*[local-name() = $default-structural-containers]" mode="jats2html" priority="2">
     <xsl:apply-templates select="if(title) 
-                                 then node() except label (: label is already processed in title template :) 
+                                 then (node() except label) (: label is already processed in title template :) 
                                  else node() (: no title, we process all nodes :)" mode="#current"/>
   </xsl:template>
   
   <!-- everything that goes into a div (except footnote-like content): -->
-  <xsl:template match="*[local-name() = $default-structural-containers][$divify-sections = 'yes']
+  <xsl:template match="*[local-name() = $default-structural-containers]
+                        [$divify-sections = 'yes']
                       |abstract
                       |verse-group" 
-                mode="jats2html" priority="3">
+                mode="jats2html" priority="15">
     <xsl:element name="{if(local-name() = ('abstract', 'verse-group', 'contrib-group') or parent::book-part) 
                         then 'div' 
-                        else $default-container-name}">
+                        else 'section'}">
       <xsl:apply-templates select="@* except (@book-part-type|@sec-type|@content-type)" mode="#current"/>
       <xsl:if test="tr:create-epub-type-attribute(.)">
         <xsl:attribute name="epub:type" select="tr:create-epub-type-attribute(.)"/>
@@ -2611,6 +2616,7 @@
 
   <xsl:template match="*[name() = ('table', 'array')][@css:width]" mode="table-widths">
     <xsl:variable name="twips" select="tr:length-to-unitless-twip(@css:width)" as="xs:double?"/>
+    <!--  <xsl:message select="'###', string-join(caption, ''), ' p-w-t: ', $page-width-twips, ' twips: ', $twips "/>-->
     <xsl:choose>
       <xsl:when test="$twips">
         <table xmlns="">
