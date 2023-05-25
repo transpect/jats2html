@@ -241,19 +241,7 @@
         <xsl:if test="*/@source-dir-uri">
           <meta name="source-dir-uri" content="{*/@source-dir-uri}"/>
         </xsl:if>
-        <xsl:choose>
-          <xsl:when test="$css-location eq ''">
-          <link rel="stylesheet" type="text/css" href="{concat($common-path, 'css/stylesheet.css')}"/>  
-          </xsl:when>
-          <xsl:otherwise>
-            <link rel="stylesheet" type="text/css" href="{if (contains($css-location, '/')) 
-                                                          then $css-location 
-                                                          else concat($common-path,'css/', $css-location)}"/>    
-          </xsl:otherwise>
-        </xsl:choose>
-        <xsl:for-each select="reverse($paths[not(position() = index-of($roles, 'common'))])">
-          <link rel="stylesheet" type="text/css" href="{concat(., 'css/overrides.css')}"/>
-        </xsl:for-each>
+        <xsl:call-template name="include-stylesheets"/>
         <xsl:if test="$create-metadata-head eq 'yes'">
           <xsl:call-template name="create-meta-tags"/>  
         </xsl:if>
@@ -280,6 +268,20 @@
         </xsl:apply-templates>
       </body>
     </html>
+  </xsl:template>
+  
+  <xsl:template name="include-stylesheets">
+    <xsl:choose>
+      <xsl:when test="$css-location eq ''">
+        <link rel="stylesheet" type="text/css" href="{concat($common-path, 'css/stylesheet.css')}"/>  
+      </xsl:when>
+      <xsl:otherwise>
+        <link rel="stylesheet" type="text/css" href="{$css-location}"/>    
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:for-each select="reverse($paths[not(position() = index-of($roles, 'common'))])">
+      <link rel="stylesheet" type="text/css" href="{concat(., 'css/overrides.css')}"/>
+    </xsl:for-each>
   </xsl:template>
   
   <xsl:template match="article | book | book-part-wrapper" mode="jats2html">
