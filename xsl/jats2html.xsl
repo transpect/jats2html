@@ -1447,12 +1447,12 @@
     <xsl:variable name="headlines-by-level" as="element()*">
       <xsl:apply-templates select="$jats2html:toc-headlines[normalize-space()]" mode="toc"/>
     </xsl:variable>
-    <xsl:element name="{if($xhtml-version eq '5.0') then 'nav' else 'div'}">
+    <xsl:element name="{if($xhtml-version eq '5.0' or $epub-version = 'EPUB3') then 'nav' else 'div'}">
       <xsl:if test="not(self::toc)"><!-- assign id just to generated toc -->
         <xsl:attribute name="id" select="'toc'"/>        
       </xsl:if>
       <xsl:attribute name="class" select="'toc'"/>
-      <xsl:if test="$xhtml-version eq '5.0'">
+      <xsl:if test="$xhtml-version eq '5.0'  or $epub-version = 'EPUB3'">
         <xsl:attribute name="epub:type" select="'toc'"/>
       </xsl:if>
       <xsl:choose>
@@ -1463,7 +1463,7 @@
         <xsl:otherwise>
           <xsl:apply-templates select="title-group" mode="jats2html"/>
           <xsl:choose>
-            <xsl:when test="$xhtml-version eq '5.0'">
+            <xsl:when test="$xhtml-version eq '5.0' or $epub-version = 'EPUB3'">
               <xsl:variable name="max-level" 
                             select="($toc-max-level, 
                                      max(for $i in $jats2html:toc-headlines 
@@ -1562,7 +1562,7 @@
   <xsl:template match="title
                       |sec[not(title)]/label
                       |title-group[not(title)]/label" mode="toc">
-    <xsl:element name="{if($xhtml-version eq '5.0') then 'li' else 'p'}">
+    <xsl:element name="{if($xhtml-version eq '5.0' or $epub-version = 'EPUB3') then 'li' else 'p'}">
       <xsl:attribute name="class" select="concat('toc', jats2html:heading-level(.))"/>
       <a href="#{(@id, generate-id())[1]}" 
          class="toc-link toc-{(parent::title-group/parent::book-part-meta/parent::book-part/@book-part-type,
@@ -1577,9 +1577,11 @@
         <xsl:if test="ancestor::book-part-meta/contrib-group/contrib">
           <span class="toc-authors">
             <xsl:value-of select="string-join(for $i in ancestor::book-part-meta/contrib-group/contrib 
-                                              return concat($i//(name[@xml:lang eq $lang], name[1])[1]/given-names, 
-                                                            ' ', 
-                                                            $i//(name[@xml:lang eq $lang], name[1])[1]/surname),
+                                              return if ($i[string-name[normalize-space()] and not(name)])
+                                                     then $i//string-name
+                                                     else concat($i//(name[@xml:lang eq $lang], name[1])[1]/given-names, 
+                                                                  ' ', 
+                                                                  $i//(name[@xml:lang eq $lang], name[1])[1]/surname),
                                               ', ')"/>
           </span>
           <xsl:text>&#x20;</xsl:text>
