@@ -1574,18 +1574,7 @@
                                parent::title-group/parent::*/local-name(),
                                parent::*/local-name()
                                )[1]}">
-        <xsl:if test="ancestor::book-part-meta/contrib-group/contrib">
-          <span class="toc-authors">
-            <xsl:value-of select="string-join(for $i in ancestor::book-part-meta/contrib-group/contrib 
-                                              return if ($i[string-name[normalize-space()] and not(name)])
-                                                     then $i//string-name
-                                                     else concat($i//(name[@xml:lang eq $lang], name[1])[1]/given-names, 
-                                                                  ' ', 
-                                                                  $i//(name[@xml:lang eq $lang], name[1])[1]/surname),
-                                              ', ')"/>
-          </span>
-          <xsl:text>&#x20;</xsl:text>
-        </xsl:if>
+        <xsl:call-template name="toc-authors"/>
         <xsl:if test="not(self::label) and ../label">
           <span class="toc-label">
             <xsl:apply-templates select="../label/node()" mode="strip-indexterms-etc"/>
@@ -1597,6 +1586,22 @@
         </xsl:apply-templates>
       </a>
     </xsl:element>
+  </xsl:template>
+  
+  <xsl:template name="toc-authors">
+    <!-- you can override this in your adaptations -->
+    <xsl:if test="ancestor::book-part-meta/contrib-group/contrib">
+      <span class="toc-authors">
+        <xsl:value-of select="string-join(for $i in ancestor::book-part-meta/contrib-group/contrib 
+                                          return if ($i[string-name[normalize-space()] and not(name)])
+                                                 then $i//string-name
+                                                 else concat($i//(name[@xml:lang eq $lang], name[1])[1]/given-names, 
+                                                                  ' ', 
+                                                                  $i//(name[@xml:lang eq $lang], name[1])[1]/surname),
+                                            ', ')"/>
+       </span>
+       <xsl:text>&#x20;</xsl:text>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="alt-title" mode="jats2html">
