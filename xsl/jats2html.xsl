@@ -974,6 +974,10 @@
           <!-- avoid prefixing the id with 'xref_' since a link to this id was not adjusted accordingly.
           Therefore overriding this xref handling template. -->
           <xsl:copy-of select="@id"/>
+          <xsl:if test="$epub-version = 'EPUB3'">
+            <xsl:if test="@specific-use= 'EndnoteRange'"><xsl:attribute name="epub:type" select="'noteref'"/></xsl:if>
+            <xsl:attribute name="role" select="if (@specific-use= 'EndnoteMarker') then 'doc-backlink' else 'doc-noteref'"/>
+          </xsl:if>
           <xsl:apply-templates mode="#current"/>
         </a>
       </sup>
@@ -985,6 +989,10 @@
       <xsl:next-match/>
       <span class="endnote-anchor">
         <a href="#id_endnoteAnchor-{replace(@id, '^id_endnote-', '')}">
+          <xsl:if test="$epub-version = 'EPUB3'">
+            <xsl:attribute name="epub:type" select="'endnote'"/>
+            <xsl:attribute name="role" select="'doc-backlink'"/>
+          </xsl:if>
           <sup>
             <xsl:value-of select="replace(@id, '^id_endnote-', '')"/>
           </sup>
@@ -3498,5 +3506,5 @@
     <xsl:param name="token" as="xs:string+"/>
     <xsl:sequence select="tokenize($string, '\s+') = $token"/>
   </xsl:function>
-
+  
 </xsl:stylesheet>
