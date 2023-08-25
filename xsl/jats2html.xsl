@@ -132,7 +132,10 @@
             else                        'Notes'"/>
   <xsl:param name="footnote-title-element-name" select="'h1'" as="xs:string"/>
   <xsl:param name="epub-version" as="xs:string" select="'EPUB3'"/>
-
+  <xsl:param name="jats2html:create-lof" select="false()" as="xs:boolean"/>
+  <xsl:param name="jats2html:create-lot" select="false()" as="xs:boolean"/>
+  <xsl:param name="jats2html:lof-as-nav" select="false()" as="xs:boolean"/>
+  <xsl:param name="jats2html:lot-as-nav" select="false()" as="xs:boolean"/>
   
   
   <xsl:output method="xhtml" indent="no" 
@@ -266,6 +269,8 @@
           <xsl:with-param name="root" select="root(*)" as="document-node()" tunnel="yes"/>
           <xsl:with-param name="footnote-roots" as="element(*)*" tunnel="yes" select="$footnote-roots"/>
         </xsl:apply-templates>
+        <xsl:call-template name="create-lof"/>
+        <xsl:call-template name="create-lot"/>
       </body>
     </html>
   </xsl:template>
@@ -2776,7 +2781,7 @@
 
   <xsl:variable name="xref-start-string" select="'['" as="xs:string?"/>
   <xsl:variable name="xref-end-string" select="']'" as="xs:string?"/>
-
+  
   <xsl:template match="xref" mode="jats2html">
     <xsl:param name="in-toc" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="linked-items" as="element(linked-item)*">
@@ -3506,5 +3511,67 @@
     <xsl:param name="token" as="xs:string+"/>
     <xsl:sequence select="tokenize($string, '\s+') = $token"/>
   </xsl:function>
+
+  <xsl:template name="create-lof">
+    <xsl:if test="$jats2html:create-lof and //fig[caption]">
+     <xsl:element name="{if ($epub-version = 'EPUB3' or $xhtml-version = '5.0') then 'section' else 'div'}">
+       <xsl:attribute name="epub:type" select="'lof'"/>
+       <xsl:attribute name="id" select="'lof'"/>
+       <xsl:if test="$jats2html:lof-as-nav">
+         <xsl:attribute name="hidden" select="'hidden'"/>
+         <xsl:attribute name="class" select="'as-nav'"/>
+       </xsl:if>
+       <h1 class="lof-heading">
+         <xsl:value-of select="if (/*/@xml:lang = 'de') then 'Abbildungsverzeichnis' else 'List of Figures'"/>
+       </h1>
+      <xsl:variable name="figures" as="element(*)*">
+        <xsl:apply-templates select="//fig[caption]" mode="lof"/>
+      </xsl:variable>
+       <xsl:if test="exists($figures)">
+         <ol>
+           <xsl:for-each select="$figures">
+             <xsl:sequence select="."/>
+           </xsl:for-each>
+         </ol>
+       </xsl:if>
+     </xsl:element>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="create-lot">
+    <xsl:if test="$jats2html:create-lot and //table-wrap[caption]">
+     <xsl:element name="{if ($epub-version = 'EPUB3' or $xhtml-version = '5.0') then 'section' else 'div'}">
+       <xsl:attribute name="epub:type" select="'lot'"/>
+       <xsl:attribute name="id" select="'lot'"/>
+       <xsl:if test="$jats2html:lot-as-nav">
+         <xsl:attribute name="hidden" select="'hidden'"/>
+         <xsl:attribute name="class" select="'as-nav'"/>
+       </xsl:if>
+       <h1 class="lof-heading">
+         <xsl:value-of select="if (/*/@xml:lang = 'de') then 'Tabellenverzeichnis' else 'List of Tables'"/>
+       </h1>
+       <xsl:variable name="tables" as="element(*)*">
+        <xsl:apply-templates select="//table-wrap[caption]" mode="lof"/>
+      </xsl:variable>
+       <xsl:if test="exists($tables)">
+         <ol>
+           <xsl:for-each select="$tables">
+             <xsl:sequence select="."/>
+           </xsl:for-each>
+         </ol>
+       </xsl:if>
+     </xsl:element>
+    </xsl:if>
+  </xsl:template>
   
+  <xsl:template match="table-wrap | fig" mode="lof">
+    <li>
+      <a href="#{@id}">
+        <xsl:apply-templates select="label" mode="strip-indexterms-etc"/>
+        <xsl:apply-templates select="label" mode="label-sep"/>
+        <xsl:apply-templates select="caption/title" mode="strip-indexterms-etc"/>
+      </a>
+    </li>  
+  </xsl:template>
+      
 </xsl:stylesheet>
