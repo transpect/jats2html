@@ -132,9 +132,9 @@
             else                        'Notes'"/>
   <xsl:param name="footnote-title-element-name" select="'h1'" as="xs:string"/>
   <xsl:param name="epub-version" as="xs:string" select="'EPUB3'"/>
-  <xsl:param name="jats2html:create-lof" select="false()" as="xs:boolean"/>
+  <xsl:param name="jats2html:create-loi" select="false()" as="xs:boolean"/>
   <xsl:param name="jats2html:create-lot" select="false()" as="xs:boolean"/>
-  <xsl:param name="jats2html:lof-as-nav" select="false()" as="xs:boolean"/>
+  <xsl:param name="jats2html:loi-as-nav" select="false()" as="xs:boolean"/>
   <xsl:param name="jats2html:lot-as-nav" select="false()" as="xs:boolean"/>
   
   
@@ -3512,12 +3512,12 @@
     <xsl:sequence select="tokenize($string, '\s+') = $token"/>
   </xsl:function>
 
-  <xsl:template name="create-lof">
-    <xsl:if test="$jats2html:create-lof and //fig[caption]">
+  <xsl:template name="create-loi">
+    <xsl:if test="$jats2html:create-loi and //fig[caption]">
      <xsl:element name="{if ($epub-version = 'EPUB3' or $xhtml-version = '5.0') then 'section' else 'div'}">
        <xsl:attribute name="epub:type" select="'lof'"/>
        <xsl:attribute name="id" select="'lof'"/>
-       <xsl:if test="$jats2html:lof-as-nav">
+       <xsl:if test="$jats2html:loi-as-nav">
          <xsl:attribute name="hidden" select="'hidden'"/>
          <xsl:attribute name="class" select="'as-nav'"/>
        </xsl:if>
