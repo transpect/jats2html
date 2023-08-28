@@ -269,7 +269,7 @@
           <xsl:with-param name="root" select="root(*)" as="document-node()" tunnel="yes"/>
           <xsl:with-param name="footnote-roots" as="element(*)*" tunnel="yes" select="$footnote-roots"/>
         </xsl:apply-templates>
-        <xsl:call-template name="create-lof"/>
+        <xsl:call-template name="create-loi"/>
         <xsl:call-template name="create-lot"/>
       </body>
     </html>
