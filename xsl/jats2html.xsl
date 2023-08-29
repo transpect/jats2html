@@ -3513,11 +3513,10 @@
   </xsl:function>
 
   <xsl:template name="create-loi">
-    <xsl:message select="'####', $jats2html:create-loi, 'fig: ', exists(//fig[caption]), ' $epub-version: ',$epub-version, ' $jats2html:loi-as-nav: ', $jats2html:loi-as-nav"/>
-    <xsl:if test="$jats2html:create-loi and //fig[caption]">
+    <xsl:if test="$jats2html:create-loi and exists(//fig[caption9]">
      <xsl:element name="{if ($epub-version = 'EPUB3' or $xhtml-version = '5.0') then 'section' else 'div'}">
-       <xsl:attribute name="epub:type" select="'lof'"/>
-       <xsl:attribute name="id" select="'lof'"/>
+       <xsl:attribute name="epub:type" select="'loi'"/>
+       <xsl:attribute name="id" select="'loi'"/>
        <xsl:if test="$jats2html:loi-as-nav">
          <xsl:attribute name="hidden" select="'hidden'"/>
          <xsl:attribute name="class" select="'as-nav'"/>
@@ -3540,7 +3539,7 @@
   </xsl:template>
 
   <xsl:template name="create-lot">
-    <xsl:if test="$jats2html:create-lot and //table-wrap[caption]">
+    <xsl:if test="$jats2html:create-lot and exists(//table-wrap[caption])">
      <xsl:element name="{if ($epub-version = 'EPUB3' or $xhtml-version = '5.0') then 'section' else 'div'}">
        <xsl:attribute name="epub:type" select="'lot'"/>
        <xsl:attribute name="id" select="'lot'"/>
