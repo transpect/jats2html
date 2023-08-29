@@ -3513,6 +3513,7 @@
   </xsl:function>
 
   <xsl:template name="create-loi">
+    <xsl:message select="'####', $jats2html:create-loi, 'fig: ', exists(//fig[caption]), ' $epub-version: ',$epub-version, ' $jats2html:loi-as-nav: ', $jats2html:loi-as-nav"/>
     <xsl:if test="$jats2html:create-loi and //fig[caption]">
      <xsl:element name="{if ($epub-version = 'EPUB3' or $xhtml-version = '5.0') then 'section' else 'div'}">
        <xsl:attribute name="epub:type" select="'lof'"/>
