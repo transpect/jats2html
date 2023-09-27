@@ -1576,7 +1576,8 @@
                       |sec[not(title)]/label
                       |title-group[not(title)]/label" mode="toc">
     <xsl:element name="{if($xhtml-version eq '5.0' or $epub-version = 'EPUB3') then 'li' else 'p'}">
-      <xsl:attribute name="class" select="concat('toc', jats2html:heading-level(.))"/>
+      <xsl:apply-templates select="." mode="toc-class"/>
+     
       <a href="#{(@id, generate-id())[1]}" 
          class="toc-link toc-{(parent::title-group/parent::book-part-meta/parent::book-part/@book-part-type,
                                parent::title-group/parent::book-part-meta/parent::*/local-name(),
@@ -1599,6 +1600,12 @@
         </xsl:apply-templates>
       </a>
     </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="title
+                      |sec[not(title)]/label
+                      |title-group[not(title)]/label" mode="toc-class">
+     <xsl:attribute name="class" select="concat('toc', jats2html:heading-level(.))"/>
   </xsl:template>
   
   <xsl:template name="toc-authors">
