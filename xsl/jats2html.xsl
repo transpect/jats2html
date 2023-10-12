@@ -136,7 +136,8 @@
   <xsl:param name="jats2html:create-lot" select="false()" as="xs:boolean"/>
   <xsl:param name="jats2html:loi-as-nav" select="false()" as="xs:boolean"/>
   <xsl:param name="jats2html:lot-as-nav" select="false()" as="xs:boolean"/>
-  
+  <xsl:param name="lot-as-nav" select="false()" as="xs:boolean"/>
+  <xsl:param name="img-presentation-role" select="'tr_ARTIFACT'" as="xs:string"/>
   
   <xsl:output method="xhtml" indent="no" 
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
@@ -151,12 +152,19 @@
     as="document-node(element(l10n:l10n))"/>
   
   <xsl:key name="l10n-string" match="l10n:string" use="@id"/>
+
+  <xsl:template match="html:img[(.|ancestor::html:div[contains(@class, 'fig')])/@class[1][matches(., $img-presentation-role)]]/@srcpath" 
+    mode="clean-up" priority="7">
+    <xsl:next-match/>
+    <xsl:attribute name="role" select="'presentation'"/>
+  </xsl:template>
   
   <xsl:template match="* | @*" mode="expand-css clean-up table-widths epub-alternatives">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@* | node()" mode="#current" />  
     </xsl:copy>
   </xsl:template>
+
   <xsl:template match="processing-instruction('break')" mode="epub-alternatives">
     <xsl:copy/>
   </xsl:template>
