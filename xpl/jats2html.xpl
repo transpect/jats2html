@@ -17,7 +17,7 @@
   <p:option name="debug" required="false" select="'no'"/>
   <p:option name="debug-dir-uri" required="false" select="'debug'"/>
   <p:option name="status-dir-uri" required="false" select="'status'"/>
-  <p:option name="css-location" required="false" select="'stylesheet.css'"/>
+  <p:option name="css-location" required="false" select="''"/>
   <p:option name="fallback-xsl" select="'http://transpect.io/jats2html/xsl/jats2html.xsl'"/>
   <p:option name="fallback-xpl" select="'http://transpect.io/jats2html/xpl/jats2html_default.xpl'"/>
   
