@@ -3402,7 +3402,7 @@
   </xsl:template>
 
   <xsl:template match="kwd-group/kwd" mode="jats2html">
-    <xsl:if test="preceding-sibling::kwd">
+    <xsl:if test="preceding-sibling::kwd and not(preceding-sibling::*[1][self::x][matches(., '[,;]')])">
       <span class="kwd_sep">
         <xsl:text xml:space="preserve">; </xsl:text>
       </span>
