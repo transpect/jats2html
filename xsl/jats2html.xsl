@@ -1488,7 +1488,8 @@
               <xsl:variable name="max-level" 
                             select="($toc-max-level, 
                                      max(for $i in $jats2html:toc-headlines 
-                                         return jats2html:heading-level($i)))[1]"/>
+                                         return jats2html:heading-level($i)),
+                                     0)[1]"/>
               <xsl:variable name="toc-as-tree">
                 <xsl:sequence select="jats2html:flat-toc-to-tree($headlines-by-level, 0, $max-level)"/>
               </xsl:variable>
