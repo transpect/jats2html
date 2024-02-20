@@ -795,6 +795,10 @@
   <!-- will be handled by class-att mode -->
   <xsl:template match="@content-type | @style-type | @list-content | @specific-use" mode="jats2html"/>
 
+  <xsl:template match="*[self::*:td|self::*:th]/@scope" mode="jats2html">
+    <xsl:copy copy-namespaces="no"/>
+  </xsl:template>
+  
   <xsl:template match="contrib-id" mode="jats2html">
     <span class="{local-name()}">
       <xsl:next-match/>
