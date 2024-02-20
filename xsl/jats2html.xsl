@@ -892,7 +892,7 @@
       <span class="note-mark">
         <xsl:choose>
           <xsl:when test="$static-footnotes">
-            <xsl:value-of select="(@symbol, $index)[1]"/>
+            <xsl:value-of select="(@symbol,label, $index)[1]"/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:call-template name="footnote-link">
@@ -901,7 +901,7 @@
           </xsl:otherwise>
         </xsl:choose>
       </span>
-      <xsl:apply-templates mode="jats2html"/>
+      <xsl:apply-templates select="node() except label" mode="jats2html"/>
     </xsl:element>
   </xsl:template>
   
@@ -935,7 +935,7 @@
             <xsl:attribute name="epub:type" select="'noteref'"/>
           </xsl:if>
           <sup>
-            <xsl:value-of select="(@symbol, $index)[1]"/>
+            <xsl:value-of select="(@symbol, label, $index)[1]"/>
           </sup>
         </a>
       </span>    
