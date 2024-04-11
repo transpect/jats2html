@@ -365,6 +365,7 @@
                          'book-back',
                          'book-body',
                          'book-part',
+                         'book-meta',
                          'contrib-group',
                          'dedication',
                          'fn-group',
