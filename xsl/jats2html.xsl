@@ -2789,8 +2789,8 @@
   </xsl:template>
   
   <xsl:template match="contrib-group/aff[@id]" mode="jats2html">
-    <xsl:variable name="affiliations-ids" select="parent::*/aff/generate-id()" as="xs:string+"/>
-    <xsl:variable name="pos" select="index-of($affiliations-ids, generate-id())" as="xs:integer"/>
+    <xsl:variable name="affiliations-ids" select="for $aff in parent::*/aff return ($aff/@id, generate-id($aff))[1]" as="xs:string+"/>
+    <xsl:variable name="pos" select="index-of($affiliations-ids, (@id, generate-id())[1])" as="xs:integer"/>
     <p class="aff">
       <xsl:apply-templates select="@*" mode="#current"/>
       <span class="label">
