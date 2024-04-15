@@ -1195,7 +1195,7 @@
     <xsl:next-match/>
   </xsl:template>
   
-  <xsl:template match="list[matches(@list-type, '^(simple|ndash|bullet)$')]" 
+  <xsl:template match="list[matches(@list-type, '^(simple|n?dash|bullet)$')]" 
                 mode="jats2html">
     <ul>
       <xsl:apply-templates select="@*" mode="#current"/>
