@@ -468,7 +468,7 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="book-meta/*[local-name()= ('book-id', 'isbn', 'permissions', 'book-volume-number', 'publisher')]" mode="jats2html">
+  <xsl:template match="book-meta/*[local-name()= ('book-id', 'book-volume-id', 'isbn', 'permissions', 'book-volume-number', 'publisher')]" mode="jats2html">
     <div class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </div>
