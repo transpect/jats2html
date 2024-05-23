@@ -2634,7 +2634,7 @@
       <xsl:when test="$table-widths-created">
         <!-- if jats2html:table-width-grid() returns 0, widths were preserved and stylesheet could loop.-->
          <xsl:element name="{name()}">
-           <xsl:apply-templates select="@*, node()" mode="#current"/>
+           <xsl:call-template name="css:content"/>
          </xsl:element>
       </xsl:when>
       <xsl:otherwise>
