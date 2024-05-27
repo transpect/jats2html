@@ -1333,15 +1333,15 @@
             <xsl:apply-templates select="label, caption/*[1]/node()" mode="#current"/>
           </p>
         </xsl:if>
-        <xsl:apply-templates select="if(label) then caption/*[position() ne 1] else caption" mode="#current"/>
+        <xsl:apply-templates select="if (label) then caption/*[position() ne 1] else caption" mode="#current"/>
       </div>
     </xsl:variable>
-    <div class="{local-name()} {distinct-values(for $ct in (@content-type, table/@content-type) return tokenize($ct, '\s+'))}">
+    <div class="{local-name()} {distinct-values(for $ct in (@content-type, table/@content-type, if (alternatives) then 'alt-image' else ()) return tokenize($ct, '\s+'))}">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:if test="(label|caption) and $table-caption-side eq 'top'">
         <xsl:sequence select="$table-caption"/>
       </xsl:if>
-      <xsl:apply-templates select="* except (label|caption)" mode="#current"/>
+      <xsl:apply-templates select="* except (label|caption|table[..[alternatives]])" mode="#current"/>
       <xsl:if test="(label|caption) and $table-caption-side eq 'bottom'">
         <xsl:sequence select="$table-caption"/>
       </xsl:if>
@@ -1349,11 +1349,11 @@
   </xsl:template>
 
   <!-- special case when alternative images is rendered for epub-->  
-  <xsl:template match="table-wrap[alternatives]" mode="jats2html" priority="3">
+<!--  <xsl:template match="table-wrap[alternatives]" mode="jats2html" priority="3">
     <div class="{local-name()} {distinct-values(table/@content-type)} alt-image">
       <xsl:apply-templates select="@*, node() except table" mode="#current"/>
     </div>
-  </xsl:template>
+  </xsl:template>-->
   
   <xsl:template match="@preformat-type" mode="jats2html">
     <xsl:attribute name="class" select="."/>
