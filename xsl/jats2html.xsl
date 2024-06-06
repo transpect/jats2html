@@ -425,7 +425,7 @@
   <xsl:template match="*" mode="jats2html" priority="7">
     <xsl:param name="footnote-roots" as="element(*)*" tunnel="yes"/>
     <xsl:next-match/>
-    <xsl:if test="exists(. intersect $footnote-roots)">
+    <xsl:if test="exists(. intersect $footnote-roots) and not(//fn-group)">
       <xsl:call-template name="jats2html:footnotes"/>
     </xsl:if>
   </xsl:template>
