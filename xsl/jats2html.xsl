@@ -2237,7 +2237,7 @@
         </xsl:if>
       </xsl:for-each>
       <xsl:for-each-group select="current-group()/see" group-by="string(.)">
-        <xsl:if test="position() = 1">
+        <xsl:if test="position() = 1 and not(current-group()[*])">
           <xsl:value-of select="if ($root/*/@xml:lang = 'de') 
                                 then 
                                   if ($cg[jats2html:contains-token(@content-type, 'hub:not-placed-on-page')])
@@ -2291,7 +2291,7 @@
         </a>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="."/>
+        <xsl:apply-templates mode="#current"/>
       </xsl:otherwise>
     </xsl:choose>
 
