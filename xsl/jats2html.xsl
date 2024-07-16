@@ -1195,7 +1195,8 @@
     <xsl:next-match/>
   </xsl:template>
   
-  <xsl:template match="list[matches(@list-type, '^(simple|ndash|bullet)$') or not(@list-type)]" 
+  <xsl:template match="list[not(matches(@list-type, '^(order|alpha|roman|alpha-lower|alpha-upper|roman-lower|roman-upper)$')) 
+                            or not(@list-type)]" 
                 mode="jats2html">
     <ul>
       <xsl:apply-templates select="@*" mode="#current"/>
@@ -2237,7 +2238,7 @@
         </xsl:if>
       </xsl:for-each>
       <xsl:for-each-group select="current-group()/see" group-by="string(.)">
-        <xsl:if test="position() = 1 and not(current-group()[*])">
+        <xsl:if test="position() = 1 ">
           <xsl:value-of select="if ($root/*/@xml:lang = 'de') 
                                 then 
                                   if ($cg[jats2html:contains-token(@content-type, 'hub:not-placed-on-page')])
