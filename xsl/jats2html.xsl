@@ -2238,13 +2238,16 @@
         </xsl:if>
       </xsl:for-each>
       <xsl:for-each-group select="current-group()/see" group-by="string(.)">
-        <xsl:if test="position() = 1 ">
+        <xsl:if test="position() = 1 and not(matches(.,'siehe','i'))">
           <xsl:value-of select="if ($root/*/@xml:lang = 'de') 
                                 then 
                                   if ($cg[jats2html:contains-token(@content-type, 'hub:not-placed-on-page')])
                                   then 'siehe ' 
                                   else ' siehe ' 
                                 else ' see '" xml:space="preserve"/>
+        </xsl:if>
+        <xsl:if test="position() = 1 ">
+          <xsl:value-of select="' '" xml:space="preserve"/>
         </xsl:if>
         <xsl:call-template name="potentially-link-to-see-target"/>
         <xsl:if test="not(position() = last())">
@@ -2366,12 +2369,16 @@
   </xsl:template>
   
   <xsl:template match="see" mode="jats2html">
-    <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe ' else ' see '" xml:space="preserve"/>
+    <xsl:if test="not(matches(string-join(descendant::text(),''),'siehe|see','i'))">
+      <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe ' else ' see '" xml:space="preserve"/>
+    </xsl:if>
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
   <xsl:template match="see-also" mode="jats2html">
-    <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe auch ' else ' see also '" xml:space="preserve"/>
+    <xsl:if test="not(matches(string-join(descendant::text(),''),'siehe auch|see also','i'))">
+      <xsl:value-of select="if($root/*/@xml:lang = 'de') then ' siehe auch ' else ' see also '" xml:space="preserve"/>
+    </xsl:if>
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
