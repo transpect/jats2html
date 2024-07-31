@@ -1463,7 +1463,8 @@
                            [not(   ancestor::boxed-text 
                                 or ancestor::toc 
                                 or ancestor::collection-meta
-                                or ancestor::book-meta)]
+                                or ancestor::book-meta
+                                or ancestor::index-div)]
                            [jats2html:heading-level(.) le number((current()/@depth, 100)[1]) + 1]
                            [not(matches(@content-type, $jats2html:notoc-regex))]"/>
   
@@ -2146,6 +2147,9 @@
               <li class="ie ie{$level}" epub:type="index-entry">
                 <xsl:apply-templates select="* except (index-entry|nav-pointer|nav-pointer-group)" mode="index-term"/>                
                 <xsl:for-each select="nav-pointer[@rid] union nav-pointer-group/nav-pointer[@rid]">
+                  <xsl:if test="position() = 1">
+                    <xsl:text>&#x20;</xsl:text>
+                  </xsl:if>
                   <xsl:apply-templates select="." mode="index-term"/>
                   <xsl:if test="position() ne last()">
                     <xsl:text>,&#x20;</xsl:text>
