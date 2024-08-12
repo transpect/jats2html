@@ -153,7 +153,7 @@
   
   <xsl:key name="l10n-string" match="l10n:string" use="@id"/>
 
-  <xsl:template match="html:img[(.|ancestor::html:div[contains(@class, 'fig')])/@class[1][matches(., $img-presentation-role)]]/@srcpath" 
+  <xsl:template match="html:img[not($epub-version = 'EPUB2')][(.|ancestor::html:div[contains(@class, 'fig')])/@class[1][matches(., $img-presentation-role)]]/@srcpath" 
     mode="clean-up" priority="7">
     <xsl:next-match/>
     <xsl:attribute name="role" select="'presentation'"/>
