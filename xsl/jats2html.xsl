@@ -1285,7 +1285,11 @@
   <xsl:template match="fig" mode="jats2html">
     <xsl:element name="{if($xhtml-version eq '5.0') then 'figure' else 'div'}">
       <xsl:attribute name="class" select="string-join((name(), @book-part-type, @sec-type, @content-type), ' ')"/>  
-      <xsl:call-template name="css:other-atts"/>  
+      <xsl:call-template name="css:other-atts"/>
+      <xsl:if test="$jats2html:create-loi and not(@id)">
+        <!-- iffig has no @id but a list of figures is created: add @id-->
+        <xsl:attribute name="id" select="generate-id(.)"/>
+      </xsl:if>
       <xsl:apply-templates select="* except (label | caption | permissions), caption" mode="#current"/>
     </xsl:element>
   </xsl:template>
@@ -1339,6 +1343,10 @@
     </xsl:variable>
     <div class="{local-name()} {distinct-values(for $ct in (@content-type, table/@content-type, if (alternatives) then 'alt-image' else ()) return tokenize($ct, '\s+'))}">
       <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:if test="self::table-wrap and $jats2html:create-lot and not(@id)">
+        <!-- if table-wrap has no @id but a list of tables is created: add @id-->
+        <xsl:attribute name="id" select="generate-id(.)"/>
+      </xsl:if>
       <xsl:if test="(label|caption) and $table-caption-side eq 'top'">
         <xsl:sequence select="$table-caption"/>
       </xsl:if>
@@ -3599,7 +3607,7 @@
   
   <xsl:template match="table-wrap | fig" mode="lof">
     <li>
-      <a href="#{@id}">
+      <a href="#{(@id, generate-id(.))[1]}">
         <xsl:apply-templates select="label" mode="strip-indexterms-etc"/>
         <xsl:apply-templates select="label" mode="label-sep"/>
         <xsl:apply-templates select="caption/title" mode="strip-indexterms-etc"/>
