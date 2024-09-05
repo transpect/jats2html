@@ -1500,13 +1500,8 @@
           <xsl:apply-templates select="title-group" mode="jats2html"/>
           <xsl:choose>
             <xsl:when test="$xhtml-version eq '5.0' or $epub-version = 'EPUB3'">
-              <xsl:variable name="max-level" 
-                            select="($toc-max-level, 
-                                     max(for $i in $jats2html:toc-headlines 
-                                         return jats2html:heading-level($i)),
-                                     0)[1]"/>
               <xsl:variable name="toc-as-tree">
-                <xsl:sequence select="jats2html:flat-toc-to-tree($headlines-by-level, 0, $max-level)"/>
+                <xsl:sequence select="jats2html:flat-toc-to-tree($headlines-by-level, 0, jats2html:set-max-toc-level($toc-max-level, $jats2html:toc-headlines ))"/>
               </xsl:variable>
               <xsl:variable name="patched-toc">
                 <xsl:apply-templates select="$toc-as-tree" mode="patch-toc-for-epub3"/>
@@ -1521,6 +1516,15 @@
       </xsl:choose>
     </xsl:element>
   </xsl:template>
+  
+  <xsl:function name="jats2html:set-max-toc-level" as="xs:integer">
+    <xsl:param name="toc-max-level" as="xs:integer?"/>
+    <xsl:param name="jats2html:toc-headlines" as="element()*"/>
+   <xsl:sequence select="($toc-max-level[. castable as xs:integer], 
+                                     max(for $i in $jats2html:toc-headlines 
+                                         return jats2html:heading-level($i)),
+                                     0)[1]"/>
+  </xsl:function>
   
   <xsl:template name="page-list">
     <!-- it is better to let epubtools create this list because it will make sure that it is in spine order.
