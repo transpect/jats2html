@@ -1616,17 +1616,8 @@
                                parent::title-group/parent::*/local-name(),
                                parent::*/local-name()
                                )[1]}">
-        <xsl:call-template name="toc-authors"/>
-        <xsl:if test="not(self::label) and ../label">
-          <span class="toc-label">
-            <xsl:apply-templates select="../label/node()" mode="strip-indexterms-etc"/>
-            <xsl:value-of select="$subtitle-separator-in-ncx"/>
-          </span>
-        </xsl:if>
-        <xsl:apply-templates mode="jats2html">
-          <xsl:with-param name="in-toc" select="true()" as="xs:boolean" tunnel="yes"/>
-        </xsl:apply-templates>
-      </a>
+      <xsl:call-template name="toc-link-content"/>
+     </a>
     </xsl:element>
   </xsl:template>
   
@@ -1635,7 +1626,20 @@
                       |title-group[not(title)]/label" mode="toc-class">
      <xsl:attribute name="class" select="concat('toc', jats2html:heading-level(.))"/>
   </xsl:template>
-  
+ 
+  <xsl:template name="toc-link-content"> 
+    <xsl:call-template name="toc-authors"/>
+    <xsl:if test="not(self::label) and ../label">
+      <span class="toc-label">
+        <xsl:apply-templates select="../label/node()" mode="strip-indexterms-etc"/>
+        <xsl:value-of select="$subtitle-separator-in-ncx"/>
+      </span>
+    </xsl:if>
+    <xsl:apply-templates mode="jats2html">
+      <xsl:with-param name="in-toc" select="true()" as="xs:boolean" tunnel="yes"/>
+    </xsl:apply-templates>
+  </xsl:template>
+
   <xsl:template name="toc-authors">
     <!-- you can override this in your adaptations -->
     <xsl:if test="ancestor::book-part-meta/contrib-group/contrib">
