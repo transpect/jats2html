@@ -2250,7 +2250,11 @@
       </xsl:for-each>
       <xsl:for-each select="current-group()[empty(index-term)]
                                            [not(some $a in ancestor-or-self::*[self::index-term]/@content-type satisfies jats2html:contains-token($a, 'hub:not-placed-on-page'))]">
-        <a href="#it_{@id}" id="ie_{@id}" class="index-link" epub:type="index-locator">
+       <xsl:variable name="style" select="if (current-group()/ancestor-or-self::index-term[last()]/@content-type[matches(., '^(hub:page-num-)?(bold|italic|bolditalic)$')]) 
+                                          then  replace(current-group()/ancestor-or-self::index-term[last()]/@content-type, '^(hub:page-num-)?(bold|italic|bolditalic)$', '$2')
+                                          else ()" as="xs:string?"/>
+        <a href="#it_{@id}" id="ie_{@id}" epub:type="index-locator">
+          <xsl:attribute name="class" select="string-join(('index-link', $style)[normalize-space()], ' ')"/>
           <xsl:value-of select="position()"/>
         </a>
         <xsl:if test="position() ne last()(: or (current-group()[see] and position() = last()):)">
