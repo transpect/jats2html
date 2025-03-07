@@ -3578,7 +3578,7 @@
          <xsl:value-of select="if (/*/@xml:lang = 'de') then 'Abbildungsverzeichnis' else 'List of Figures'"/>
        </h1>
       <xsl:variable name="figures" as="element(*)*">
-        <xsl:apply-templates select="//fig[caption]" mode="lof"/>
+        <xsl:apply-templates select="//fig[caption][normalize-space()]" mode="lof"/>
       </xsl:variable>
        <xsl:if test="exists($figures)">
          <ol>
@@ -3618,13 +3618,15 @@
   </xsl:template>
   
   <xsl:template match="table-wrap | fig" mode="lof">
-    <li>
-      <a href="#{(@id, generate-id(.))[1]}">
-        <xsl:apply-templates select="label" mode="strip-indexterms-etc"/>
-        <xsl:apply-templates select="label" mode="label-sep"/>
-        <xsl:apply-templates select="caption/title" mode="strip-indexterms-etc"/>
-      </a>
-    </li>  
+    <xsl:if test="label[normalize-space()] or caption/title[normalize-space()]">
+      <li>
+        <a href="#{(@id, generate-id(.))[1]}">
+          <xsl:apply-templates select="label" mode="strip-indexterms-etc"/>
+          <xsl:apply-templates select="label" mode="label-sep"/>
+          <xsl:apply-templates select="caption/title" mode="strip-indexterms-etc"/>
+        </a>
+      </li>
+    </xsl:if>  
   </xsl:template>
       
 </xsl:stylesheet>
