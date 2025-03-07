@@ -3578,7 +3578,7 @@
          <xsl:value-of select="if (/*/@xml:lang = 'de') then 'Abbildungsverzeichnis' else 'List of Figures'"/>
        </h1>
       <xsl:variable name="figures" as="element(*)*">
-        <xsl:apply-templates select="//fig[caption][normalize-space()]" mode="lof"/>
+        <xsl:apply-templates select="//fig[caption]" mode="lof"/>
       </xsl:variable>
        <xsl:if test="exists($figures)">
          <ol>
