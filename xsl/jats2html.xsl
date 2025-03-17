@@ -2166,8 +2166,11 @@
                   <xsl:if test="position() = 1">
                     <xsl:text>&#x20;</xsl:text>
                   </xsl:if>
+                  <xsl:if test="current()/@nav-pointer-type='end-of-range'">
+                    <xsl:text>-</xsl:text>
+                  </xsl:if>
                   <xsl:apply-templates select="." mode="index-term"/>
-                  <xsl:if test="position() ne last()">
+                  <xsl:if test="position() ne last() and not(current()/@nav-pointer-type='start-of-range')">
                     <xsl:text>,&#x20;</xsl:text>
                   </xsl:if>
                 </xsl:for-each>
