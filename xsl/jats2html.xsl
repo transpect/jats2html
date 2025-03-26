@@ -44,6 +44,7 @@
   <!-- if xhtml-version is set to '5.0' and value here is 'yes', the footnotes are set as endnotes -->
   <xsl:param name="default-container-name" select="if($xhtml-version eq '5.0') then 'section' else 'div'" as="xs:string"/>
   <xsl:param name="toc" select="'no'" as="xs:string"/>
+  <xsl:param name="toc-hidden" as="xs:string" select="'no'"/>
   <xsl:param name="toc-max-level" as="xs:integer?"/>
   <xsl:param name="copy-colwidths" as="xs:string" select="'yes'">
     <!-- whether to repeat CSS widths in the first table rows in order to overcome bugs in ADE and others.
@@ -1486,6 +1487,9 @@
     <xsl:element name="{if($xhtml-version eq '5.0' or $epub-version = 'EPUB3') then 'nav' else 'div'}">
       <xsl:if test="not(self::toc)"><!-- assign id just to generated toc -->
         <xsl:attribute name="id" select="'toc'"/>        
+      </xsl:if>
+      <xsl:if test="$toc-hidden = ('yes', 'true')"><!-- hide toc -->
+        <xsl:attribute name="hidden" select="'hidden'"/>        
       </xsl:if>
       <xsl:attribute name="class" select="'toc'"/>
       <xsl:if test="$xhtml-version eq '5.0'  or $epub-version = 'EPUB3'">
