@@ -1468,6 +1468,10 @@
     <xsl:attribute name="epub:type" select="'backmatter'"/>
   </xsl:template>
   
+  <xsl:template match="xref[key('by-id', @rid)[self::mixed-citation|self::ref|self::element-citation]]" mode="epub-type">
+    <xsl:attribute name="epub:type" select="'biblioref'"/>
+  </xsl:template>
+  
   <xsl:template match="*" mode="epub-type"/>
 
   <xsl:function name="tr:create-epub-type-attribute" as="attribute()?">
@@ -2882,6 +2886,7 @@
                 <!-- in some cases an xref does not have an @id, so we will not create duplicate @id="xref_" attributes -->
                 <xsl:attribute name="id" select="concat('xref_', @id)"/>  
               </xsl:if>
+              <xsl:sequence select="tr:create-epub-type-attribute(.)"/>
               <xsl:apply-templates select="@srcpath, @alt, node()" mode="#current"/>
             </a>
             <xsl:if test="    $linked-items[1]/@ref-type = 'ref' 
