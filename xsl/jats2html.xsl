@@ -46,6 +46,7 @@
   <xsl:param name="toc" select="'no'" as="xs:string"/>
   <xsl:param name="toc-hidden" as="xs:string" select="'no'"/>
   <xsl:param name="toc-max-level" as="xs:integer?"/>
+  <xsl:param name="bibliography-as-list" as="xs:string?" select="'no'"/>
   <xsl:param name="copy-colwidths" as="xs:string" select="'yes'">
     <!-- whether to repeat CSS widths in the first table rows in order to overcome bugs in ADE and others.
       But there are other bugs that may show if repeating the widths (table cell contents cut off to the right).
@@ -1023,6 +1024,25 @@
     <a class="{local-name()}" href="{if(starts-with(@xlink:href , 'http')) then @xlink:href else concat('#', @xlink:href)}">
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </a>
+  </xsl:template>
+  
+  <xsl:template match="ref-list[$bibliography-as-list = ('yes', 'true')]" mode="jats2html" priority="5">
+    
+    <section>
+      <xsl:apply-templates select="." mode="class-att"/>
+      <xsl:apply-templates select="title" mode="#current"/>
+      <ul class="ref">
+        <xsl:apply-templates select="@* except (@book-part-type|@sec-type|@content-type)" mode="#current"/>
+        <xsl:if test="tr:create-epub-type-attribute(.)">
+          <xsl:attribute name="epub:type" select="tr:create-epub-type-attribute(.)"/>
+        </xsl:if>
+        <xsl:apply-templates select="node() except title" mode="#current"/>
+      </ul>
+    </section>
+  </xsl:template>
+ 
+  <xsl:template match="ref-list[$bibliography-as-list = ('yes', 'true')]/ref" mode="jats2html" priority="5">
+    <li><xsl:apply-templates select="@*, node()" mode="#current"/></li>
   </xsl:template>
 
   <xsl:template match="*[html:p[html:span[@class = 'endnote-anchor']]]" mode="clean-up" priority="5">
