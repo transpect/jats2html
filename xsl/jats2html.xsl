@@ -381,7 +381,8 @@
                          'named-book-part-body',
                          'preface',
                          'ref-list',
-                         'sec')"/>
+                         'sec',
+                         'dark-matter')"/>
   
   <xsl:template match="*[local-name() = $default-structural-containers]" mode="jats2html" priority="2">
     <xsl:apply-templates select="if(title) 
