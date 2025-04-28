@@ -1032,7 +1032,7 @@
       <xsl:apply-templates select="." mode="class-att"/>
       <xsl:apply-templates select="title" mode="#current"/>
       <ul class="ref">
-        <xsl:apply-templates select="@* except (@book-part-type|@sec-type|@content-type)" mode="#current"/>
+        <xsl:apply-templates select="@* except (@book-part-type|@sec-type|@content-type|@id)" mode="#current"/>
         <xsl:if test="tr:create-epub-type-attribute(.)">
           <xsl:attribute name="epub:type" select="tr:create-epub-type-attribute(.)"/>
         </xsl:if>
