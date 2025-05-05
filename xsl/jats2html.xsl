@@ -1280,7 +1280,8 @@
        although this element can appear notelessly in the regular content. -->
   
   <xsl:template match="notes" mode="jats2html">
-    <div class="{local-name()}">
+    <div>
+      <xsl:attribute name="class" select="string-join((local-name(), @notes-type), ' ')"/>
       <xsl:call-template name="css:content"/>
     </div>
   </xsl:template>
