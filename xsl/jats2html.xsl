@@ -3081,7 +3081,7 @@
     <xsl:message>No heading level for <xsl:copy-of select=".."/></xsl:message>
   </xsl:template>
   
-  <xsl:template match="table-wrap/* | verse-group/* | fig/*" mode="jats:heading-level" as="xs:integer?"/>
+  <xsl:template match="table-wrap/* | verse-group/* | fig/* | fig/caption/*" mode="jats:heading-level" as="xs:integer?"/>
 
   <xsl:template match="book-title-group/*" mode="jats:heading-level" as="xs:integer?">
     <xsl:sequence select="1"/>
