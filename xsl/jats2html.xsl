@@ -3467,7 +3467,7 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="kwd-group[@kwd-group-type = ('author-created', 'author-generated')]" mode="jats2html-create-title jats2html">
+  <xsl:template match="kwd-group[not(@specific-use/tokenize() = 'meta-only')][@kwd-group-type = ('author-created', 'author-generated')]" mode="jats2html-create-title jats2html">
     <div class="{local-name()} {@kwd-group-type}">
       <xsl:apply-templates select="@*, node()" mode="jats2html"/>
     </div>
