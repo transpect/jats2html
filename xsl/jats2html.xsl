@@ -437,6 +437,7 @@
     <xsl:param name="recount-footnotes" as="xs:boolean?" tunnel="yes"/>
     <xsl:param name="static-footnotes" as="xs:boolean?" tunnel="yes"/>
     <xsl:param name="footnote-roots" as="element(*)*" tunnel="yes"/>
+    <xsl:param name="footnote-heading-class" select="'footnote-heading'" as="xs:string?" tunnel="yes"/>
     <xsl:variable name="context" as="element(*)" select="."/>
     <xsl:variable name="footnotes" 
                   select=".//fn[jats2html:include-footnote(.)][not(some $fnroot in ($footnote-roots intersect current()/descendant::*) 
@@ -456,7 +457,9 @@
               </xsl:when>
               <xsl:otherwise>
                 <xsl:element name="{$footnote-title-element-name}">
-                  <xsl:attribute name="class" select="'footnote-heading'"/>
+                  <xsl:if test="$footnote-heading-class != ''">
+                    <xsl:attribute name="class" select="$footnote-heading-class"/>
+                  </xsl:if>
                   <xsl:value-of select="$footnote-title"/>
                 </xsl:element>
               </xsl:otherwise>
