@@ -1030,7 +1030,8 @@
     </a>
   </xsl:template>
   
-  <xsl:template match="ref-list[$bibliography-as-list = ('yes', 'true')]" mode="jats2html" priority="5">
+  <xsl:template match="ref-list[$bibliography-as-list = ('yes', 'true')]
+                               [every $child in * satisfies $child[self::ref|self::label|self::title]]" mode="jats2html" priority="5">
     
     <section>
       <xsl:apply-templates select="." mode="class-att"/>
@@ -1040,13 +1041,25 @@
         <xsl:if test="tr:create-epub-type-attribute(.)">
           <xsl:attribute name="epub:type" select="tr:create-epub-type-attribute(.)"/>
         </xsl:if>
-        <xsl:apply-templates select="node() except title" mode="#current"/>
+        <xsl:apply-templates select="node() except title" mode="#current">
+          <xsl:with-param name="create-list-items" as="xs:boolean" select="true()" tunnel="yes"/>
+        </xsl:apply-templates>
       </ul>
     </section>
   </xsl:template>
  
   <xsl:template match="ref-list[$bibliography-as-list = ('yes', 'true')]/ref" mode="jats2html" priority="5">
-    <li><xsl:apply-templates select="@*, node()" mode="#current"/></li>
+    <xsl:param name="create-list-items" as="xs:boolean?" tunnel="yes"/>
+    <xsl:choose>
+      <xsl:when test="$create-list-items">
+        <li>
+          <xsl:apply-templates select="@*, node()" mode="#current"/>
+        </li>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:next-match/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="*[html:p[html:span[@class = 'endnote-anchor']]]" mode="clean-up" priority="5">
