@@ -2528,7 +2528,9 @@
   </xsl:template>
   
   <xsl:template name="jats2html:img-alt">
-    <xsl:attribute name="alt" select="(alt-text, @xlink:title)[1]"/>
+    <xsl:variable name="graphic-in-fig-pos" as="xs:integer"
+                  select="(index-of(parent::fig/graphic/generate-id(), generate-id()), 1)[1]"/>
+    <xsl:attribute name="alt" select="(alt-text, parent::fig/alt-text[$graphic-in-fig-pos], @xlink:title)[1]"/>
   </xsl:template>
   
   <xsl:template match="graphic[caption and not(parent::fig)][$xhtml-version eq '5.0']" mode="jats2html" priority="5">
