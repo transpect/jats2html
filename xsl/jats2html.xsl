@@ -203,7 +203,11 @@
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </span>
   </xsl:template>
-
+  
+  <xsl:template match="processing-meta" mode="jats2html">
+    <xsl:message select="concat('jats2html: ignored: ', name())"/>
+  </xsl:template>
+  
   <xsl:template match="*" mode="jats2html" priority="-1">
     <xsl:if test="$debug eq 'yes' and not(self::html:*)">
       <xsl:message>jats2html: unhandled: <xsl:apply-templates select="." mode="css:unhandled"/></xsl:message>
@@ -2583,16 +2587,63 @@
   
   <!-- formulas -->
   
+  <xsl:variable name="create-aria-math"
+    select="false()" as="xs:boolean"/>
+  <xsl:variable name="a11y-aria-label-length-threshold"
+    select="80" as="xs:integer">
+    <!-- char length of alt-text wether @aria-label or @aria-describedby should be used -->  
+  </xsl:variable>
+  
   <xsl:template match="disp-formula-group|disp-formula" mode="jats2html">
     <div class="{local-name()}">
-      <xsl:next-match/>
+      <xsl:apply-templates select="@id, @srcpath" mode="#current"/>
+      <xsl:apply-templates select="alt-text" mode="#current"/>
+      <xsl:apply-templates select="node() except alt-text" mode="#current"/>
     </div>
   </xsl:template>
   
   <xsl:template match="inline-formula" mode="jats2html">
     <span class="{name()}">
-      <xsl:apply-templates select="@srcpath, node()" mode="#current"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:apply-templates select="alt-text" mode="#current"/>
+      <xsl:apply-templates select="node() except alt-text" mode="#current"/>
     </span>
+  </xsl:template>
+  
+  <xsl:variable name="math-formula-gen-ids"
+    select="for $i in //*[self::disp-formula or self::inline-formula][mml:math] return generate-id($i)"/>
+  
+  <xsl:template match="inline-formula/@*[not(name() = 'srcpath')]" mode="jats2html"/>
+  
+  <xsl:template match="inline-formula/alt-text | disp-formula/alt-text" mode="jats2html">
+    <xsl:choose>
+      <xsl:when test="$create-aria-math and parent::*/mml:math">
+        <xsl:attribute name="role" select="'math'"/>
+        <xsl:choose>
+          <xsl:when test="string-length(.) gt $a11y-aria-label-length-threshold">
+            <xsl:variable name="describedby-id"
+              select="concat(substring(parent::*/name(), 1, 1), 'f', index-of($math-formula-gen-ids, generate-id(parent::*)), '-desc')"/>
+            <xsl:attribute name="aria-describedby" select="$describedby-id"/>
+            <xsl:element name="{if(parent::disp-formula) then 'p' else 'span'}">
+              <xsl:attribute name="id" select="$describedby-id"/>
+              <xsl:attribute name="style" select="'display:none'"/>
+              <xsl:attribute name="aria-hidden" select="'true'"/>
+              <xsl:value-of select="."/>
+            </xsl:element>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:attribute name="aria-label" select="."/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="alt" select="."/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="disp-formula/@id" mode="jats2html">
+    <xsl:attribute name="id" select="."/>
   </xsl:template>
   
   <xsl:template match="alternatives" mode="jats2html">
@@ -2601,15 +2652,32 @@
     </span>
   </xsl:template>
   
+  <xsl:variable name="math-alttext-source" as="xs:string"
+    select="'unwrap-mml'">
+    <!-- possible values are:
+         'unwrap-mml' (default, compatibility) → use transpect module unwrap-mml
+         'alt-text-of-parent-el' → i.e. inline-formula/alt-text
+         'given-alttext-attr' → use given @alttext
+    -->
+  </xsl:variable>
+  
   <xsl:template match="mml:math" mode="jats2html">
     <xsl:variable name="altimg" as="attribute(xlink:href)?"
                   select="parent::alternatives/*[local-name() = ('graphic', 'inline-graphic')][1]/@xlink:href"/>
     <xsl:element name="{local-name()}" namespace="http://www.w3.org/1998/Math/MathML">
       <!-- Unlike HTML, EPUB 3.0 requires an alttext attribute. -->
       <xsl:attribute name="alttext">
-        <xsl:if test="tr:unwrap-mml-boolean(.)">
-          <xsl:apply-templates mode="unwrap-mml"/>
-        </xsl:if>
+        <xsl:choose>
+          <xsl:when test="$math-alttext-source = 'unwrap-mml' and tr:unwrap-mml-boolean(.)">
+            <xsl:apply-templates mode="unwrap-mml"/>
+          </xsl:when>
+          <xsl:when test="$math-alttext-source = 'alt-text-of-parent-el' and parent::*/alt-text/normalize-space()">
+            <xsl:value-of select="parent::*/alt-text"/>
+          </xsl:when>
+          <xsl:when test="$math-alttext-source = 'given-alttext-attr' and @alttext ne ''">
+            <xsl:value-of select="@alttext"/>
+          </xsl:when>
+        </xsl:choose>
       </xsl:attribute>
       <xsl:if test="$altimg">
         <xsl:attribute name="altimg" select="$altimg"/>
