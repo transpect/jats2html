@@ -3692,7 +3692,7 @@
   </xsl:function>
 
   <xsl:template name="create-loi">
-    <xsl:if test="$jats2html:create-loi and exists(//fig[caption[label[normalize-space()] or caption/title[normalize-space()]]])">
+    <xsl:if test="$jats2html:create-loi and exists(//fig[label[normalize-space()] or caption[title[normalize-space()]]])">
      <xsl:element name="{if ($epub-version = 'EPUB3' or $xhtml-version = '5.0') then 'section' else 'div'}">
        <xsl:attribute name="epub:type" select="'loi'"/>
        <xsl:attribute name="id" select="'loi'"/>
