@@ -491,7 +491,7 @@
     </p>
   </xsl:template>
 
-  <xsl:template match="attrib[parent::*[name() = ('styled-content', 'named-content')]]" mode="jats2html" priority="2">
+  <xsl:template match="attrib[parent::*[name() = ('styled-content', 'named-content')]]|disp-formula/label" mode="jats2html" priority="2">
     <span class="{local-name()}">
       <xsl:call-template name="css:content"/>
     </span>
@@ -2598,7 +2598,7 @@
     <div class="{local-name()}">
       <xsl:apply-templates select="@id, @srcpath" mode="#current"/>
       <xsl:apply-templates select="alt-text" mode="#current"/>
-      <xsl:apply-templates select="node() except alt-text" mode="#current"/>
+      <xsl:apply-templates select="node() except (alt-text, label), label" mode="#current"/>
     </div>
   </xsl:template>
   
@@ -2606,7 +2606,7 @@
     <span class="{name()}">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:apply-templates select="alt-text" mode="#current"/>
-      <xsl:apply-templates select="node() except alt-text" mode="#current"/>
+      <xsl:apply-templates select="node() except (alt-text, label), label" mode="#current"/>
     </span>
   </xsl:template>
   
