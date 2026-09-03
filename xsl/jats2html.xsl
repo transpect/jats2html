@@ -412,7 +412,7 @@
     </xsl:element>
   </xsl:template>
   
-  <xsl:variable name="default-title-containers" as="xs:string+" select="('book-title-group', 'title-group', 'toc-title-group')"/>
+  <xsl:variable name="default-title-containers" as="xs:string+" select="('book-title-group', 'title-group', 'toc-title-group', 'index-title-group')"/>
   
   <xsl:template match="*[local-name() = $default-title-containers]" 
                 mode="jats2html" priority="3">
@@ -761,6 +761,8 @@
   
   <xsl:template match="title[not($divify-sections = 'yes')]" mode="class-att" priority="2" as="attribute(class)">
     <xsl:attribute name="class" select="(parent::title-group[not(ends-with(../name(), 'meta'))],
+                                         parent::toc-title-group,
+                                         parent::index-title-group,
                                          ancestor::*[ends-with(name(), 'meta')], 
                                          .)[1]/../
                                                  (name(), @book-part-type)[last()]"/>
@@ -1508,9 +1510,11 @@
   </xsl:variable>
   
   <xsl:variable name="jats2html:toc-headlines" as="element()*"
-                select="//*[self::title or self::label[parent::sec[not(title)] or title-group[not(title)]]]
+                select="//*[self::title or self::label[parent::sec[not(title)] or title-group[not(title)] ]]
                            [parent::sec[not(ancestor::boxed-text)]
                            |parent::title-group
+                           |parent::toc-title-group
+                           |parent::index-title-group
                            |parent::app
                            |parent::ack
                            |parent::index-title-group
@@ -1544,12 +1548,12 @@
         <xsl:attribute name="epub:type" select="'toc'"/>
       </xsl:if>
       <xsl:choose>
-        <xsl:when test="exists(self::toc/* except title-group)">
+        <xsl:when test="exists(self::toc/* except (title-group|toc-title-group))">
           <!-- explicitly rendered toc -->
           <xsl:apply-templates mode="jats2html"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:apply-templates select="title-group" mode="jats2html"/>
+          <xsl:apply-templates select="title-group|toc-title-group" mode="jats2html"/>
           <xsl:choose>
             <xsl:when test="$xhtml-version eq '5.0' or $epub-version = 'EPUB3'">
               <xsl:variable name="toc-as-tree">
@@ -1654,7 +1658,9 @@
   
   <xsl:template match="title
                       |sec[not(title)]/label
-                      |title-group[not(title)]/label" mode="toc">
+                      |title-group[not(title)]/label
+                      |toc-title-group[not(title)]/label
+                      |index-title-group[not(title)]/label" mode="toc">
     <xsl:element name="{if($xhtml-version eq '5.0' or $epub-version = 'EPUB3') then 'li' else 'p'}">
       <xsl:apply-templates select="." mode="toc-class"/>
      
@@ -1663,6 +1669,7 @@
                                parent::title-group/parent::book-part-meta/parent::*/local-name(),
                                parent::book-part-meta/parent::*/local-name(),
                                parent::index-title-group/parent::index/local-name(),
+                               parent::toc-title-group/parent::toc/local-name(),
                                parent::title-group/parent::book-part-meta/parent::*/local-name(),
                                self::sec/local-name(),
                                parent::title-group/parent::*/local-name(),
@@ -1784,7 +1791,7 @@
       <xsl:if test="self::title and ../../.. is /">
         <xsl:message select="'The assertion that this titled element has a grandparent is not correct: ', .."></xsl:message>
       </xsl:if>
-      <xsl:sequence select="tr:create-epub-type-attribute(if (self::*:title and ..[self::*:title-group]) then ../../.. else ..)"/>
+      <xsl:sequence select="tr:create-epub-type-attribute(if (self::*:title and ..[self::*:title-group|self::*:index-title-group|self::*:toc-title-group]) then ../../.. else ..)"/>
       <xsl:variable name="_label" as="element(label)?" 
                     select="(../label[not(named-content[@content-type = 'post-identifier'])], 
                              parent::caption/../label[not(named-content[@content-type = 'post-identifier'])]
