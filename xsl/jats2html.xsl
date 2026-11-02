@@ -149,7 +149,7 @@
   <xsl:output method="xml" indent="yes" name="debug" exclude-result-prefixes="#all"/>
 
   <xsl:param name="lang" select="(/*/@xml:lang, 'en')[1]" as="xs:string"/>
-  
+  <xsl:variable name="root" select="/" as="document-node()"/>
   <xsl:variable name="l10n" select="document(concat('../l10n/l10n.', ($lang, 'en')[1], '.xml'))"
     as="document-node(element(l10n:l10n))"/>
   
@@ -1494,7 +1494,7 @@
     <xsl:attribute name="epub:type" select="'backmatter'"/>
   </xsl:template>
   
-  <xsl:template match="xref[key('by-id', @rid)[self::mixed-citation|self::ref|self::element-citation]]" mode="epub-type">
+  <xsl:template match="xref[key('by-id', @rid, $root)[self::mixed-citation|self::ref|self::element-citation]]" mode="epub-type">
     <xsl:attribute name="epub:type" select="'biblioref'"/>
   </xsl:template>
   
@@ -2942,8 +2942,6 @@
   <xsl:key name="by-rid" match="*[@rid]" use="@rid"/>
   <xsl:key name="rule-by-name" match="css:rule" use="@name"/> 
   
-  <xsl:variable name="root" select="/" as="document-node()"/>
-  
   <xsl:template match="contrib/xref[@rid][not(node())]" mode="jats2html">
     <xsl:variable name="affiliation-ids" select="ancestor::contrib-group[1]/aff/@id" as="attribute(id)*"/>
     <xsl:variable name="index" select="index-of($affiliation-ids, @rid)" as="xs:integer*"/>
@@ -3182,7 +3180,7 @@
   
   <xsl:template match="table-wrap/* | verse-group/* | fig/* | fig/caption/*" mode="jats:heading-level" as="xs:integer?"/>
 
-  <xsl:template match="book-title-group/*" mode="jats:heading-level" as="xs:integer?">
+  <xsl:template match="book-title-group/*|toc-title-group/*" mode="jats:heading-level" as="xs:integer?">
     <xsl:sequence select="1"/>
   </xsl:template>
 
@@ -3195,7 +3193,7 @@
     <xsl:sequence select="count(ancestor::*[ancestor::boxed-text]) + 3"/>
   </xsl:template>
 
-  <xsl:template match="abstract/* | def-list/* | trans-abstract/* | ack/* | app/* | app-group/* | bio/* |
+  <xsl:template match="abstract/* | def-list/* | trans-abstract/* | dedication/* | ack/* | app/* | app-group/* | bio/* |
                        glossary/* | sec/* | ref-list/* | statement/* | kwd-group/*" mode="jats:heading-level" as="xs:integer?">
     <xsl:variable name="ancestor-title" as="element(title)?" 
       select="(
